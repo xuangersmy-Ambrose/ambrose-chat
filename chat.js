@@ -121,7 +121,7 @@ const UI = {
     }
 };
 
-// 初始化
-document.addEventListener('DOMContentLoaded', () => {
+// 初始化（由Auth模块调用）
+window.initChat = () => {
     UI.init();
-});
+};
