@@ -77,7 +77,7 @@ function callKimiAPI(message) {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
-                'Authorization': 'Bearer sk-Wa4NDeoKOszV7Q0kdKCXJEcleDPL6gPk5CumMyqD74SUCvky',
+                'Authorization': 'Bearer sk-UEmVGHzAcQlVcNT4Tw2BnwNkFIgL3dGSpmr9kmxczr2yNRXM',
                 'Content-Length': Buffer.byteLength(postData)
             },
             timeout: 30000 // 30秒超时
