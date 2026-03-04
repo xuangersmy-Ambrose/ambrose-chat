@@ -1,6 +1,4 @@
 // Vercel Serverless API - 代理Kimi请求
-// 使用 Node.js 内置 https 模块
-
 const https = require('https');
 
 export default async function handler(req, res) {
@@ -18,28 +16,28 @@ export default async function handler(req, res) {
     }
     
     try {
-        // 获取请求体
-        const body = await new Promise((resolve, reject) => {
-            let data = '';
-            req.on('data', chunk => data += chunk);
-            req.on('end', () => {
-                try {
-                    resolve(JSON.parse(data));
-                } catch (e) {
-                    reject(e);
-                }
-            });
-            req.on('error', reject);
-        });
+        console.log('收到请求');
         
-        const { message } = body;
+        // 获取请求体
+        let body = '';
+        for await (const chunk of req) {
+            body += chunk;
+        }
+        
+        console.log('请求体:', body);
+        
+        const { message } = JSON.parse(body);
         
         if (!message) {
             return res.status(400).json({ error: 'Message required' });
         }
         
+        console.log('调用Kimi API, message:', message);
+        
         // 调用Kimi API
         const kimiResponse = await callKimiAPI(message);
+        
+        console.log('Kimi回复:', kimiResponse);
         
         return res.status(200).json({
             reply: kimiResponse
@@ -49,14 +47,15 @@ export default async function handler(req, res) {
         console.error('Error:', error);
         return res.status(500).json({ 
             error: 'Service error',
-            details: error.message 
+            details: error.message,
+            stack: error.stack
         });
     }
 }
 
 function callKimiAPI(message) {
     return new Promise((resolve, reject) => {
-        const data = JSON.stringify({
+        const postData = JSON.stringify({
             model: 'moonshot-v1-8k',
             messages: [
                 {
@@ -79,9 +78,12 @@ function callKimiAPI(message) {
             headers: {
                 'Content-Type': 'application/json',
                 'Authorization': 'Bearer sk-Wa4NDeoKOszV7Q0kdKCXJEcleDPL6gPk5CumMyqD74SUCvky',
-                'Content-Length': Buffer.byteLength(data)
-            }
+                'Content-Length': Buffer.byteLength(postData)
+            },
+            timeout: 30000 // 30秒超时
         };
+        
+        console.log('发送请求到Kimi...');
         
         const apiReq = https.request(options, (apiRes) => {
             let responseData = '';
@@ -91,26 +93,37 @@ function callKimiAPI(message) {
             });
             
             apiRes.on('end', () => {
+                console.log('Kimi响应:', responseData);
                 try {
                     const parsed = JSON.parse(responseData);
                     if (parsed.choices && parsed.choices[0] && parsed.choices[0].message) {
                         resolve(parsed.choices[0].message.content);
                     } else if (parsed.error) {
+                        console.error('Kimi API错误:', parsed.error);
                         reject(new Error(parsed.error.message || 'API Error'));
                     } else {
+                        console.error('无效响应:', parsed);
                         reject(new Error('Invalid response'));
                     }
                 } catch (e) {
+                    console.error('解析错误:', e);
                     reject(new Error('Parse error: ' + e.message));
                 }
             });
         });
         
         apiReq.on('error', (error) => {
+            console.error('请求错误:', error);
             reject(error);
         });
         
-        apiReq.write(data);
+        apiReq.on('timeout', () => {
+            console.error('请求超时');
+            apiReq.destroy();
+            reject(new Error('Request timeout'));
+        });
+        
+        apiReq.write(postData);
         apiReq.end();
     });
 }

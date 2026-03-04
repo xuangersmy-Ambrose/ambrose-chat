@@ -52,20 +52,27 @@ const UI = {
     },
     
     async callAPI(message) {
-        const response = await fetch(API_URL, {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({ message })
-        });
-        
-        if (!response.ok) {
-            throw new Error('API request failed');
+        try {
+            const response = await fetch(API_URL, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ message })
+            });
+            
+            const data = await response.json();
+            
+            if (!response.ok) {
+                console.error('API错误:', data);
+                throw new Error(data.details || data.error || '请求失败');
+            }
+            
+            return data.reply || '抱歉，没有获取到回复';
+        } catch (err) {
+            console.error('请求异常:', err);
+            throw err;
         }
-        
-        const data = await response.json();
-        return data.reply || '抱歉，没有获取到回复';
     },
     
     addMessage(text, sender) {
