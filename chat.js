@@ -548,23 +548,33 @@ const UI = {
         this.scrollToBottom();
     },
 
-    // 健身视频库
+    // 健身视频库 - 专业版文案
     fitnessVideos: {
         training: [
-            { id: 1, title: '胸肌训练基础', duration: '12:30', level: '入门', views: '12.5K', thumbnail: '💪', color: '#00f3ff' },
-            { id: 2, title: '背部力量塑造', duration: '15:45', level: '中级', views: '8.3K', thumbnail: '🏋️', color: '#00f3ff' },
-            { id: 3, title: '腿部爆发力', duration: '18:20', level: '进阶', views: '15.2K', thumbnail: '🦵', color: '#00f3ff' },
-            { id: 4, title: '核心稳定性', duration: '10:15', level: '入门', views: '22.1K', thumbnail: '🎯', color: '#00f3ff' }
+            { id: 1, title: '胸肌全面激活训练', duration: '12:30', level: '入门', views: '12.5K', thumbnail: '💪', color: '#00f3ff', 
+              subtitle: 'Chest Activation Pro', desc: '平板卧推 · 上斜推举 · 飞鸟夹胸 · 基础要领精讲' },
+            { id: 2, title: '背部力量进阶塑造', duration: '15:45', level: '中级', views: '8.3K', thumbnail: '🏋️', color: '#00f3ff',
+              subtitle: 'Back Strength Plus', desc: '引体向上 · 杠铃划船 · 高位下拉 · 背部线条雕刻' },
+            { id: 3, title: '腿部爆发力特训', duration: '18:20', level: '进阶', views: '15.2K', thumbnail: '🦵', color: '#00f3ff',
+              subtitle: 'Leg Power Extreme', desc: '深蹲硬拉 · 腿举训练 · 股四头肌 · 腿部维度增长' },
+            { id: 4, title: '核心肌群稳定性训练', duration: '10:15', level: '入门', views: '22.1K', thumbnail: '🎯', color: '#00f3ff',
+              subtitle: 'Core Stability Base', desc: '平板支撑 · 卷腹训练 · 俄罗斯转体 · 腰腹力量奠基' }
         ],
         cardio: [
-            { id: 5, title: 'HIIT燃脂训练', duration: '20:00', level: '进阶', views: '35.2K', thumbnail: '🔥', color: '#ff6b35' },
-            { id: 6, title: '有氧舞蹈', duration: '25:30', level: '入门', views: '28.7K', thumbnail: '💃', color: '#ff6b35' },
-            { id: 7, title: '跳绳减脂', duration: '15:00', level: '中级', views: '19.3K', thumbnail: '⚡', color: '#ff6b35' }
+            { id: 5, title: 'HIIT极限燃脂训练', duration: '20:00', level: '进阶', views: '35.2K', thumbnail: '🔥', color: '#ff6b35',
+              subtitle: 'HIIT Fat Burner', desc: '高强度间歇 · 20分钟极速燃脂 · 运动后持续耗氧' },
+            { id: 6, title: '有氧舞蹈活力训练', duration: '25:30', level: '入门', views: '28.7K', thumbnail: '💃', color: '#ff6b35',
+              subtitle: 'Aerobic Dance Flow', desc: '音乐律动 · 全身燃脂 · 提升心肺 · 快乐运动' },
+            { id: 7, title: '跳绳燃脂效率训练', duration: '15:00', level: '中级', views: '19.3K', thumbnail: '⚡', color: '#ff6b35',
+              subtitle: 'Jump Rope Burn', desc: '双摇进阶 · 节奏控制 · 小腿塑形 · 高效燃脂' }
         ],
         yoga: [
-            { id: 8, title: '晨间唤醒瑜伽', duration: '20:00', level: '入门', views: '42.1K', thumbnail: '🌅', color: '#9d4edd' },
-            { id: 9, title: '睡前放松', duration: '15:30', level: '入门', views: '38.9K', thumbnail: '🌙', color: '#9d4edd' },
-            { id: 10, title: '拉伸恢复', duration: '12:00', level: '入门', views: '25.7K', thumbnail: '🌿', color: '#9d4edd' }
+            { id: 8, title: '晨间唤醒流瑜伽', duration: '20:00', level: '入门', views: '42.1K', thumbnail: '🌅', color: '#9d4edd',
+              subtitle: 'Morning Flow Yoga', desc: '唤醒身体 · 舒展脊柱 · 开启能量满满的一天' },
+            { id: 9, title: '睡前深度放松瑜伽', duration: '15:30', level: '入门', views: '38.9K', thumbnail: '🌙', color: '#9d4edd',
+              subtitle: 'Sleep Yoga Relax', desc: '舒缓压力 · 改善睡眠 · 冥想放松 · 身心修复' },
+            { id: 10, title: '运动后拉伸恢复', duration: '12:00', level: '入门', views: '25.7K', thumbnail: '🌿', color: '#9d4edd',
+              subtitle: 'Post-Workout Stretch', desc: '全身拉伸 · 缓解酸痛 · 促进恢复 · 预防损伤' }
         ]
     },
 
@@ -649,51 +659,70 @@ const UI = {
         }
 
         grid.innerHTML = videos.map(v => `
-            <div onclick="UI.openVideoPlayer(${v.id}, '${v.title}', '${v.duration}', '${v.level}', '${v.views}', '${v.thumbnail}', '${v.color}')" 
-                 style="background: linear-gradient(145deg, rgba(15,18,30,0.9), rgba(8,10,15,0.95)); border-radius: 12px; overflow: hidden; border: 1px solid ${v.color}30; cursor: pointer; transition: all 0.3s;">
-                <div style="position: relative; aspect-ratio: 16/10; background: linear-gradient(135deg, ${v.color}20, ${v.color}05); display: flex; align-items: center; justify-content: center;">
-                    <div style="font-size: 40px; filter: drop-shadow(0 0 10px ${v.color});">${v.thumbnail}</div>
-                    <div style="position: absolute; bottom: 6px; right: 6px; background: rgba(0,0,0,0.8); padding: 2px 6px; border-radius: 4px; font-size: 10px; color: #fff; font-family: 'Orbitron';">${v.duration}</div>
-                    <div style="position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; background: rgba(0,0,0,0.4); opacity: 0; transition: opacity 0.3s;" onmouseover="this.style.opacity=1" onmouseout="this.style.opacity=0">
-                        <div style="width: 44px; height: 44px; background: ${v.color}; border-radius: 50%; display: flex; align-items: center; justify-content: center; box-shadow: 0 0 20px ${v.color};">▶</div>
+            <div onclick="UI.openVideoPlayer(${v.id}, '${v.title}', '${v.subtitle}', '${v.duration}', '${v.level}', '${v.views}', '${v.thumbnail}', '${v.color}', '${v.desc}')" 
+                 style="background: linear-gradient(145deg, rgba(15,18,30,0.9), rgba(8,10,15,0.95)); border-radius: 16px; overflow: hidden; border: 1px solid ${v.color}30; cursor: pointer; transition: all 0.3s;"
+                 onmouseover="this.style.transform='translateY(-6px) scale(1.02)'; this.style.boxShadow='0 20px 50px ${v.color}25'; this.style.borderColor='${v.color}60';"
+                 onmouseout="this.style.transform='translateY(0) scale(1)'; this.style.boxShadow='none'; this.style.borderColor='${v.color}30';"
+            >
+                <div style="position: relative; aspect-ratio: 16/10; background: linear-gradient(135deg, ${v.color}25, ${v.color}05); display: flex; align-items: center; justify-content: center;">
+                    <div style="font-size: 48px; filter: drop-shadow(0 0 15px ${v.color});">${v.thumbnail}</div>
+                    <div style="position: absolute; bottom: 8px; right: 8px; background: rgba(0,0,0,0.85); padding: 4px 8px; border-radius: 6px; font-size: 11px; color: #fff; font-family: 'Orbitron', monospace; font-weight: 600;">${v.duration}</div>
+                    <div style="position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; background: rgba(0,0,0,0.5); opacity: 0; transition: opacity 0.3s;" class="play-overlay"
+                    >
+                        <div style="width: 56px; height: 56px; background: ${v.color}; border-radius: 50%; display: flex; align-items: center; justify-content: center; box-shadow: 0 0 40px ${v.color}, 0 0 80px ${v.color}50; transition: transform 0.3s; transform: scale(0.9);">
+                            <span style="font-size: 24px; margin-left: 4px; color: #000;">▶</span>
+                        </div>
                     </div>
                 </div>
-                <div style="padding: 10px;">
-                    <div style="font-size: 13px; font-weight: 600; color: #fff; margin-bottom: 6px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">${v.title}</div>
+                <div style="padding: 14px;">
+                    <div style="font-size: 10px; color: ${v.color}; font-family: 'Orbitron', monospace; letter-spacing: 1px; margin-bottom: 6px; text-transform: uppercase; font-weight: 500;">${v.subtitle}</div>
+                    <div style="font-size: 15px; font-weight: 700; color: #fff; margin-bottom: 8px; line-height: 1.3; display: -webkit-box; -webkit-line-clamp: 1; -webkit-box-orient: vertical; overflow: hidden;">${v.title}</div>
+                    <div style="font-size: 11px; color: #888; margin-bottom: 12px; line-height: 1.4;">${v.desc}</div>
                     <div style="display: flex; justify-content: space-between; align-items: center;">
-                        <span style="font-size: 10px; color: ${v.color}; background: ${v.color}15; padding: 2px 6px; border-radius: 4px;">${v.level}</span>
-                        <span style="font-size: 10px; color: #666;">▶ ${v.views}</span>
+                        <span style="font-size: 10px; color: ${v.color}; background: ${v.color}15; padding: 4px 12px; border-radius: 20px; font-weight: 500;">${v.level}</span>
+                        <span style="font-size: 11px; color: #666; display: flex; align-items: center; gap: 4px;">
+                            <span style="color: ${v.color};">▶</span> ${v.views}
+                        </span>
                     </div>
                 </div>
             </div>
         `).join('');
     },
 
-    openVideoPlayer(id, title, duration, level, views, thumbnail, color) {
+    openVideoPlayer(id, title, subtitle, duration, level, views, thumbnail, color, desc) {
         const player = document.createElement('div');
         player.style.cssText = `
             background: linear-gradient(180deg, rgba(10,12,20,0.98) 0%, rgba(5,5,8,1) 100%);
-            border-radius: 20px;
-            padding: 20px;
-            margin: 12px 0;
-            border: 1px solid ${color}40;
-            box-shadow: 0 0 40px ${color}15;
+            border-radius: 24px;
+            padding: 24px;
+            margin: 16px 0;
+            border: 1px solid ${color}50;
+            box-shadow: 0 0 60px ${color}20, 0 20px 50px rgba(0,0,0,0.5);
         `;
         player.innerHTML = `
-            <div style="position: relative; aspect-ratio: 16/9; background: linear-gradient(135deg, ${color}30, #000); border-radius: 12px; display: flex; align-items: center; justify-content: center; margin-bottom: 16px;">
-                <div style="font-size: 64px;">${thumbnail}</div>
-                <div style="position: absolute; inset: 0; background: linear-gradient(to top, rgba(0,0,0,0.9) 0%, transparent 60%); display: flex; flex-direction: column; justify-content: flex-end; padding: 16px;">
-                    <div style="font-size: 18px; font-weight: 700; color: #fff; margin-bottom: 6px;">${title}</div>
-                    <div style="display: flex; gap: 12px; font-size: 12px; color: #aaa;">
-                        <span style="color: ${color};">⏱ ${duration}</span>
-                        <span>👁 ${views}</span>
-                        <span>📊 ${level}</span>
+            <div style="position: relative; aspect-ratio: 16/9; background: linear-gradient(135deg, ${color}40, #000); border-radius: 16px; display: flex; align-items: center; justify-content: center; margin-bottom: 20px; overflow: hidden;">
+                <div style="font-size: 80px; filter: drop-shadow(0 0 30px ${color});">${thumbnail}</div>
+                <div style="position: absolute; inset: 0; background: linear-gradient(to top, rgba(0,0,0,0.95) 0%, rgba(0,0,0,0.3) 50%, transparent 100%); display: flex; flex-direction: column; justify-content: flex-end; padding: 24px;"
+                >
+                    <div style="font-size: 10px; color: ${color}; font-family: 'Orbitron', monospace; letter-spacing: 2px; margin-bottom: 8px; text-transform: uppercase;">${subtitle}</div>
+                    <div style="font-size: 22px; font-weight: 700; color: #fff; margin-bottom: 8px; text-shadow: 0 2px 20px rgba(0,0,0,0.8);">${title}</div>
+                    <div style="font-size: 12px; color: #aaa; margin-bottom: 12px;">${desc}</div>
+                    <div style="display: flex; gap: 16px; font-size: 12px;">
+                        <span style="color: ${color}; display: flex; align-items: center; gap: 4px;">⏱ ${duration}</span>
+                        <span style="color: #888; display: flex; align-items: center; gap: 4px;">👁 ${views}</span>
+                        <span style="color: #888; display: flex; align-items: center; gap: 4px;">📊 ${level}</span>
                     </div>
                 </div>
             </div>
-            <div style="display: flex; gap: 10px;">
-                <button onclick="UI.sendFitnessQuery('请给我详细的${title}训练指导，包括动作要领、组数次数建议和注意事项')" style="flex: 1; background: ${color}; border: none; border-radius: 10px; padding: 12px; color: #000; font-size: 14px; font-weight: 600; cursor: pointer;">▶ 开始训练</button>
-                <button onclick="this.closest('.video-player').remove()" style="width: 44px; background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.2); border-radius: 10px; color: #fff; font-size: 18px; cursor: pointer;">✕</button>
+            <div style="display: flex; gap: 12px;">
+                <button onclick="UI.sendFitnessQuery('请给我详细的${title}训练指导，包括动作要领、组数次数建议和注意事项')" style="flex: 1; background: linear-gradient(135deg, ${color}, ${color}dd); border: none; border-radius: 12px; padding: 14px; color: #000; font-size: 15px; font-weight: 700; cursor: pointer; box-shadow: 0 4px 20px ${color}40; transition: all 0.3s;"
+                onmouseover="this.style.transform='translateY(-2px)'; this.style.boxShadow='0 8px 30px ${color}60';"
+                onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='0 4px 20px ${color}40';"
+                >▶ 开始训练</button>
+                <button onclick="this.closest('.video-player').remove()" style="width: 48px; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.2); border-radius: 12px; color: #fff; font-size: 16px; cursor: pointer; transition: all 0.3s;"
+                onmouseover="this.style.background='rgba(255,255,255,0.1)'; this.style.borderColor='rgba(255,255,255,0.3)';"
+                onmouseout="this.style.background='rgba(255,255,255,0.05)'; this.style.borderColor='rgba(255,255,255,0.2)';"
+                >✕</button>
             </div>
         `;
         player.className = 'video-player';
@@ -702,48 +731,91 @@ const UI = {
     },
 
     showFitnessNutrition() {
-        this.addMessage('🥗 科学饮食方案\n\n点击下方获取专属饮食建议：', 'bot');
+        this.addMessage('🥗 **NUTRITION CENTER**\n📋 科学饮食方案\n\n根据您的健身目标，选择专属饮食方案：', 'bot');
         setTimeout(() => {
-            this.messages.insertAdjacentHTML('beforeend', `
-                <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; margin: 12px 0; padding: 0 16px;">
-                    <div onclick="UI.sendFitnessQuery('我正在增肌，请给我详细的增肌饮食方案，包括每日热量、蛋白质摄入和具体食谱')" style="background: linear-gradient(135deg, rgba(0,255,136,0.1), rgba(0,255,136,0.02)); border: 1px solid rgba(0,255,136,0.3); border-radius: 12px; padding: 16px; text-align: center; cursor: pointer;">
-                        <div style="font-size: 32px; margin-bottom: 8px;">🥩</div>
-                        <div style="font-size: 14px; font-weight: 600; color: #00ff88;">增肌饮食</div>
-                        <div style="font-size: 10px; color: #888; margin-top: 4px;">高蛋白·高热量</div>
+            const nutritionHTML = `
+                <div style="margin: 16px 0; padding: 0 16px;">
+                    <div style="font-size: 11px; color: #888; margin-bottom: 12px; letter-spacing: 1px;">💡 选择您的饮食目标</div>
+                    <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px;">
+                        <div onclick="UI.sendFitnessQuery('我正在增肌，请给我详细的增肌饮食方案，包括每日热量需求、蛋白质摄入建议和具体的三餐食谱安排')" 
+                             style="background: linear-gradient(145deg, rgba(0,255,136,0.12), rgba(0,255,136,0.03)); border: 1px solid rgba(0,255,136,0.35); border-radius: 16px; padding: 20px; text-align: center; cursor: pointer; transition: all 0.3s;"
+                             onmouseover="this.style.transform='translateY(-4px)'; this.style.boxShadow='0 12px 30px rgba(0,255,136,0.2)'; this.style.borderColor='rgba(0,255,136,0.6)';"
+                             onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='none'; this.style.borderColor='rgba(0,255,136,0.35)';">
+                            <div style="font-size: 40px; margin-bottom: 12px;">🥩</div>
+                            <div style="font-size: 15px; font-weight: 700; color: #00ff88; margin-bottom: 6px;">增肌饮食方案</div>
+                            <div style="font-size: 10px; color: #00ff88; opacity: 0.8; margin-bottom: 8px; font-family: 'Orbitron'; letter-spacing: 1px;">MUSCLE BUILDING</div>
+                            <div style="font-size: 11px; color: #888; line-height: 1.5;">高蛋白 · 热量盈余<br/>促进肌肉生长</div>
+                        </div>
+                        <div onclick="UI.sendFitnessQuery('我正在减脂，请给我低热量饮食方案，包括每日热量控制、营养搭配和减脂期的三餐食谱建议')" 
+                             style="background: linear-gradient(145deg, rgba(0,255,136,0.12), rgba(0,255,136,0.03)); border: 1px solid rgba(0,255,136,0.35); border-radius: 16px; padding: 20px; text-align: center; cursor: pointer; transition: all 0.3s;"
+                             onmouseover="this.style.transform='translateY(-4px)'; this.style.boxShadow='0 12px 30px rgba(0,255,136,0.2)'; this.style.borderColor='rgba(0,255,136,0.6)';"
+                             onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='none'; this.style.borderColor='rgba(0,255,136,0.35)';">
+                            <div style="font-size: 40px; margin-bottom: 12px;">🥗</div>
+                            <div style="font-size: 15px; font-weight: 700; color: #00ff88; margin-bottom: 6px;">减脂饮食方案</div>
+                            <div style="font-size: 10px; color: #00ff88; opacity: 0.8; margin-bottom: 8px; font-family: 'Orbitron'; letter-spacing: 1px;">FAT LOSS</div>
+                            <div style="font-size: 11px; color: #888; line-height: 1.5;">低热量 · 高纤维<br/>科学健康减脂</div>
+                        </div>
                     </div>
-                    <div onclick="UI.sendFitnessQuery('我正在减脂，请给我低热量饮食方案，包括每日热量控制和减脂食谱')" style="background: linear-gradient(135deg, rgba(0,255,136,0.1), rgba(0,255,136,0.02)); border: 1px solid rgba(0,255,136,0.3); border-radius: 12px; padding: 16px; text-align: center; cursor: pointer;">
-                        <div style="font-size: 32px; margin-bottom: 8px;">🥗</div>
-                        <div style="font-size: 14px; font-weight: 600; color: #00ff88;">减脂饮食</div>
-                        <div style="font-size: 10px; color: #888; margin-top: 4px;">低热量·高纤维</div>
+                    <div style="margin-top: 12px; background: rgba(0,255,136,0.05); border: 1px dashed rgba(0,255,136,0.2); border-radius: 12px; padding: 14px; text-align: center; cursor: pointer;"
+                         onclick="UI.sendFitnessQuery('请给我日常健康饮食的基本原则、营养搭配建议以及维持体重的饮食方案')"
+                         onmouseover="this.style.background='rgba(0,255,136,0.1)'; this.style.borderColor='rgba(0,255,136,0.4)';"
+                         onmouseout="this.style.background='rgba(0,255,136,0.05)'; this.style.borderColor='rgba(0,255,136,0.2)';">
+                        <span style="font-size: 13px; color: #00ff88;">📖 了解健康饮食原则 →</span>
                     </div>
                 </div>
-            `);
+            `;
+            this.messages.insertAdjacentHTML('beforeend', nutritionHTML);
             this.scrollToBottom();
         }, 200);
     },
 
     showFitnessCalculator() {
-        this.addMessage('📊 身体数据测算\n\n选择需要计算的项目：', 'bot');
+        this.addMessage('📊 **BODY METRICS**\n🔬 身体数据测算\n\n精准测算您的身体指标，制定科学健身计划：', 'bot');
         setTimeout(() => {
-            this.messages.insertAdjacentHTML('beforeend', `
-                <div style="display: grid; gap: 8px; margin: 12px 0; padding: 0 16px;">
-                    <div onclick="UI.sendFitnessQuery('请帮我计算BMI并解释结果含义和健康建议')" style="background: rgba(255,0,255,0.05); border: 1px solid rgba(255,0,255,0.2); border-radius: 10px; padding: 14px; display: flex; align-items: center; gap: 12px; cursor: pointer;">
-                        <div style="font-size: 28px;">⚖️</div>
-                        <div style="flex: 1;"><div style="font-size: 14px; font-weight: 600; color: #fff;">BMI 计算</div><div style="font-size: 11px; color: #888;">身体质量指数</div></div>
-                        <div style="color: #ff00ff;">→</div>
-                    </div>
-                    <div onclick="UI.sendFitnessQuery('请帮我计算基础代谢率(BMR)并解释影响因素')" style="background: rgba(255,0,255,0.05); border: 1px solid rgba(255,0,255,0.2); border-radius: 10px; padding: 14px; display: flex; align-items: center; gap: 12px; cursor: pointer;">
-                        <div style="font-size: 28px;">🔥</div>
-                        <div style="flex: 1;"><div style="font-size: 14px; font-weight: 600; color: #fff;">基础代谢率</div><div style="font-size: 11px; color: #888;">BMR 测算</div></div>
-                        <div style="color: #ff00ff;">→</div>
-                    </div>
-                    <div onclick="UI.sendFitnessQuery('请帮我计算每日总热量需求(TDEE)并提供饮食建议')" style="background: rgba(255,0,255,0.05); border: 1px solid rgba(255,0,255,0.2); border-radius: 10px; padding: 14px; display: flex; align-items: center; gap: 12px; cursor: pointer;">
-                        <div style="font-size: 28px;">📈</div>
-                        <div style="flex: 1;"><div style="font-size: 14px; font-weight: 600; color: #fff;">热量需求</div><div style="font-size: 11px; color: #888;">TDEE 计算</div></div>
-                        <div style="color: #ff00ff;">→</div>
+            const calculatorHTML = `
+                <div style="margin: 16px 0; padding: 0 16px;">
+                    <div style="font-size: 11px; color: #888; margin-bottom: 12px; letter-spacing: 1px;">📏 选择测算项目</div>
+                    <div style="display: grid; gap: 10px;">
+                        <div onclick="UI.sendFitnessQuery('请帮我计算BMI身体质量指数，详细解释结果含义，并根据我的情况给出健康建议')" 
+                             style="background: linear-gradient(145deg, rgba(255,0,255,0.08), rgba(255,0,255,0.02)); border: 1px solid rgba(255,0,255,0.25); border-radius: 14px; padding: 16px; display: flex; align-items: center; gap: 16px; cursor: pointer; transition: all 0.3s;"
+                             onmouseover="this.style.transform='translateX(4px)'; this.style.borderColor='rgba(255,0,255,0.5)'; this.style.boxShadow='0 4px 20px rgba(255,0,255,0.15)';"
+                             onmouseout="this.style.transform='translateX(0)'; this.style.borderColor='rgba(255,0,255,0.25)'; this.style.boxShadow='none';">
+                            <div style="font-size: 32px;">⚖️</div>
+                            <div style="flex: 1;">
+                                <div style="font-size: 15px; font-weight: 700; color: #fff; margin-bottom: 4px;">BMI 身体质量指数</div>
+                                <div style="font-size: 11px; color: #ff00ff; font-family: 'Orbitron'; letter-spacing: 1px; margin-bottom: 4px;">BODY MASS INDEX</div>
+                                <div style="font-size: 11px; color: #888;">评估体重健康状况</div>
+                            </div>
+                            <div style="color: #ff00ff; font-size: 20px;">→</div>
+                        </div>
+                        <div onclick="UI.sendFitnessQuery('请帮我计算基础代谢率BMR，解释影响代谢的因素，并给出提高代谢的建议')" 
+                             style="background: linear-gradient(145deg, rgba(255,0,255,0.08), rgba(255,0,255,0.02)); border: 1px solid rgba(255,0,255,0.25); border-radius: 14px; padding: 16px; display: flex; align-items: center; gap: 16px; cursor: pointer; transition: all 0.3s;"
+                             onmouseover="this.style.transform='translateX(4px)'; this.style.borderColor='rgba(255,0,255,0.5)'; this.style.boxShadow='0 4px 20px rgba(255,0,255,0.15)';"
+                             onmouseout="this.style.transform='translateX(0)'; this.style.borderColor='rgba(255,0,255,0.25)'; this.style.boxShadow='none';">
+                            <div style="font-size: 32px;">🔥</div>
+                            <div style="flex: 1;">
+                                <div style="font-size: 15px; font-weight: 700; color: #fff; margin-bottom: 4px;">基础代谢率 BMR</div>
+                                <div style="font-size: 11px; color: #ff00ff; font-family: 'Orbitron'; letter-spacing: 1px; margin-bottom: 4px;">BASAL METABOLIC RATE</div>
+                                <div style="font-size: 11px; color: #888;">静息状态下的能量消耗</div>
+                            </div>
+                            <div style="color: #ff00ff; font-size: 20px;">→</div>
+                        </div>
+                        <div onclick="UI.sendFitnessQuery('请帮我计算每日总热量需求TDEE，根据我的运动强度给出具体的卡路里建议')" 
+                             style="background: linear-gradient(145deg, rgba(255,0,255,0.08), rgba(255,0,255,0.02)); border: 1px solid rgba(255,0,255,0.25); border-radius: 14px; padding: 16px; display: flex; align-items: center; gap: 16px; cursor: pointer; transition: all 0.3s;"
+                             onmouseover="this.style.transform='translateX(4px)'; this.style.borderColor='rgba(255,0,255,0.5)'; this.style.boxShadow='0 4px 20px rgba(255,0,255,0.15)';"
+                             onmouseout="this.style.transform='translateX(0)'; this.style.borderColor='rgba(255,0,255,0.25)'; this.style.boxShadow='none';">
+                            <div style="font-size: 32px;">📈</div>
+                            <div style="flex: 1;">
+                                <div style="font-size: 15px; font-weight: 700; color: #fff; margin-bottom: 4px;">每日热量需求 TDEE</div>
+                                <div style="font-size: 11px; color: #ff00ff; font-family: 'Orbitron'; letter-spacing: 1px; margin-bottom: 4px;">TOTAL DAILY ENERGY</div>
+                                <div style="font-size: 11px; color: #888;">包含运动的总能量消耗</div>
+                            </div>
+                            <div style="color: #ff00ff; font-size: 20px;">→</div>
+                        </div>
                     </div>
                 </div>
-            `);
+            `;
+            this.messages.insertAdjacentHTML('beforeend', calculatorHTML);
             this.scrollToBottom();
         }, 200);
     },
