@@ -183,9 +183,79 @@ class FitnessPro {
                 </div>
                 
                 <div style="margin-top: 20px; background: rgba(0,255,136,0.05); border: 1px dashed rgba(0,255,136,0.2); border-radius: 12px; padding: 16px; text-align: center; cursor: pointer;"
-                    onclick="UI.sendFitnessQuery('请帮我计算BMI、基础代谢率和每日热量需求')"
+                    onclick="Fitness.showBodyMetrics()"
                 >
                     <span style="font-size: 14px; color: #00ff88;">📊 身体数据测算 →</span>
+                </div>
+            </div>
+        `;
+        this.ui.addMessageHTML(html, 'bot');
+    }
+    
+    showBodyMetrics() {
+        const html = `
+            <div style="background: linear-gradient(180deg, rgba(10,12,20,0.98) 0%, rgba(5,5,8,1) 100%); border-radius: 24px; margin: 16px 0; padding: 24px; border: 1px solid rgba(0,243,255,0.2);">
+                <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 24px;">
+                    <div style="font-size: 20px; font-weight: 700; color: #00f3ff;">📊 身体数据测算</div>
+                    <button onclick="Fitness.showNutrition()" style="background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); border-radius: 8px; padding: 8px 16px; color: #888; font-size: 13px; cursor: pointer;">← 返回</button>
+                </div>
+                
+                <div style="display: grid; gap: 12px;">
+                    <div onclick="UI.handleSendWithPrompt('请帮我计算BMI身体质量指数，详细解释结果含义，并根据我的情况给出健康建议')" 
+                        style="background: rgba(0,243,255,0.05); border: 1px solid rgba(0,243,255,0.15); border-radius: 16px; padding: 20px; display: flex; align-items: center; gap: 16px; cursor: pointer; transition: all 0.3s;"
+                        onmouseover="this.style.background='rgba(0,243,255,0.1)'; this.style.transform='translateX(4px)';"
+                        onmouseout="this.style.background='rgba(0,243,255,0.05)'; this.style.transform='translateX(0)';"
+                    >
+                        <div style="font-size: 32px;">⚖️</div>
+                        <div style="flex: 1;">
+                            <div style="font-size: 16px; font-weight: 700; color: #fff; margin-bottom: 4px;">BMI 身体质量指数</div>
+                            <div style="font-size: 11px; color: #00f3ff; font-family: 'Orbitron'; margin-bottom: 4px;">BODY MASS INDEX</div>
+                            <div style="font-size: 12px; color: #888;">评估体重健康状况的标准指标</div>
+                        </div>
+                        <div style="color: #00f3ff; font-size: 20px;">→</div>
+                    </div>
+                    
+                    <div onclick="UI.handleSendWithPrompt('请帮我计算基础代谢率BMR，解释影响代谢的因素，并给出提高代谢的建议')" 
+                        style="background: rgba(255,0,160,0.05); border: 1px solid rgba(255,0,160,0.15); border-radius: 16px; padding: 20px; display: flex; align-items: center; gap: 16px; cursor: pointer; transition: all 0.3s;"
+                        onmouseover="this.style.background='rgba(255,0,160,0.1)'; this.style.transform='translateX(4px)';"
+                        onmouseout="this.style.background='rgba(255,0,160,0.05)'; this.style.transform='translateX(0)';"
+                    >
+                        <div style="font-size: 32px;">🔥</div>
+                        <div style="flex: 1;">
+                            <div style="font-size: 16px; font-weight: 700; color: #fff; margin-bottom: 4px;">基础代谢率 BMR</div>
+                            <div style="font-size: 11px; color: #ff00a0; font-family: 'Orbitron'; margin-bottom: 4px;">BASAL METABOLIC RATE</div>
+                            <div style="font-size: 12px; color: #888;">静息状态下的能量消耗</div>
+                        </div>
+                        <div style="color: #ff00a0; font-size: 20px;">→</div>
+                    </div>
+                    
+                    <div onclick="UI.handleSendWithPrompt('请帮我计算每日总热量需求TDEE，根据我的运动强度给出具体的卡路里建议')" 
+                        style="background: rgba(0,255,136,0.05); border: 1px solid rgba(0,255,136,0.15); border-radius: 16px; padding: 20px; display: flex; align-items: center; gap: 16px; cursor: pointer; transition: all 0.3s;"
+                        onmouseover="this.style.background='rgba(0,255,136,0.1)'; this.style.transform='translateX(4px)';"
+                        onmouseout="this.style.background='rgba(0,255,136,0.05)'; this.style.transform='translateX(0)';"
+                    >
+                        <div style="font-size: 32px;">📈</div>
+                        <div style="flex: 1;">
+                            <div style="font-size: 16px; font-weight: 700; color: #fff; margin-bottom: 4px;">每日热量需求 TDEE</div>
+                            <div style="font-size: 11px; color: #00ff88; font-family: 'Orbitron'; margin-bottom: 4px;">TOTAL DAILY ENERGY EXPENDITURE</div>
+                            <div style="font-size: 12px; color: #888;">包含运动的总能量消耗</div>
+                        </div>
+                        <div style="color: #00ff88; font-size: 20px;">→</div>
+                    </div>
+                    
+                    <div onclick="UI.handleSendWithPrompt('请帮我计算每日建议饮水量，并给出科学饮水的建议')" 
+                        style="background: rgba(0,150,255,0.05); border: 1px solid rgba(0,150,255,0.15); border-radius: 16px; padding: 20px; display: flex; align-items: center; gap: 16px; cursor: pointer; transition: all 0.3s;"
+                        onmouseover="this.style.background='rgba(0,150,255,0.1)'; this.style.transform='translateX(4px)';"
+                        onmouseout="this.style.background='rgba(0,150,255,0.05)'; this.style.transform='translateX(0)';"
+                    >
+                        <div style="font-size: 32px;">💧</div>
+                        <div style="flex: 1;">
+                            <div style="font-size: 16px; font-weight: 700; color: #fff; margin-bottom: 4px;">每日饮水量</div>
+                            <div style="font-size: 11px; color: #0096ff; font-family: 'Orbitron'; margin-bottom: 4px;">WATER INTAKE</div>
+                            <div style="font-size: 12px; color: #888;">根据体重计算每日建议饮水</div>
+                        </div>
+                        <div style="color: #0096ff; font-size: 20px;">→</div>
+                    </div>
                 </div>
             </div>
         `;

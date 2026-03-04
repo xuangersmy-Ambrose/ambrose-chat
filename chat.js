@@ -241,6 +241,28 @@ const UI = {
         return group;
     },
 
+    async handleSendWithPrompt(prompt) {
+        // 添加用户消息提示
+        const loadingEl = this.addLoading();
+        
+        const sendBtn = document.getElementById('sendBtn');
+        if (sendBtn) sendBtn.disabled = true;
+        this.isProcessing = true;
+
+        try {
+            const reply = await this.callAPI(prompt);
+            loadingEl.remove();
+            this.addMessage(reply, 'bot');
+        } catch (err) {
+            console.error('API Error:', err);
+            loadingEl.remove();
+            this.addMessage('抱歉，服务暂时不可用，请稍后重试。', 'bot');
+        } finally {
+            this.isProcessing = false;
+            if (sendBtn) sendBtn.disabled = false;
+        }
+    },
+
     scrollToBottom() {
         if (this.messages) {
             this.messages.scrollTo({
@@ -322,6 +344,12 @@ window.Fitness = {
     showNutrition() {
         if (UI.fitnessPro) {
             UI.fitnessPro.showNutrition();
+        }
+    },
+    
+    showBodyMetrics() {
+        if (UI.fitnessPro) {
+            UI.fitnessPro.showBodyMetrics();
         }
     }
 };
