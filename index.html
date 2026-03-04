@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-    <title>AMBROSE - 你的AI助手</title>
+    <title>AMBROSE - AI助手</title>
     <style>
         * {
             margin: 0;
@@ -14,74 +14,55 @@
             -webkit-tap-highlight-color: transparent;
         }
         
-        :root {
-            --primary: #07c160;
-            --primary-dark: #06ad56;
-            --bg: #ededed;
-            --chat-bg: #f5f5f5;
-            --bubble-user: #95ec69;
-            --bubble-bot: #ffffff;
-            --text: #000000;
-            --text-secondary: #999999;
-            --border: #d6d6d6;
-        }
-        
-        html, body {
-            height: 100%;
+        body {
             font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'PingFang SC', 'Hiragino Sans GB', 'Microsoft YaHei', sans-serif;
-            background: var(--bg);
+            background: #f5f5f5;
+            height: 100vh;
             overflow: hidden;
         }
         
-        /* 顶部导航 */
+        .container {
+            display: flex;
+            flex-direction: column;
+            height: 100vh;
+        }
+        
+        /* 顶部 */
         .header {
-            position: fixed;
-            top: 0;
-            left: 0;
-            right: 0;
-            height: 44px;
-            background: var(--bg);
-            border-bottom: 1px solid var(--border);
+            background: #07c160;
+            color: white;
+            padding: 12px 16px;
+            padding-top: max(12px, env(safe-area-inset-top));
             display: flex;
             align-items: center;
             justify-content: center;
-            z-index: 100;
-            padding-top: env(safe-area-inset-top);
+            position: relative;
         }
         
         .header-title {
             font-size: 17px;
             font-weight: 600;
-            color: var(--text);
         }
         
-        .header-subtitle {
-            font-size: 12px;
-            color: var(--text-secondary);
+        .header-status {
+            width: 8px;
+            height: 8px;
+            background: #95ec69;
+            border-radius: 50%;
             margin-left: 8px;
         }
         
-        /* 主聊天区域 */
-        .chat-container {
-            height: 100vh;
-            display: flex;
-            flex-direction: column;
-            padding-top: calc(44px + env(safe-area-inset-top));
-            padding-bottom: env(safe-area-inset-bottom);
-        }
-        
+        /* 消息区域 */
         .messages {
             flex: 1;
             overflow-y: auto;
-            padding: 10px;
-            background: var(--chat-bg);
+            padding: 16px;
             -webkit-overflow-scrolling: touch;
         }
         
-        /* 消息气泡 */
         .message {
             display: flex;
-            margin-bottom: 15px;
+            margin-bottom: 16px;
             animation: fadeIn 0.3s ease;
         }
         
@@ -95,394 +76,130 @@
         }
         
         .avatar {
-            width: 40px;
-            height: 40px;
+            width: 36px;
+            height: 36px;
             border-radius: 6px;
-            flex-shrink: 0;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 24px;
+            font-size: 20px;
+            flex-shrink: 0;
             background: #e1e1e1;
         }
         
         .message.user .avatar {
-            background: var(--primary);
+            background: #07c160;
         }
         
         .bubble {
             max-width: 70%;
+            margin: 0 10px;
             padding: 10px 14px;
             border-radius: 18px;
-            font-size: 16px;
+            font-size: 15px;
             line-height: 1.5;
             word-wrap: break-word;
             position: relative;
-            margin: 0 10px;
         }
         
         .message.user .bubble {
-            background: var(--bubble-user);
+            background: #95ec69;
             border-bottom-right-radius: 4px;
         }
         
         .message.bot .bubble {
-            background: var(--bubble-bot);
+            background: white;
             border-bottom-left-radius: 4px;
             box-shadow: 0 1px 2px rgba(0,0,0,0.1);
         }
         
-        /* 语音播放按钮 */
-        .voice-play {
-            display: inline-flex;
-            align-items: center;
-            gap: 5px;
-            color: var(--primary);
-            cursor: pointer;
-            font-size: 14px;
-            margin-top: 5px;
+        .bubble .text {
+            color: #000;
         }
         
-        .voice-play::before {
-            content: "🔊";
+        .bubble .time {
+            font-size: 11px;
+            color: #999;
+            margin-top: 4px;
+            text-align: right;
         }
         
-        .voice-play.playing::before {
-            animation: sound 0.5s infinite;
+        /* 加载动画 */
+        .loading-msg .bubble {
+            display: flex;
+            gap: 4px;
+            padding: 15px 20px;
         }
         
-        @keyframes sound {
-            0%, 100% { opacity: 1; }
-            50% { opacity: 0.5; }
+        .dot {
+            width: 8px;
+            height: 8px;
+            background: #999;
+            border-radius: 50%;
+            animation: bounce 1.4s infinite;
         }
         
-        /* 时间戳 */
-        .timestamp {
-            text-align: center;
-            color: var(--text-secondary);
-            font-size: 12px;
-            margin: 10px 0;
+        .dot:nth-child(2) { animation-delay: 0.2s; }
+        .dot:nth-child(3) { animation-delay: 0.4s; }
+        
+        @keyframes bounce {
+            0%, 60%, 100% { transform: translateY(0); }
+            30% { transform: translateY(-10px); }
         }
         
         /* 输入区域 */
         .input-area {
             background: #f7f7f7;
-            border-top: 1px solid var(--border);
-            padding: 10px;
+            border-top: 1px solid #e1e1e1;
+            padding: 10px 16px;
+            padding-bottom: max(10px, env(safe-area-inset-bottom));
             display: flex;
-            align-items: center;
             gap: 10px;
+            align-items: flex-end;
         }
         
-        .voice-hold-btn {
+        .input-box {
             flex: 1;
-            height: 40px;
             background: white;
-            border: 1px solid var(--border);
-            border-radius: 6px;
-            font-size: 16px;
-            color: var(--text);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            user-select: none;
-            -webkit-user-select: none;
-            touch-action: none;
-        }
-        
-        .voice-hold-btn:active,
-        .voice-hold-btn.recording {
-            background: #c6c6c6;
-        }
-        
-        .text-input {
-            flex: 1;
-            height: 40px;
-            border: 1px solid var(--border);
-            border-radius: 6px;
-            padding: 0 12px;
-            font-size: 16px;
+            border: 1px solid #e1e1e1;
+            border-radius: 20px;
+            padding: 10px 16px;
+            font-size: 15px;
             outline: none;
-            -webkit-appearance: none;
+            resize: none;
+            min-height: 40px;
+            max-height: 100px;
+            line-height: 20px;
         }
         
         .send-btn {
             width: 60px;
             height: 40px;
-            background: var(--primary);
+            background: #07c160;
             color: white;
             border: none;
             border-radius: 6px;
-            font-size: 16px;
+            font-size: 15px;
             font-weight: 500;
         }
         
         .send-btn:disabled {
             background: #ccc;
         }
-        
-        .switch-btn {
-            width: 40px;
-            height: 40px;
-            background: none;
-            border: none;
-            font-size: 24px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-        
-        /* 录音提示 */
-        .recording-modal {
-            display: none;
-            position: fixed;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background: rgba(0,0,0,0.5);
-            z-index: 1000;
-            justify-content: center;
-            align-items: center;
-        }
-        
-        .recording-modal.show {
-            display: flex;
-        }
-        
-        .recording-content {
-            background: rgba(0,0,0,0.7);
-            padding: 30px 50px;
-            border-radius: 12px;
-            text-align: center;
-            color: white;
-        }
-        
-        .recording-icon {
-            font-size: 60px;
-            animation: pulse 1s infinite;
-        }
-        
-        @keyframes pulse {
-            0%, 100% { transform: scale(1); }
-            50% { transform: scale(1.1); }
-        }
-        
-        .recording-text {
-            margin-top: 15px;
-            font-size: 16px;
-        }
-        
-        /* 设置面板 */
-        .settings-btn {
-            position: fixed;
-            top: calc(10px + env(safe-area-inset-top));
-            right: 10px;
-            z-index: 101;
-            background: none;
-            border: none;
-            font-size: 20px;
-            padding: 5px;
-        }
-        
-        .settings-panel {
-            display: none;
-            position: fixed;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background: rgba(0,0,0,0.5);
-            z-index: 200;
-            justify-content: center;
-            align-items: center;
-        }
-        
-        .settings-panel.show {
-            display: flex;
-        }
-        
-        .settings-content {
-            background: white;
-            width: 80%;
-            max-width: 300px;
-            border-radius: 12px;
-            padding: 20px;
-        }
-        
-        .settings-title {
-            font-size: 18px;
-            font-weight: 600;
-            margin-bottom: 15px;
-            text-align: center;
-        }
-        
-        .setting-item {
-            margin-bottom: 15px;
-        }
-        
-        .setting-label {
-            font-size: 14px;
-            color: var(--text-secondary);
-            margin-bottom: 5px;
-        }
-        
-        .setting-input {
-            width: 100%;
-            height: 36px;
-            border: 1px solid var(--border);
-            border-radius: 6px;
-            padding: 0 10px;
-            font-size: 14px;
-        }
-        
-        .voice-select {
-            width: 100%;
-            height: 36px;
-            border: 1px solid var(--border);
-            border-radius: 6px;
-            padding: 0 10px;
-            font-size: 14px;
-        }
-        
-        .save-btn {
-            width: 100%;
-            height: 40px;
-            background: var(--primary);
-            color: white;
-            border: none;
-            border-radius: 6px;
-            font-size: 16px;
-            margin-top: 10px;
-        }
-        
-        .close-settings {
-            position: absolute;
-            top: 10px;
-            right: 10px;
-            background: none;
-            border: none;
-            font-size: 24px;
-        }
-        
-        /* 加载动画 */
-        .typing {
-            display: inline-flex;
-            gap: 3px;
-            padding: 5px 10px;
-        }
-        
-        .typing span {
-            width: 8px;
-            height: 8px;
-            background: #999;
-            border-radius: 50%;
-            animation: typing 1.4s infinite;
-        }
-        
-        .typing span:nth-child(2) { animation-delay: 0.2s; }
-        .typing span:nth-child(3) { animation-delay: 0.4s; }
-        
-        @keyframes typing {
-            0%, 60%, 100% { transform: translateY(0); }
-            30% { transform: translateY(-10px); }
-        }
     </style>
 </head>
 <body>
-    <!-- 设置按钮 -->
-    <button class="settings-btn" onclick="showSettings()">⚙️</button>
-    
-    <!-- 顶部导航 -->
-    <div class="header">
-        <span class="header-title">AMBROSE</span>
-        <span class="header-subtitle">在线</span>
-    </div>
-    
-    <!-- 聊天容器 -->
-    <div class="chat-container">
-        <!-- 消息列表 -->
-        <div class="messages" id="messages">
-            <div class="timestamp">今天</div>
-            <div class="message bot">
-                <div class="avatar">🧰</div>
-                <div class="bubble">
-                    你好，我是 AMBROSE，你的专属 AI 助手。
-                    <br><br>
-                    我可以帮你：
-                    <br>• 图片/PDF 处理
-                    <br>• 股票分析
-                    <br>• 日常问答
-                    <br><br>
-                    点击 ⚙️ 设置语音音色
-                </div>
-            </div>
+    <div class="container">
+        <div class="header">
+            <span class="header-title">AMBROSE</span>
+            <span class="header-status"></span>
         </div>
         
-        <!-- 输入区域 -->
+        <div class="messages" id="messages"></div>
+        
         <div class="input-area">
-            <button class="switch-btn" onclick="switchInput()" id="switchBtn">🎙️</button>
-            
-            <!-- 语音输入按钮 -->
-            <div class="voice-hold-btn" id="voiceBtn" 
-                 ontouchstart="startRecord(event)" 
-                 ontouchend="stopRecord(event)"
-                 onmousedown="startRecord(event)" 
-                 onmouseup="stopRecord(event)">
-                按住 说话
-            </div>
-            
-            <!-- 文字输入框 -->
-            <input type="text" class="text-input" id="textInput" placeholder="输入消息..." style="display:none;">
-            <button class="send-btn" id="sendBtn" onclick="sendText()" style="display:none;">发送</button>
-        </div>
-    </div>
-    
-    <!-- 录音提示 -->
-    <div class="recording-modal" id="recordingModal">
-        <div class="recording-content">
-            <div class="recording-icon">🎙️</div>
-            <div class="recording-text">松开发送</div>
-        </div>
-    </div>
-    
-    <!-- 设置面板 -->
-    <div class="settings-panel" id="settingsPanel">
-        <div class="settings-content" style="position: relative;">
-            <button class="close-settings" onclick="hideSettings()">×</button>
-            <div class="settings-title">设置</div>
-            
-            <div class="setting-item">
-                <div class="setting-label">Kimi API Key</div>
-                <input type="password" class="setting-input" id="kimiApiKey" placeholder="输入你的 API Key">
-            </div>
-            
-            <div class="setting-item">
-                <div class="setting-label">阿里云 AccessKey ID</div>
-                <input type="text" class="setting-input" id="aliKeyId" placeholder="输入 AccessKey ID">
-            </div>
-            
-            <div class="setting-item">
-                <div class="setting-label">阿里云 AccessKey Secret</div>
-                <input type="password" class="setting-input" id="aliKeySecret" placeholder="输入 AccessKey Secret">
-            </div>
-            
-            <div class="setting-item">
-                <div class="setting-label">阿里云 AppKey</div>
-                <input type="text" class="setting-input" id="aliAppKey" placeholder="输入 AppKey">
-            </div>
-            
-            <div class="setting-item">
-                <div class="setting-label">语音音色（女王/御姐音）</div>
-                <select class="voice-select" id="voiceType">
-                    <option value="zhixia">知夏 - 成熟御姐</option>
-                    <option value="zhiwei">知薇 - 高冷女王</option>
-                    <option value="zhining">知凝 - 知性优雅</option>
-                    <option value="zhiting">知婷 - 甜美御姐</option>
-                </select>
-            </div>
-            
-            <button class="save-btn" onclick="saveSettings()">保存设置</button>
+            <textarea class="input-box" id="messageInput" placeholder="输入消息..." rows="1"></textarea>
+            <button class="send-btn" id="sendBtn">发送</button>
         </div>
     </div>
     
