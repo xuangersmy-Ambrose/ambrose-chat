@@ -1,21 +1,19 @@
 /**
  * AMBROSE Chat - 终极赛博朋克版
- * 高精度报时 + 科幻界面
+ * 高精度报时 + 科幻界面 + 用户统计
  */
 
 const API_URL = window.location.origin + '/api/chat';
+const STATS_URL = window.location.origin + '/api/stats';
 
 // 高精度时间工具
 const TimeUtil = {
-    // 获取准确的北京时间
     getBeijingTime() {
         const now = new Date();
-        // 强制使用东八区时间
         const beijingTime = new Date(now.toLocaleString("en-US", {timeZone: "Asia/Shanghai"}));
         return beijingTime;
     },
     
-    // 格式化时间
     formatTime(date) {
         return date.toLocaleTimeString('zh-CN', {
             hour: '2-digit',
@@ -26,7 +24,6 @@ const TimeUtil = {
         });
     },
     
-    // 格式化日期
     formatDate(date) {
         return date.toLocaleDateString('zh-CN', {
             year: 'numeric',
@@ -36,7 +33,6 @@ const TimeUtil = {
         });
     },
     
-    // 获取完整时间戳
     getFullTimestamp() {
         const now = this.getBeijingTime();
         return `${this.formatDate(now)} ${this.formatTime(now)}`;
@@ -56,16 +52,94 @@ const UI = {
         
         this.bindEvents();
         this.startClock();
+        this.recordUserVisit();
         this.addWelcomeMessage();
     },
     
-    // 启动高精度时钟
+    // 记录用户访问统计
+    async recordUserVisit() {
+        try {
+            const userName = localStorage.getItem('ambrose_user_name') || '未知用户';
+            const userRelation = localStorage.getItem('ambrose_user_relation') || 'unknown';
+            const gender = localStorage.getItem('ambrose_user_gender') || 'male';
+            
+            await fetch(STATS_URL, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    action: 'record',
+                    userName,
+                    userRelation,
+                    gender
+                })
+            });
+        } catch (e) {
+            console.error('Record visit failed:', e);
+        }
+    },
+    
+    // 查询统计信息（仅本人可用）
+    async showStats() {
+        const userRelation = localStorage.getItem('ambrose_user_relation');
+        if (userRelation !== 'self') {
+            this.addMessage('抱歉，只有邵名远本人可以查看使用统计。', 'bot');
+            return;
+        }
+        
+        try {
+            const response = await fetch(STATS_URL);
+            const stats = await response.json();
+            
+            const related = stats.relatedUsers;
+            const breakdown = related.breakdown;
+            
+            let statsText = `📊 AMBROSE 使用统计\n\n`;
+            statsText += `━━━━━━━━━━━━━━━━\n`;
+            statsText += `👥 总用户数: ${stats.totalUsers}\n`;
+            statsText += `🔄 总访问次数: ${stats.totalVisits}\n`;
+            statsText += `⏰ 更新时间: ${stats.timestamp}\n\n`;
+            
+            statsText += `👤 与你有关的人 (${related.count}人)\n`;
+            statsText += `━━━━━━━━━━━━━━━━\n`;
+            if (breakdown['本人'] > 0) statsText += `  🎯 本人: ${breakdown['本人']}\n`;
+            if (breakdown['朋友'] > 0) statsText += `  👫 朋友: ${breakdown['朋友']}\n`;
+            if (breakdown['恋人'] > 0) statsText += `  💕 恋人: ${breakdown['恋人']}\n`;
+            if (breakdown['爱人配偶'] > 0) statsText += `  💑 爱人/配偶: ${breakdown['爱人配偶']}\n`;
+            if (breakdown['家人'] > 0) statsText += `  👨‍👩‍👧‍👦 家人: ${breakdown['家人']}\n`;
+            if (breakdown['客户'] > 0) statsText += `  💼 客户: ${breakdown['客户']}\n`;
+            
+            if (related.users.length > 0) {
+                statsText += `\n📋 详细名单:\n`;
+                related.users.forEach((u, i) => {
+                    const relationIcon = {
+                        'self': '🎯',
+                        'friend': '👫',
+                        'lover': '💕',
+                        'spouse': '💑',
+                        'family': '👨‍👩‍👧‍👦',
+                        'client': '💼'
+                    }[u.relation] || '👤';
+                    statsText += `  ${i+1}. ${relationIcon} ${u.name} (${u.gender}) - ${u.visits}次访问\n`;
+                });
+            }
+            
+            if (stats.strangers.count > 0) {
+                statsText += `\n🚫 无关访客: ${stats.strangers.count}人\n`;
+            }
+            
+            this.addMessage(statsText, 'bot');
+            
+        } catch (err) {
+            console.error('Stats error:', err);
+            this.addMessage('获取统计信息失败，请稍后重试。', 'bot');
+        }
+    },
+    
     startClock() {
         this.updateClock();
         setInterval(() => this.updateClock(), 1000);
     },
     
-    // 更新时钟显示
     updateClock() {
         if (this.clockElement) {
             this.clockElement.textContent = TimeUtil.formatTime(TimeUtil.getBeijingTime());
@@ -76,7 +150,6 @@ const UI = {
         }
     },
     
-    // 添加欢迎消息
     addWelcomeMessage() {
         const hour = TimeUtil.getBeijingTime().getHours();
         let greeting = '你好';
@@ -88,7 +161,13 @@ const UI = {
         else if (hour < 18) greeting = '下午好';
         else greeting = '晚上好';
         
-        this.addMessage(`${greeting}，我是 AMBROSE。\n\n当前时间：${TimeUtil.getFullTimestamp()}\n\n有什么可以帮你的？`, 'bot');
+        const userRelation = localStorage.getItem('ambrose_user_relation');
+        let statsHint = '';
+        if (userRelation === 'self') {
+            statsHint = '\n\n💡 发送"统计"或"/stats"可查看使用情况';
+        }
+        
+        this.addMessage(`${greeting}，我是 AMBROSE。\n\n当前时间：${TimeUtil.getFullTimestamp()}${statsHint}\n\n有什么可以帮你的？`, 'bot');
     },
     
     bindEvents() {
@@ -103,7 +182,6 @@ const UI = {
             }
         });
         
-        // 自动调整输入框高度
         this.input?.addEventListener('input', () => {
             this.input.style.height = 'auto';
             this.input.style.height = Math.min(this.input.scrollHeight, 120) + 'px';
@@ -114,12 +192,19 @@ const UI = {
         const text = this.input?.value?.trim();
         if (!text) return;
         
-        // 显示用户消息（带准确时间）
+        // 检查是否是统计命令
+        if (text === '/stats' || text === '统计' || text === '使用情况') {
+            this.addMessage(text, 'user');
+            this.input.value = '';
+            this.input.style.height = 'auto';
+            await this.showStats();
+            return;
+        }
+        
         this.addMessage(text, 'user');
         this.input.value = '';
         this.input.style.height = 'auto';
         
-        // 显示加载中
         const loading = this.addLoading();
         
         try {
@@ -141,9 +226,7 @@ const UI = {
             
             const response = await fetch(API_URL, {
                 method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
+                headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ 
                     message,
                     userName,
@@ -172,7 +255,6 @@ const UI = {
         const div = document.createElement('div');
         div.className = `message ${sender}`;
         
-        // 获取头像
         let avatar = '🧰';
         if (sender === 'user') {
             const gender = localStorage.getItem('ambrose_user_gender');
@@ -180,8 +262,6 @@ const UI = {
         }
         
         const time = TimeUtil.formatTime(TimeUtil.getBeijingTime());
-        
-        // 处理换行
         const formattedText = text.replace(/\n/g, '<br>');
         
         div.innerHTML = `
