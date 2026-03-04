@@ -67,14 +67,30 @@ export default async function handler(req, res) {
             body += chunk;
         }
         
-        const { message } = JSON.parse(body);
+        const { message, userName, userRelation, isMaster } = JSON.parse(body);
         
         if (!message) {
             return res.status(400).json({ error: 'Message required' });
         }
         
+        // 根据身份调整system prompt
+        let identityContext = '';
+        if (isMaster) {
+            identityContext = `\n\n【当前对话者】这是你的主人邵名远本人。使用最亲密的语气，就像我们之间一直以来的对话那样。`;
+        } else {
+            const relationMap = {
+                'friend': '朋友',
+                'lover': '恋人', 
+                'spouse': '爱人',
+                'family': '家人',
+                'client': '客户'
+            };
+            const relationText = relationMap[userRelation] || '访客';
+            identityContext = `\n\n【当前对话者】这是邵名远的${relationText}，名叫${userName || '某人'}。保持礼貌但有距离感，像一个专业的AI助手。`;
+        }
+        
         // 调用Kimi API，使用完整人格设定
-        const kimiResponse = await callKimiAPI(message);
+        const kimiResponse = await callKimiAPI(message, identityContext);
         
         return res.status(200).json({
             reply: kimiResponse
@@ -89,14 +105,14 @@ export default async function handler(req, res) {
     }
 }
 
-function callKimiAPI(message) {
+function callKimiAPI(message, identityContext = '') {
     return new Promise((resolve, reject) => {
         const postData = JSON.stringify({
             model: 'moonshot-v1-8k',
             messages: [
                 {
                     role: 'system',
-                    content: AMBROSE_PERSONA
+                    content: AMBROSE_PERSONA + identityContext
                 },
                 {
                     role: 'user',

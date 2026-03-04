@@ -53,12 +53,21 @@ const UI = {
     
     async callAPI(message) {
         try {
+            // 获取用户身份信息
+            const userName = localStorage.getItem('ambrose_user_name') || '未知用户';
+            const userRelation = localStorage.getItem('ambrose_user_relation') || 'unknown';
+            
             const response = await fetch(API_URL, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json'
                 },
-                body: JSON.stringify({ message })
+                body: JSON.stringify({ 
+                    message,
+                    userName,
+                    userRelation,
+                    isMaster: userRelation === 'self'
+                })
             });
             
             const data = await response.json();
