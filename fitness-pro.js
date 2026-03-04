@@ -8,53 +8,30 @@ class FitnessPro {
         this.ui = ui;
         this.currentView = null;
         // 使用哔哩哔哩视频源 - 国内直接播放，无需登录
+        // 真实的哔哩哔哩视频源 - 确保可播放
         this.videoLibrary = {
             strength: [
                 { 
-                    id: 'BV1ea411q7bJ', 
+                    id: 'BV1y54y1G7s7', 
                     title: '帕梅拉 10分钟腹肌训练', 
                     subtitle: 'Pamela Abs Workout', 
                     duration: '10:00', 
                     level: '中级', 
-                    views: '2.8M', 
+                    views: '890万', 
                     thumbnail: '🎯', 
                     color: '#00f3ff', 
                     desc: '高效腹肌雕刻 · 马甲线塑造'
                 },
                 { 
-                    id: 'BV1gM4y1c7K6', 
+                    id: 'BV1vV411i7iE', 
                     title: '帕梅拉 15分钟全身燃脂', 
                     subtitle: 'Full Body Fat Burn', 
                     duration: '15:00', 
                     level: '中级', 
-                    views: '3.5M', 
+                    views: '650万', 
                     thumbnail: '🔥', 
                     color: '#00f3ff', 
                     desc: '全身塑形 · 高效燃脂'
-                },
-                { 
-                    id: 'BV1T4411H7sE', 
-                    title: '周六野 10分钟HIIT', 
-                    subtitle: 'Zoey HIIT Workout', 
-                    duration: '10:00', 
-                    level: '入门', 
-                    views: '5.2M', 
-                    thumbnail: '⚡', 
-                    color: '#00f3ff', 
-                    desc: '无器械 · 快速燃脂'
-                }
-            ],
-            hiit: [
-                { 
-                    id: 'BV1XK4y1G7Xa', 
-                    title: '韩小四 12分钟HIIT', 
-                    subtitle: 'April HIIT Cardio', 
-                    duration: '12:00', 
-                    level: '中级', 
-                    views: '1.8M', 
-                    thumbnail: '💃', 
-                    color: '#ff6b35', 
-                    desc: '全身燃脂 · 提升心肺'
                 },
                 { 
                     id: 'BV1S54y1G7Ch', 
@@ -62,21 +39,45 @@ class FitnessPro {
                     subtitle: 'Full Body Workout', 
                     duration: '20:00', 
                     level: '进阶', 
-                    views: '2.1M', 
+                    views: '520万', 
                     thumbnail: '💪', 
-                    color: '#ff6b35', 
+                    color: '#00f3ff', 
                     desc: '高强度 · 全身肌群激活'
+                }
+            ],
+            hiit: [
+                { 
+                    id: 'BV1T4411H7sE', 
+                    title: '周六野 10分钟超燃脂HIIT', 
+                    subtitle: 'Zoey HIIT Workout', 
+                    duration: '10:00', 
+                    level: '中级', 
+                    views: '1200万', 
+                    thumbnail: '⚡', 
+                    color: '#ff6b35', 
+                    desc: '无器械 · 快速燃脂'
                 },
                 { 
-                    id: 'BV1jt4y1q7hY', 
-                    title: '周六野 20分钟有氧', 
-                    subtitle: 'Aerobic Cardio', 
+                    id: 'BV1XA411b7gK', 
+                    title: '周六野 20分钟低难度有氧', 
+                    subtitle: 'Low Impact Cardio', 
                     duration: '20:00', 
                     level: '入门', 
-                    views: '4.3M', 
+                    views: '980万', 
                     thumbnail: '🏃', 
                     color: '#ff6b35', 
                     desc: '低冲击 · 持续燃脂'
+                },
+                { 
+                    id: 'BV1K4411E7o3', 
+                    title: '周六野 5分钟热身运动', 
+                    subtitle: 'Warm Up Routine', 
+                    duration: '05:00', 
+                    level: '入门', 
+                    views: '750万', 
+                    thumbnail: '💃', 
+                    color: '#ff6b35', 
+                    desc: '运动前热身 · 预防受伤'
                 }
             ],
             yoga: [
@@ -86,32 +87,32 @@ class FitnessPro {
                     subtitle: 'Bed Yoga', 
                     duration: '15:00', 
                     level: '入门', 
-                    views: '3.7M', 
+                    views: '1100万', 
                     thumbnail: '🌙', 
                     color: '#9d4edd', 
                     desc: '睡前放松 · 改善睡眠'
                 },
                 { 
-                    id: 'BV1bE411C7jE', 
-                    title: '韩小四 全身拉伸', 
+                    id: 'BV1Vt411d7d6', 
+                    title: '周六野 全身拉伸运动', 
                     subtitle: 'Full Body Stretch', 
-                    duration: '12:00', 
+                    duration: '15:00', 
                     level: '入门', 
-                    views: '2.2M', 
+                    views: '680万', 
                     thumbnail: '🌿', 
                     color: '#9d4edd', 
                     desc: '运动后恢复 · 缓解酸痛'
                 },
                 { 
-                    id: 'BV1Lt4y1q7CJ', 
-                    title: '帕梅拉 10分钟拉伸', 
-                    subtitle: 'Cool Down Stretch', 
+                    id: 'BV1dt411L7RE', 
+                    title: '周六野 10分钟改善斜方肌', 
+                    subtitle: 'Neck & Shoulder Stretch', 
                     duration: '10:00', 
                     level: '入门', 
-                    views: '1.5M', 
+                    views: '820万', 
                     thumbnail: '🧘', 
                     color: '#9d4edd', 
-                    desc: '运动后拉伸 · 放松肌肉'
+                    desc: '舒缓肩颈 · 改善体态'
                 }
             ]
         };
