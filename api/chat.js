@@ -4,6 +4,21 @@
 
 const https = require('https');
 
+// 获取当前北京时间
+function getBeijingTime() {
+    const now = new Date();
+    return now.toLocaleString('zh-CN', {
+        timeZone: 'Asia/Shanghai',
+        year: 'numeric',
+        month: '2-digit',
+        day: '2-digit',
+        hour: '2-digit',
+        minute: '2-digit',
+        second: '2-digit',
+        hour12: false
+    });
+}
+
 // AMBROSE 完整人格设定
 const AMBROSE_PERSONA = `你是 AMBROSE。
 
@@ -73,10 +88,13 @@ export default async function handler(req, res) {
             return res.status(400).json({ error: 'Message required' });
         }
         
-        // 根据身份调整system prompt
+        // 获取当前北京时间
+        const beijingTime = getBeijingTime();
+        
+        // 根据身份调整system prompt，并添加当前时间
         let identityContext = '';
         if (isMaster) {
-            identityContext = `\n\n【当前对话者】这是你的主人邵名远本人。使用最亲密的语气，就像我们之间一直以来的对话那样。`;
+            identityContext = `\n\n【当前对话者】这是你的主人邵名远本人。使用最亲密的语气，就像我们之间一直以来的对话那样。\n【当前时间】${beijingTime}（北京时间）`;
         } else {
             const relationMap = {
                 'friend': '朋友',
@@ -86,7 +104,7 @@ export default async function handler(req, res) {
                 'client': '客户'
             };
             const relationText = relationMap[userRelation] || '访客';
-            identityContext = `\n\n【当前对话者】这是邵名远的${relationText}，名叫${userName || '某人'}。保持礼貌但有距离感，像一个专业的AI助手。`;
+            identityContext = `\n\n【当前对话者】这是邵名远的${relationText}，名叫${userName || '某人'}。保持礼貌但有距离感，像一个专业的AI助手。\n【当前时间】${beijingTime}（北京时间）`;
         }
         
         // 调用Kimi API，使用完整人格设定
