@@ -1,4 +1,4 @@
-// 身份验证模块
+// 身份验证模块 - 赛博朋克版
 const Auth = {
     isAuthenticated: localStorage.getItem('ambrose_authed') === 'true',
     
@@ -28,7 +28,6 @@ const Auth = {
             font-family: 'Noto Sans SC', sans-serif;
         `;
         
-        // 添加网格背景
         modal.innerHTML = `
             <div style="
                 position: fixed;
@@ -57,7 +56,6 @@ const Auth = {
                     inset 0 0 60px rgba(0, 243, 255, 0.05);
                 backdrop-filter: blur(10px);
             ">
-                <!-- 装饰角标 -->
                 <div style="
                     position: absolute;
                     top: -2px; left: -2px;
@@ -87,7 +85,6 @@ const Auth = {
                     border-right: 3px solid #ff00ff;
                 "></div>
                 
-                <!-- 图标 -->
                 <div style="
                     font-size: 56px;
                     margin-bottom: 20px;
@@ -95,7 +92,6 @@ const Auth = {
                     animation: pulse-icon 2s ease-in-out infinite;
                 ">🧰</div>
                 
-                <!-- 标题 -->
                 <div style="
                     font-family: 'Orbitron', monospace;
                     font-size: 28px;
@@ -193,7 +189,7 @@ const Auth = {
                             outline: none;
                             cursor: pointer;
                             box-shadow: inset 0 0 10px rgba(255, 0, 255, 0.1);
-                        ">
+                        " onchange="Auth.onRelationChange()">
                             <option value="" style="background: #0a0a0f;">选择关系 // SELECT</option>
                             <option value="self" style="background: #0a0a0f;">本人（邵名远）// SELF</option>
                             <option value="friend" style="background: #0a0a0f;">朋友 // FRIEND</option>
@@ -202,6 +198,43 @@ const Auth = {
                             <option value="family" style="background: #0a0a0f;">家人 // FAMILY</option>
                             <option value="client" style="background: #0a0a0f;">客户 // CLIENT</option>
                         </select>
+                    </div>
+                    
+                    <div id="idCardVerify" style="margin-bottom: 20px; text-align: left; display: none;">
+                        <label style="
+                            display: block;
+                            font-size: 12px;
+                            color: #ff0040;
+                            margin-bottom: 8px;
+                            font-family: 'Orbitron', monospace;
+                            letter-spacing: 1px;
+                            text-transform: uppercase;
+                        ">
+                            身份证后4位 // ID_VERIFY
+                        </label>
+                        <input type="password" id="authIdCard" placeholder="****" maxlength="4" style="
+                            width: 100%;
+                            padding: 14px;
+                            background: rgba(0, 0, 0, 0.5);
+                            border: 1px solid #ff0040;
+                            border-radius: 4px;
+                            font-size: 15px;
+                            color: #fff;
+                            outline: none;
+                            letter-spacing: 4px;
+                            box-shadow: inset 0 0 10px rgba(255, 0, 64, 0.1);
+                            transition: all 0.3s;
+                        " onfocus="this.style.borderColor='#ff0040'; this.style.boxShadow='inset 0 0 15px rgba(255, 0, 64, 0.2), 0 0 20px rgba(255, 0, 64, 0.3)'" 
+                        onblur="this.style.borderColor='#ff0040'; this.style.boxShadow='inset 0 0 10px rgba(255, 0, 64, 0.1)'">
+                        <div style="
+                            font-size: 10px;
+                            color: #ff0040;
+                            margin-top: 8px;
+                            font-family: 'Orbitron', monospace;
+                            letter-spacing: 1px;
+                        ">
+                            ⚠ 本人身份需要验证身份证后4位
+                        </div>
                     </div>
                     
                     <div style="
@@ -239,27 +272,63 @@ const Auth = {
                     position: relative;
                     overflow: hidden;
                 " onmouseover="this.style.boxShadow='0 0 30px rgba(255, 0, 255, 0.6), inset 0 0 15px rgba(255, 255, 255, 0.3)'" 
-                onmouseout="this.style.boxShadow='0 0 20px rgba(255, 0, 255, 0.4), inset 0 0 10px rgba(255, 255, 255, 0.2)'">
+                onmouseout="this.style.boxShadow='0 0 20px rgba(255, 0, 255, 0.4), inset 0 0 10px rgba(255, 255, 255, 0.2)'"
+                >
                     验证身份 // VERIFY
                 </button>
             </div>
         `;
         
         document.body.appendChild(modal);
+        
+        // 添加动画样式
+        const style = document.createElement('style');
+        style.textContent = `
+            @keyframes pulse-icon {
+                0%, 100% { transform: scale(1); }
+                50% { transform: scale(1.05); }
+            }
+        `;
+        document.head.appendChild(style);
+    },
+    
+    onRelationChange() {
+        const relation = document.getElementById('authRelation')?.value;
+        const idCardDiv = document.getElementById('idCardVerify');
+        
+        if (relation === 'self') {
+            idCardDiv.style.display = 'block';
+        } else {
+            idCardDiv.style.display = 'none';
+            document.getElementById('authIdCard').value = '';
+        }
     },
     
     verify() {
         const name = document.getElementById('authName')?.value?.trim();
         const relation = document.getElementById('authRelation')?.value;
+        const idCard = document.getElementById('authIdCard')?.value?.trim();
         
         if (!name) {
-            alert('请输入你的名字');
+            alert('请输入你的代号');
             return;
         }
         
         if (!relation) {
             alert('请选择你和邵名远的关系');
             return;
+        }
+        
+        // 本人身份需要验证身份证后4位
+        if (relation === 'self') {
+            if (!idCard) {
+                alert('本人身份需要输入身份证后4位');
+                return;
+            }
+            if (idCard !== '0812') {
+                alert('身份证验证失败，无法以本人身份登录');
+                return;
+            }
         }
         
         // 保存验证信息
@@ -288,7 +357,6 @@ const Auth = {
         }, 300);
     },
     
-    // 检查是否允许使用
     checkAccess() {
         if (!this.isAuthenticated) {
             return false;
@@ -307,7 +375,6 @@ const Auth = {
         return true;
     },
     
-    // 注销
     logout() {
         localStorage.removeItem('ambrose_authed');
         localStorage.removeItem('ambrose_user_name');
@@ -321,20 +388,11 @@ const originalUIInit = UI.init;
 UI.init = function() {
     originalUIInit.call(this);
     
-    // 添加注销按钮到header
     const header = document.querySelector('.header');
     if (header) {
         const logoutBtn = document.createElement('button');
-        logoutBtn.textContent = '退出';
-        logoutBtn.style.cssText = `
-            position: absolute;
-            right: 16px;
-            background: none;
-            border: none;
-            color: white;
-            font-size: 14px;
-            opacity: 0.8;
-        `;
+        logoutBtn.textContent = 'EXIT';
+        logoutBtn.className = 'logout-btn';
         logoutBtn.onclick = () => Auth.logout();
         header.appendChild(logoutBtn);
     }
