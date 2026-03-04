@@ -124,7 +124,7 @@ const Auth = {
                     line-height: 1.6;
                 ">
                     全知全能的精神体投射<br>
-                    <span style="color: #00f3ff;">专属于邵名远</span>
+                    <span style="color: #00f3ff;">专属于 BOSS Shao</span>
                 </div>
                 
                 <div style="
@@ -237,7 +237,7 @@ const Auth = {
                             box-shadow: inset 0 0 10px rgba(255, 0, 255, 0.1);
                         " onchange="Auth.onRelationChange()">
                             <option value="" style="background: #0a0a0f;">选择关系 // SELECT</option>
-                            <option value="self" style="background: #0a0a0f;">本人（邵名远）// SELF</option>
+                            <option value="self" style="background: #0a0a0f;">本人 // SELF</option>
                             <option value="friend" style="background: #0a0a0f;">朋友 // FRIEND</option>
                             <option value="lover" style="background: #0a0a0f;">恋人 // LOVER</option>
                             <option value="spouse" style="background: #0a0a0f;">爱人/配偶 // SPOUSE</option>
@@ -279,7 +279,7 @@ const Auth = {
                             font-family: 'Orbitron', monospace;
                             letter-spacing: 1px;
                         ">
-                            ⚠ 请输入邀请码 8888，或向邵名远本人索取
+                            ⚠ 请输入邀请码 8888，或向 BOSS Shao 本人索取
                         </div>
                     </div>
                     
@@ -330,7 +330,6 @@ const Auth = {
                         border-left: 2px solid #ff00ff;
                         padding-left: 12px;
                     ">
-                        只有以上关系才能连接AMBROSE<br>
                         ONLY AUTHORIZED RELATIONS CAN CONNECT
                     </div>
                 </div>
@@ -472,7 +471,7 @@ const Auth = {
         
         // 欢迎消息
         const relationText = {
-            'self': '本人（邵名远）',
+            'self': '本人',
             'friend': '朋友',
             'lover': '恋人',
             'spouse': '爱人',
@@ -483,7 +482,7 @@ const Auth = {
         const genderText = gender === 'male' ? '男' : '女';
         
         setTimeout(() => {
-            UI.addMessage(`验证通过。\n\n你好，${name}。\n你是邵名远的${relationText}（${genderText}），可以使用我。\n\n我是AMBROSE，很高兴为你服务。`, 'bot');
+            UI.addMessage(`验证通过。\n\n你好，${name}。\n你是 BOSS Shao 的${relationText}（${genderText}），可以使用我。\n\n我是 AMBROSE，很高兴为你服务。`, 'bot');
         }, 300);
     },
     
