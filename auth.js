@@ -72,6 +72,7 @@ const Auth = {
                             background: white;
                         ">
                             <option value="">请选择关系</option>
+                            <option value="self">本人（邵名远）</option>
                             <option value="friend">朋友</option>
                             <option value="lover">恋人</option>
                             <option value="spouse">爱人/配偶</option>
@@ -128,6 +129,7 @@ const Auth = {
         
         // 欢迎消息
         const relationText = {
+            'self': '本人（邵名远）',
             'friend': '朋友',
             'lover': '恋人',
             'spouse': '爱人',
@@ -147,7 +149,7 @@ const Auth = {
         }
         
         const relation = localStorage.getItem('ambrose_user_relation');
-        const allowedRelations = ['friend', 'lover', 'spouse', 'family', 'client'];
+        const allowedRelations = ['self', 'friend', 'lover', 'spouse', 'family', 'client'];
         
         if (!allowedRelations.includes(relation)) {
             localStorage.removeItem('ambrose_authed');
