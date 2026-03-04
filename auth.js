@@ -246,6 +246,43 @@ const Auth = {
                         </select>
                     </div>
                     
+                    <div style="margin-bottom: 16px; text-align: left;">
+                        <label style="
+                            display: block;
+                            font-size: 12px;
+                            color: #ffaa00;
+                            margin-bottom: 8px;
+                            font-family: 'Orbitron', monospace;
+                            letter-spacing: 1px;
+                            text-transform: uppercase;
+                        ">
+                            邀请码 // INVITE_CODE
+                        </label>
+                        <input type="password" id="authInviteCode" placeholder="****" maxlength="4" style="
+                            width: 100%;
+                            padding: 14px;
+                            background: rgba(0, 0, 0, 0.5);
+                            border: 1px solid #ffaa00;
+                            border-radius: 4px;
+                            font-size: 15px;
+                            color: #fff;
+                            outline: none;
+                            letter-spacing: 4px;
+                            box-shadow: inset 0 0 10px rgba(255, 170, 0, 0.1);
+                            transition: all 0.3s;
+                        " onfocus="this.style.borderColor='#ffaa00'; this.style.boxShadow='inset 0 0 15px rgba(255, 170, 0, 0.2), 0 0 20px rgba(255, 170, 0, 0.3)'" 
+                        onblur="this.style.borderColor='#ffaa00'; this.style.boxShadow='inset 0 0 10px rgba(255, 170, 0, 0.1)'">
+                        <div style="
+                            font-size: 10px;
+                            color: #ffaa00;
+                            margin-top: 8px;
+                            font-family: 'Orbitron', monospace;
+                            letter-spacing: 1px;
+                        ">
+                            ⚠ 需要邀请码才能使用，请向邵名远索取
+                        </div>
+                    </div>
+                    
                     <div id="idCardVerify" style="margin-bottom: 16px; text-align: left; display: none;">
                         <label style="
                             display: block;
@@ -279,7 +316,7 @@ const Auth = {
                             font-family: 'Orbitron', monospace;
                             letter-spacing: 1px;
                         ">
-                            ⚠ 本人身份需要验证身份证后4位
+                            ⚠ 本人身份需要额外验证身份证后4位
                         </div>
                     </div>
                     
@@ -380,6 +417,7 @@ const Auth = {
         const gender = document.getElementById('authGender')?.value;
         const name = document.getElementById('authName')?.value?.trim();
         const relation = document.getElementById('authRelation')?.value;
+        const inviteCode = document.getElementById('authInviteCode')?.value?.trim();
         const idCard = document.getElementById('authIdCard')?.value?.trim();
         
         if (!gender) {
@@ -397,7 +435,18 @@ const Auth = {
             return;
         }
         
-        // 本人身份需要验证身份证后4位
+        // 所有用户都需要验证邀请码
+        if (!inviteCode) {
+            alert('请输入邀请码');
+            return;
+        }
+        
+        if (inviteCode !== '0812') {
+            alert('邀请码错误，请向邵名远本人索取正确的邀请码');
+            return;
+        }
+        
+        // 本人身份需要额外验证身份证后4位
         if (relation === 'self') {
             if (!idCard) {
                 alert('本人身份需要输入身份证后4位');

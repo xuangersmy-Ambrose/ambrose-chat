@@ -472,7 +472,7 @@
                 <div class="clock-date" id="date">----/--/--</div>
             </div>
             
-            <button class="logout-btn" onclick="Auth.logout()">断开</button>
+            <button class="logout-btn" onclick="if(confirm('确定要切换身份吗？')){Auth.logout();}">切换身份</button>
         </div>
         
         <!-- 消息区域 -->
