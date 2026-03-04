@@ -224,6 +224,11 @@ const UI = {
             const userRelation = localStorage.getItem('ambrose_user_relation') || 'unknown';
             const gender = localStorage.getItem('ambrose_user_gender') || 'male';
             
+            // 获取客户端本地时间和时区
+            const now = new Date();
+            const clientTime = now.toLocaleString('zh-CN');
+            const clientTimezone = Intl.DateTimeFormat().resolvedOptions().timeZone;
+            
             const response = await fetch(API_URL, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
@@ -233,6 +238,8 @@ const UI = {
                     userRelation,
                     isMaster: userRelation === 'self',
                     gender,
+                    clientTime,
+                    clientTimezone,
                     timestamp: TimeUtil.getFullTimestamp()
                 })
             });
