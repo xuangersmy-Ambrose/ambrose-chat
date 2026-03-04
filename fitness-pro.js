@@ -1,27 +1,118 @@
 /**
  * AMBROSE Fitness Pro v3.0
- * 专业级健身系统
+ * 专业级健身系统 - 使用哔哩哔哩视频源
  */
 
 class FitnessPro {
     constructor(ui) {
         this.ui = ui;
         this.currentView = null;
+        // 使用哔哩哔哩视频源 - 国内直接播放，无需登录
         this.videoLibrary = {
             strength: [
-                { id: 'qILM02f85yY', title: '胸肌轰炸训练', subtitle: 'Chest Destruction', duration: '15:30', level: '进阶', views: '12.8M', thumbnail: '💪', color: '#00f3ff', desc: '胸大肌全面刺激 · 增肌必备' },
-                { id: 'H1F-UfC8MbE', title: '背部力量特训', subtitle: 'Back Power', duration: '18:45', level: '中级', views: '8.5M', thumbnail: '🦍', color: '#00f3ff', desc: '引体向上 · 划船 · 背部宽度厚度' },
-                { id: '9gjQdR08E1E', title: '腿部高强度训练', subtitle: 'Leg Day', duration: '22:00', level: '进阶', views: '6.2M', thumbnail: '🦵', color: '#00f3ff', desc: '深蹲 · 硬拉 · 腿部力量爆发' }
+                { 
+                    id: 'BV1ea411q7bJ', 
+                    title: '帕梅拉 10分钟腹肌训练', 
+                    subtitle: 'Pamela Abs Workout', 
+                    duration: '10:00', 
+                    level: '中级', 
+                    views: '2.8M', 
+                    thumbnail: '🎯', 
+                    color: '#00f3ff', 
+                    desc: '高效腹肌雕刻 · 马甲线塑造'
+                },
+                { 
+                    id: 'BV1gM4y1c7K6', 
+                    title: '帕梅拉 15分钟全身燃脂', 
+                    subtitle: 'Full Body Fat Burn', 
+                    duration: '15:00', 
+                    level: '中级', 
+                    views: '3.5M', 
+                    thumbnail: '🔥', 
+                    color: '#00f3ff', 
+                    desc: '全身塑形 · 高效燃脂'
+                },
+                { 
+                    id: 'BV1T4411H7sE', 
+                    title: '周六野 10分钟HIIT', 
+                    subtitle: 'Zoey HIIT Workout', 
+                    duration: '10:00', 
+                    level: '入门', 
+                    views: '5.2M', 
+                    thumbnail: '⚡', 
+                    color: '#00f3ff', 
+                    desc: '无器械 · 快速燃脂'
+                }
             ],
             hiit: [
-                { id: 'ml6cT4AZdqI', title: '30分钟HIIT燃脂', subtitle: 'HIIT Fat Burner', duration: '30:00', level: '中级', views: '112M', thumbnail: '🔥', color: '#ff6b35', desc: '高强度间歇 · 极速燃脂' },
-                { id: 'L_xrDAtykMI', title: '10分钟跳绳燃脂', subtitle: 'Jump Rope', duration: '10:00', level: '中级', views: '15.3M', thumbnail: '⚡', color: '#ff6b35', desc: '双摇 · 交叉跳 · 高效燃脂' },
-                { id: '2MoGxTQmNIc', title: '15分钟有氧舞蹈', subtitle: 'Dance Cardio', duration: '15:00', level: '入门', views: '38.9M', thumbnail: '💃', color: '#ff6b35', desc: '音乐律动 · 快乐燃脂' }
+                { 
+                    id: 'BV1XK4y1G7Xa', 
+                    title: '韩小四 12分钟HIIT', 
+                    subtitle: 'April HIIT Cardio', 
+                    duration: '12:00', 
+                    level: '中级', 
+                    views: '1.8M', 
+                    thumbnail: '💃', 
+                    color: '#ff6b35', 
+                    desc: '全身燃脂 · 提升心肺'
+                },
+                { 
+                    id: 'BV1S54y1G7Ch', 
+                    title: '帕梅拉 20分钟全身训练', 
+                    subtitle: 'Full Body Workout', 
+                    duration: '20:00', 
+                    level: '进阶', 
+                    views: '2.1M', 
+                    thumbnail: '💪', 
+                    color: '#ff6b35', 
+                    desc: '高强度 · 全身肌群激活'
+                },
+                { 
+                    id: 'BV1jt4y1q7hY', 
+                    title: '周六野 20分钟有氧', 
+                    subtitle: 'Aerobic Cardio', 
+                    duration: '20:00', 
+                    level: '入门', 
+                    views: '4.3M', 
+                    thumbnail: '🏃', 
+                    color: '#ff6b35', 
+                    desc: '低冲击 · 持续燃脂'
+                }
             ],
             yoga: [
-                { id: 'v7AYKMP6rOE', title: '晨间唤醒瑜伽', subtitle: 'Morning Flow', duration: '20:00', level: '入门', views: '28.7M', thumbnail: '🌅', color: '#9d4edd', desc: '唤醒身体 · 舒展脊柱' },
-                { id: 'inpok4MKVLM', title: '睡前放松瑜伽', subtitle: 'Bedtime Yoga', duration: '15:00', level: '入门', views: '22.4M', thumbnail: '🌙', color: '#9d4edd', desc: '舒缓压力 · 改善睡眠' },
-                { id: 'sTANio_2E0Q', title: '全身拉伸放松', subtitle: 'Full Stretch', duration: '12:00', level: '入门', views: '18.9M', thumbnail: '🌿', color: '#9d4edd', desc: '运动后恢复 · 缓解酸痛' }
+                { 
+                    id: 'BV1Kb411L7ZC', 
+                    title: '周六野 床上瑜伽', 
+                    subtitle: 'Bed Yoga', 
+                    duration: '15:00', 
+                    level: '入门', 
+                    views: '3.7M', 
+                    thumbnail: '🌙', 
+                    color: '#9d4edd', 
+                    desc: '睡前放松 · 改善睡眠'
+                },
+                { 
+                    id: 'BV1bE411C7jE', 
+                    title: '韩小四 全身拉伸', 
+                    subtitle: 'Full Body Stretch', 
+                    duration: '12:00', 
+                    level: '入门', 
+                    views: '2.2M', 
+                    thumbnail: '🌿', 
+                    color: '#9d4edd', 
+                    desc: '运动后恢复 · 缓解酸痛'
+                },
+                { 
+                    id: 'BV1Lt4y1q7CJ', 
+                    title: '帕梅拉 10分钟拉伸', 
+                    subtitle: 'Cool Down Stretch', 
+                    duration: '10:00', 
+                    level: '入门', 
+                    views: '1.5M', 
+                    thumbnail: '🧘', 
+                    color: '#9d4edd', 
+                    desc: '运动后拉伸 · 放松肌肉'
+                }
             ]
         };
     }
@@ -100,24 +191,22 @@ class FitnessPro {
                     onmouseover="this.style.transform='translateY(-4px)'; this.style.boxShadow='0 20px 40px ${video.color}20'; this.style.borderColor='${video.color}50';"
                     onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='none'; this.style.borderColor='${video.color}30';"
                 >
-                    <div style="position: relative; aspect-ratio: 16/9; background: #000;">
-                        <img src="https://img.youtube.com/vi/${video.id}/mqdefault.jpg" style="width: 100%; height: 100%; object-fit: cover; opacity: 0.9;" />
-                        <div style="position: absolute; inset: 0; background: linear-gradient(to top, rgba(0,0,0,0.8) 0%, transparent 50%);"></div>
-                        <div style="position: absolute; bottom: 12px; left: 12px; right: 12px;">
-                            <div style="font-size: 10px; color: ${video.color}; font-family: 'Orbitron'; letter-spacing: 1px; margin-bottom: 4px;">${video.subtitle}</div>
-                            <div style="font-size: 16px; font-weight: 700; color: #fff;">${video.title}</div>
-                        </div>
-                        <div style="position: absolute; top: 12px; right: 12px; background: rgba(0,0,0,0.8); padding: 4px 10px; border-radius: 20px; font-size: 11px; color: #fff; font-family: 'Orbitron';">${video.duration}</div>
-                        <div style="position: absolute; inset: 0; display: flex; align-items: center; justify-content: center;">
-                            <div style="width: 60px; height: 60px; background: ${video.color}; border-radius: 50%; display: flex; align-items: center; justify-content: center; box-shadow: 0 0 40px ${video.color};">
+                    <div style="position: relative; aspect-ratio: 16/9; background: linear-gradient(135deg, ${video.color}20, ${video.color}05); display: flex; align-items: center; justify-content: center;">
+                        <div style="font-size: 48px; filter: drop-shadow(0 0 15px ${video.color});">${video.thumbnail}</div>
+                        <div style="position: absolute; bottom: 8px; right: 8px; background: rgba(0,0,0,0.85); padding: 4px 10px; border-radius: 6px; font-size: 11px; color: #fff; font-family: 'Orbitron'; font-weight: 600;">${video.duration}</div>
+                        <div style="position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; background: rgba(0,0,0,0.3); opacity: 0; transition: opacity 0.3s;" class="play-overlay"
+                        >
+                            <div style="width: 56px; height: 56px; background: ${video.color}; border-radius: 50%; display: flex; align-items: center; justify-content: center; box-shadow: 0 0 40px ${video.color}, 0 0 80px ${video.color}50; transition: transform 0.3s; transform: scale(0.9);">
                                 <span style="font-size: 24px; margin-left: 4px; color: #000;">▶</span>
                             </div>
                         </div>
                     </div>
                     <div style="padding: 16px;">
-                        <div style="font-size: 13px; color: #888; margin-bottom: 12px;">${video.desc}</div>
+                        <div style="font-size: 10px; color: ${video.color}; font-family: 'Orbitron'; letter-spacing: 1px; margin-bottom: 6px; text-transform: uppercase; font-weight: 500;">${video.subtitle}</div>
+                        <div style="font-size: 15px; font-weight: 700; color: #fff; margin-bottom: 8px;">${video.title}</div>
+                        <div style="font-size: 12px; color: #888; margin-bottom: 12px;">${video.desc}</div>
                         <div style="display: flex; justify-content: space-between; align-items: center;">
-                            <span style="background: ${video.color}15; color: ${video.color}; padding: 4px 12px; border-radius: 20px; font-size: 11px;">${video.level}</span>
+                            <span style="background: ${video.color}15; color: ${video.color}; padding: 4px 12px; border-radius: 20px; font-size: 11px; font-weight: 500;">${video.level}</span>
                             <span style="font-size: 12px; color: #666;">👁 ${video.views}</span>
                         </div>
                     </div>
@@ -130,10 +219,20 @@ class FitnessPro {
     }
 
     playVideo(id, title, subtitle, duration, level, views, desc, color) {
+        // 哔哩哔哩嵌入播放器 - 国内直接播放，无需登录
+        const embedUrl = `https://player.bilibili.com/player.html?bvid=${id}&page=1&high_quality=1&danmaku=0&autoplay=1`;
+        
         const html = `
-            <div style="background: linear-gradient(180deg, rgba(10,12,20,0.98) 0%, rgba(5,5,8,1) 100%); border-radius: 24px; padding: 24px; margin: 16px 0; border: 1px solid ${color}50; box-shadow: 0 0 60px ${color}20;">
+            <div class="video-player" style="background: linear-gradient(180deg, rgba(10,12,20,0.98) 0%, rgba(5,5,8,1) 100%); border-radius: 24px; padding: 24px; margin: 16px 0; border: 1px solid ${color}50; box-shadow: 0 0 60px ${color}20;">
                 <div style="position: relative; aspect-ratio: 16/9; background: #000; border-radius: 16px; overflow: hidden; margin-bottom: 20px;">
-                    <iframe src="https://www.youtube.com/embed/${id}?autoplay=1&rel=0&modestbranding=1" style="position: absolute; inset: 0; width: 100%; height: 100%; border: none;" allowfullscreen></iframe>
+                    <iframe 
+                        src="${embedUrl}" 
+                        style="position: absolute; inset: 0; width: 100%; height: 100%; border: none;" 
+                        allowfullscreen
+                        scrolling="no"
+                        frameborder="0"
+                        sandbox="allow-top-navigation allow-same-origin allow-forms allow-scripts"
+                    ></iframe>
                 </div>
                 <div style="margin-bottom: 16px;">
                     <div style="font-size: 10px; color: ${color}; font-family: 'Orbitron'; letter-spacing: 2px; margin-bottom: 8px;">${subtitle}</div>
@@ -146,7 +245,7 @@ class FitnessPro {
                     </div>
                 </div>
                 <div style="display: flex; gap: 12px;">
-                    <button onclick="UI.sendFitnessQuery('请给我详细的${title}训练指导，包括动作要领、组数次数建议和注意事项')" style="flex: 1; background: linear-gradient(135deg, ${color}, ${color}dd); border: none; border-radius: 12px; padding: 14px; color: #000; font-size: 15px; font-weight: 700; cursor: pointer;">🤖 AI训练指导</button>
+                    <button onclick="UI.handleSendWithPrompt('请给我详细的${title}训练指导，包括动作要领、组数次数建议和注意事项')" style="flex: 1; background: linear-gradient(135deg, ${color}, ${color}dd); border: none; border-radius: 12px; padding: 14px; color: #000; font-size: 15px; font-weight: 700; cursor: pointer;">🤖 AI训练指导</button>
                     <button onclick="this.closest('.video-player').remove()" style="width: 48px; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.2); border-radius: 12px; color: #fff; font-size: 16px; cursor: pointer;">✕</button>
                 </div>
             </div>
@@ -158,12 +257,21 @@ class FitnessPro {
         const html = `
             <div style="background: linear-gradient(180deg, rgba(10,12,20,0.98) 0%, rgba(5,5,8,1) 100%); border-radius: 24px; margin: 16px 0; padding: 24px; border: 1px solid rgba(0,255,136,0.2);">
                 <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 24px;">
-                    <div style="font-size: 20px; font-weight: 700; color: #00ff88;">🥗 饮食管理</div>
+                    <div style="font-size: 20px; font-weight: 700; color: #00ff88;">🥗 营养健康中心</div>
                     <button onclick="Fitness.showFitnessHub()" style="background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); border-radius: 8px; padding: 8px 16px; color: #888; font-size: 13px; cursor: pointer;">← 返回</button>
                 </div>
                 
-                <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px;">
-                    <div onclick="UI.sendFitnessQuery('我正在增肌，请给我详细的增肌饮食方案和食谱推荐')" style="background: linear-gradient(145deg, rgba(0,255,136,0.1), rgba(0,255,136,0.05)); border: 1px solid rgba(0,255,136,0.25); border-radius: 16px; padding: 20px; text-align: center; cursor: pointer; transition: all 0.3s;"
+                <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; margin-bottom: 20px;">
+                    <div onclick="Fitness.showBodyMetrics()" style="background: linear-gradient(145deg, rgba(0,243,255,0.1), rgba(0,243,255,0.05)); border: 1px solid rgba(0,243,255,0.2); border-radius: 16px; padding: 20px; text-align: center; cursor: pointer; transition: all 0.3s;"
+                        onmouseover="this.style.transform='translateY(-4px)'; this.style.boxShadow='0 10px 30px rgba(0,243,255,0.2)';"
+                        onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='none';"
+                    >
+                        <div style="font-size: 36px; margin-bottom: 12px;">📊</div>
+                        <div style="font-size: 15px; font-weight: 700; color: #00f3ff;">身体数据</div>
+                        <div style="font-size: 10px; color: #00f3ff; opacity: 0.8; margin-top: 4px; font-family: 'Orbitron';">BODY METRICS</div>
+                    </div>
+                    
+                    <div onclick="UI.handleSendWithPrompt('我正在增肌，请给我详细的增肌饮食方案和食谱推荐')" style="background: linear-gradient(145deg, rgba(0,255,136,0.1), rgba(0,255,136,0.05)); border: 1px solid rgba(0,255,136,0.25); border-radius: 16px; padding: 20px; text-align: center; cursor: pointer; transition: all 0.3s;"
                         onmouseover="this.style.transform='translateY(-4px)'; this.style.boxShadow='0 10px 30px rgba(0,255,136,0.2)';"
                         onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='none';"
                     >
@@ -172,20 +280,23 @@ class FitnessPro {
                         <div style="font-size: 10px; color: #00ff88; opacity: 0.8; margin-top: 4px; font-family: 'Orbitron';">MUSCLE BUILDING</div>
                     </div>
                     
-                    <div onclick="UI.sendFitnessQuery('我正在减脂，请给我低热量饮食方案和食谱推荐')" style="background: linear-gradient(145deg, rgba(0,255,136,0.1), rgba(0,255,136,0.05)); border: 1px solid rgba(0,255,136,0.25); border-radius: 16px; padding: 20px; text-align: center; cursor: pointer; transition: all 0.3s;"
-                        onmouseover="this.style.transform='translateY(-4px)'; this.style.boxShadow='0 10px 30px rgba(0,255,136,0.2)';"
+                    <div onclick="UI.handleSendWithPrompt('我正在减脂，请给我低热量饮食方案和食谱推荐')" style="background: linear-gradient(145deg, rgba(255,107,53,0.1), rgba(255,107,53,0.05)); border: 1px solid rgba(255,107,53,0.25); border-radius: 16px; padding: 20px; text-align: center; cursor: pointer; transition: all 0.3s;"
+                        onmouseover="this.style.transform='translateY(-4px)'; this.style.boxShadow='0 10px 30px rgba(255,107,53,0.2)';"
                         onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='none';"
                     >
                         <div style="font-size: 36px; margin-bottom: 12px;">🥗</div>
-                        <div style="font-size: 15px; font-weight: 700; color: #00ff88;">减脂饮食</div>
-                        <div style="font-size: 10px; color: #00ff88; opacity: 0.8; margin-top: 4px; font-family: 'Orbitron';">FAT LOSS</div>
+                        <div style="font-size: 15px; font-weight: 700; color: #ff6b35;">减脂饮食</div>
+                        <div style="font-size: 10px; color: #ff6b35; opacity: 0.8; margin-top: 4px; font-family: 'Orbitron';">FAT LOSS</div>
                     </div>
-                </div>
-                
-                <div style="margin-top: 20px; background: rgba(0,255,136,0.05); border: 1px dashed rgba(0,255,136,0.2); border-radius: 12px; padding: 16px; text-align: center; cursor: pointer;"
-                    onclick="Fitness.showBodyMetrics()"
-                >
-                    <span style="font-size: 14px; color: #00ff88;">📊 身体数据测算 →</span>
+                    
+                    <div onclick="UI.handleSendWithPrompt('请给我日常健康饮食的基本原则和营养搭配建议')" style="background: linear-gradient(145deg, rgba(157,78,221,0.1), rgba(157,78,221,0.05)); border: 1px solid rgba(157,78,221,0.25); border-radius: 16px; padding: 20px; text-align: center; cursor: pointer; transition: all 0.3s;"
+                        onmouseover="this.style.transform='translateY(-4px)'; this.style.boxShadow='0 10px 30px rgba(157,78,221,0.2)';"
+                        onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='none';"
+                    >
+                        <div style="font-size: 36px; margin-bottom: 12px;">🍎</div>
+                        <div style="font-size: 15px; font-weight: 700; color: #9d4edd;">营养知识</div>
+                        <div style="font-size: 10px; color: #9d4edd; opacity: 0.8; margin-top: 4px; font-family: 'Orbitron';">NUTRITION TIPS</div>
+                    </div>
                 </div>
             </div>
         `;
