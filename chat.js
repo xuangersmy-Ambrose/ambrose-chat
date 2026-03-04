@@ -446,27 +446,28 @@ const UI = {
     addWelcomeMessage() {
         const hour = TimeUtil.getBeijingTime().getHours();
         let greeting = '你好';
-        
+
         if (hour < 6) greeting = '夜深了';
         else if (hour < 9) greeting = '早上好';
         else if (hour < 12) greeting = '上午好';
         else if (hour < 14) greeting = '中午好';
         else if (hour < 18) greeting = '下午好';
         else greeting = '晚上好';
-        
+
         let hints = '';
         if (this.isMaster) {
             hints = '\n\n💡 可用指令：\n• 发送"统计"查看使用情况\n• 发送"改设计:描述"请求界面更改';
         }
-        hints += '\n• 发送"健身"开启健身智能助手';
-        
-        this.addMessage(`${greeting}，我是 AMBROSE。${hints}\n\n有什么可以帮你的？`, 'bot');
+
+        this.addMessage(`${greeting}，我是 AMBROSE。${hints}\n\n点击左下角 🏋️ 按钮开启健身智能助手，或直接输入消息与我对话。`, 'bot');
     },
 
     bindEvents() {
         const sendBtn = document.getElementById('sendBtn');
+        const fitnessBtn = document.getElementById('fitnessBtn');
 
         sendBtn?.addEventListener('click', () => this.send());
+        fitnessBtn?.addEventListener('click', () => this.showFitnessMenu());
 
         this.input?.addEventListener('keypress', (e) => {
             if (e.key === 'Enter' && !e.shiftKey) {

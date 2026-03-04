@@ -498,6 +498,34 @@
             box-shadow: none;
         }
         
+        /* 健身按钮 */
+        .fitness-btn {
+            width: 44px;
+            height: 44px;
+            background: linear-gradient(135deg, rgba(0, 255, 136, 0.2), rgba(0, 255, 136, 0.1));
+            border: 1px solid rgba(0, 255, 136, 0.5);
+            border-radius: 12px;
+            color: #00ff88;
+            font-size: 22px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 0 15px rgba(0, 255, 136, 0.2);
+            transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+            flex-shrink: 0;
+        }
+        
+        .fitness-btn:hover {
+            transform: translateY(-2px) scale(1.05);
+            box-shadow: 0 0 25px rgba(0, 255, 136, 0.4);
+            background: linear-gradient(135deg, rgba(0, 255, 136, 0.3), rgba(0, 255, 136, 0.15));
+        }
+        
+        .fitness-btn:active {
+            transform: translateY(0) scale(0.95);
+        }
+        
         /* 退出按钮 */
         .logout-btn {
             background: transparent;
@@ -605,6 +633,7 @@
         <!-- 输入区域 -->
         <div class="input-container">
             <div class="input-wrapper">
+                <button class="fitness-btn" id="fitnessBtn" title="健身智能助手">🏋️</button>
                 <textarea class="message-input" id="messageInput" placeholder="输入神经指令..." rows="1"></textarea>
                 <button class="send-button" id="sendBtn">⚡</button>
             </div>
