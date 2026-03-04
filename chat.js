@@ -548,33 +548,133 @@ const UI = {
         this.scrollToBottom();
     },
 
-    // 健身视频库 - 专业版文案
+    // YouTube 健身视频库 - 精选高赞高观看量视频
     fitnessVideos: {
         training: [
-            { id: 1, title: '胸肌全面激活训练', duration: '12:30', level: '入门', views: '12.5K', thumbnail: '💪', color: '#00f3ff', 
-              subtitle: 'Chest Activation Pro', desc: '平板卧推 · 上斜推举 · 飞鸟夹胸 · 基础要领精讲' },
-            { id: 2, title: '背部力量进阶塑造', duration: '15:45', level: '中级', views: '8.3K', thumbnail: '🏋️', color: '#00f3ff',
-              subtitle: 'Back Strength Plus', desc: '引体向上 · 杠铃划船 · 高位下拉 · 背部线条雕刻' },
-            { id: 3, title: '腿部爆发力特训', duration: '18:20', level: '进阶', views: '15.2K', thumbnail: '🦵', color: '#00f3ff',
-              subtitle: 'Leg Power Extreme', desc: '深蹲硬拉 · 腿举训练 · 股四头肌 · 腿部维度增长' },
-            { id: 4, title: '核心肌群稳定性训练', duration: '10:15', level: '入门', views: '22.1K', thumbnail: '🎯', color: '#00f3ff',
-              subtitle: 'Core Stability Base', desc: '平板支撑 · 卷腹训练 · 俄罗斯转体 · 腰腹力量奠基' }
+            { 
+                id: 'YdB1H_cLz7Y', 
+                title: '20分钟全身力量训练', 
+                duration: '20:00', 
+                level: '中级', 
+                views: '45.2M', 
+                thumbnail: '💪', 
+                color: '#00f3ff',
+                subtitle: 'Full Body Strength', 
+                desc: '无器械 · 全身肌群 · 高效燃脂塑形',
+                youtubeId: 'YdB1H_cLz7Y'
+            },
+            { 
+                id: 'qILM02f85yY', 
+                title: '胸肌轰炸训练', 
+                duration: '15:30', 
+                level: '进阶', 
+                views: '12.8M', 
+                thumbnail: '🏋️', 
+                color: '#00f3ff',
+                subtitle: 'Chest Destruction', 
+                desc: '胸大肌全面刺激 · 增肌必备',
+                youtubeId: 'qILM02f85yY'
+            },
+            { 
+                id: 'H1F-UfC8MbE', 
+                title: '背部力量特训', 
+                duration: '18:45', 
+                level: '中级', 
+                views: '8.5M', 
+                thumbnail: '🦍', 
+                color: '#00f3ff',
+                subtitle: 'Back Power Workout', 
+                desc: '引体向上 · 划船 · 背部宽度厚度',
+                youtubeId: 'H1F-UfC8MbE'
+            },
+            { 
+                id: '9gjQdR08E1E', 
+                title: '腿部高强度训练', 
+                duration: '22:00', 
+                level: '进阶', 
+                views: '6.2M', 
+                thumbnail: '🦵', 
+                color: '#00f3ff',
+                subtitle: 'Leg Day Intense', 
+                desc: '深蹲 · 硬拉 · 腿部力量爆发',
+                youtubeId: '9gjQdR08E1E'
+            }
         ],
         cardio: [
-            { id: 5, title: 'HIIT极限燃脂训练', duration: '20:00', level: '进阶', views: '35.2K', thumbnail: '🔥', color: '#ff6b35',
-              subtitle: 'HIIT Fat Burner', desc: '高强度间歇 · 20分钟极速燃脂 · 运动后持续耗氧' },
-            { id: 6, title: '有氧舞蹈活力训练', duration: '25:30', level: '入门', views: '28.7K', thumbnail: '💃', color: '#ff6b35',
-              subtitle: 'Aerobic Dance Flow', desc: '音乐律动 · 全身燃脂 · 提升心肺 · 快乐运动' },
-            { id: 7, title: '跳绳燃脂效率训练', duration: '15:00', level: '中级', views: '19.3K', thumbnail: '⚡', color: '#ff6b35',
-              subtitle: 'Jump Rope Burn', desc: '双摇进阶 · 节奏控制 · 小腿塑形 · 高效燃脂' }
+            { 
+                id: 'ml6cT4AZdqI', 
+                title: '30分钟HIIT燃脂', 
+                duration: '30:00', 
+                level: '中级', 
+                views: '112M', 
+                thumbnail: '🔥', 
+                color: '#ff6b35',
+                subtitle: 'HIIT Fat Burner', 
+                desc: '高强度间歇 · 极速燃脂 · 后燃效应',
+                youtubeId: 'ml6cT4AZdqI'
+            },
+            { 
+                id: '2MoGxTQmNIc', 
+                title: '15分钟有氧舞蹈', 
+                duration: '15:00', 
+                level: '入门', 
+                views: '38.9M', 
+                thumbnail: '💃', 
+                color: '#ff6b35',
+                subtitle: 'Dance Cardio', 
+                desc: '音乐律动 · 快乐燃脂 · 全身运动',
+                youtubeId: '2MoGxTQmNIc'
+            },
+            { 
+                id: 'L_xrDAtykMI', 
+                title: '10分钟跳绳燃脂', 
+                duration: '10:00', 
+                level: '中级', 
+                views: '15.3M', 
+                thumbnail: '⚡', 
+                color: '#ff6b35',
+                subtitle: 'Jump Rope HIIT', 
+                desc: '双摇 · 交叉跳 · 高效燃脂',
+                youtubeId: 'L_xrDAtykMI'
+            }
         ],
         yoga: [
-            { id: 8, title: '晨间唤醒流瑜伽', duration: '20:00', level: '入门', views: '42.1K', thumbnail: '🌅', color: '#9d4edd',
-              subtitle: 'Morning Flow Yoga', desc: '唤醒身体 · 舒展脊柱 · 开启能量满满的一天' },
-            { id: 9, title: '睡前深度放松瑜伽', duration: '15:30', level: '入门', views: '38.9K', thumbnail: '🌙', color: '#9d4edd',
-              subtitle: 'Sleep Yoga Relax', desc: '舒缓压力 · 改善睡眠 · 冥想放松 · 身心修复' },
-            { id: 10, title: '运动后拉伸恢复', duration: '12:00', level: '入门', views: '25.7K', thumbnail: '🌿', color: '#9d4edd',
-              subtitle: 'Post-Workout Stretch', desc: '全身拉伸 · 缓解酸痛 · 促进恢复 · 预防损伤' }
+            { 
+                id: 'v7AYKMP6rOE', 
+                title: '晨间唤醒瑜伽', 
+                duration: '20:00', 
+                level: '入门', 
+                views: '28.7M', 
+                thumbnail: '🌅', 
+                color: '#9d4edd',
+                subtitle: 'Morning Yoga Flow', 
+                desc: '唤醒身体 · 舒展脊柱 · 开启美好一天',
+                youtubeId: 'v7AYKMP6rOE'
+            },
+            { 
+                id: 'inpok4MKVLM', 
+                title: '睡前放松瑜伽', 
+                duration: '15:00', 
+                level: '入门', 
+                views: '22.4M', 
+                thumbnail: '🌙', 
+                color: '#9d4edd',
+                subtitle: 'Bedtime Yoga', 
+                desc: '舒缓压力 · 改善睡眠 · 身心修复',
+                youtubeId: 'inpok4MKVLM'
+            },
+            { 
+                id: 'sTANio_2E0Q', 
+                title: '全身拉伸放松', 
+                duration: '12:00', 
+                level: '入门', 
+                views: '18.9M', 
+                thumbnail: '🌿', 
+                color: '#9d4edd',
+                subtitle: 'Full Body Stretch', 
+                desc: '运动后恢复 · 缓解酸痛 · 柔韧训练',
+                youtubeId: 'sTANio_2E0Q'
+            }
         ]
     },
 
@@ -659,16 +759,16 @@ const UI = {
         }
 
         grid.innerHTML = videos.map(v => `
-            <div onclick="UI.openVideoPlayer(${v.id}, '${v.title}', '${v.subtitle}', '${v.duration}', '${v.level}', '${v.views}', '${v.thumbnail}', '${v.color}', '${v.desc}')" 
+            <div onclick="UI.openVideoPlayer('${v.id}', '${v.title}', '${v.subtitle}', '${v.duration}', '${v.level}', '${v.views}', '${v.thumbnail}', '${v.color}', '${v.desc}')" 
                  style="background: linear-gradient(145deg, rgba(15,18,30,0.9), rgba(8,10,15,0.95)); border-radius: 16px; overflow: hidden; border: 1px solid ${v.color}30; cursor: pointer; transition: all 0.3s;"
                  onmouseover="this.style.transform='translateY(-6px) scale(1.02)'; this.style.boxShadow='0 20px 50px ${v.color}25'; this.style.borderColor='${v.color}60';"
                  onmouseout="this.style.transform='translateY(0) scale(1)'; this.style.boxShadow='none'; this.style.borderColor='${v.color}30';"
             >
-                <div style="position: relative; aspect-ratio: 16/10; background: linear-gradient(135deg, ${v.color}25, ${v.color}05); display: flex; align-items: center; justify-content: center;">
-                    <div style="font-size: 48px; filter: drop-shadow(0 0 15px ${v.color});">${v.thumbnail}</div>
-                    <div style="position: absolute; bottom: 8px; right: 8px; background: rgba(0,0,0,0.85); padding: 4px 8px; border-radius: 6px; font-size: 11px; color: #fff; font-family: 'Orbitron', monospace; font-weight: 600;">${v.duration}</div>
-                    <div style="position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; background: rgba(0,0,0,0.5); opacity: 0; transition: opacity 0.3s;" class="play-overlay"
-                    >
+                <div style="position: relative; aspect-ratio: 16/10; background: linear-gradient(135deg, ${v.color}25, ${v.color}05); display: flex; align-items: center; justify-content: center; overflow: hidden;">
+                    <img src="https://img.youtube.com/vi/${v.youtubeId}/mqdefault.jpg" style="position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; opacity: 0.9; transition: transform 0.3s;" onmouseover="this.style.transform='scale(1.05)'" onmouseout="this.style.transform='scale(1)'" />
+                    <div style="position: absolute; inset: 0; background: rgba(0,0,0,0.3); transition: background 0.3s;" onmouseover="this.style.background='rgba(0,0,0,0.5)'" onmouseout="this.style.background='rgba(0,0,0,0.3)'"></div>
+                    <div style="position: absolute; bottom: 8px; right: 8px; background: rgba(0,0,0,0.85); padding: 4px 8px; border-radius: 6px; font-size: 11px; color: #fff; font-family: 'Orbitron', monospace; font-weight: 600; z-index: 1;">${v.duration}</div>
+                    <div style="position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; z-index: 1; pointer-events: none;">
                         <div style="width: 56px; height: 56px; background: ${v.color}; border-radius: 50%; display: flex; align-items: center; justify-content: center; box-shadow: 0 0 40px ${v.color}, 0 0 80px ${v.color}50; transition: transform 0.3s; transform: scale(0.9);">
                             <span style="font-size: 24px; margin-left: 4px; color: #000;">▶</span>
                         </div>
@@ -677,7 +777,7 @@ const UI = {
                 <div style="padding: 14px;">
                     <div style="font-size: 10px; color: ${v.color}; font-family: 'Orbitron', monospace; letter-spacing: 1px; margin-bottom: 6px; text-transform: uppercase; font-weight: 500;">${v.subtitle}</div>
                     <div style="font-size: 15px; font-weight: 700; color: #fff; margin-bottom: 8px; line-height: 1.3; display: -webkit-box; -webkit-line-clamp: 1; -webkit-box-orient: vertical; overflow: hidden;">${v.title}</div>
-                    <div style="font-size: 11px; color: #888; margin-bottom: 12px; line-height: 1.4;">${v.desc}</div>
+                    <div style="font-size: 11px; color: #888; margin-bottom: 12px; line-height: 1.4; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden;">${v.desc}</div>
                     <div style="display: flex; justify-content: space-between; align-items: center;">
                         <span style="font-size: 10px; color: ${v.color}; background: ${v.color}15; padding: 4px 12px; border-radius: 20px; font-weight: 500;">${v.level}</span>
                         <span style="font-size: 11px; color: #666; display: flex; align-items: center; gap: 4px;">
@@ -690,6 +790,15 @@ const UI = {
     },
 
     openVideoPlayer(id, title, subtitle, duration, level, views, thumbnail, color, desc) {
+        // 查找视频数据获取 YouTube ID
+        let videoData = null;
+        Object.values(this.fitnessVideos).forEach(category => {
+            const found = category.find(v => v.id === id);
+            if (found) videoData = found;
+        });
+        
+        const youtubeId = videoData ? videoData.youtubeId : id;
+        
         const player = document.createElement('div');
         player.style.cssText = `
             background: linear-gradient(180deg, rgba(10,12,20,0.98) 0%, rgba(5,5,8,1) 100%);
@@ -699,26 +808,31 @@ const UI = {
             border: 1px solid ${color}50;
             box-shadow: 0 0 60px ${color}20, 0 20px 50px rgba(0,0,0,0.5);
         `;
+        
         player.innerHTML = `
-            <div style="position: relative; aspect-ratio: 16/9; background: linear-gradient(135deg, ${color}40, #000); border-radius: 16px; display: flex; align-items: center; justify-content: center; margin-bottom: 20px; overflow: hidden;">
-                <div style="font-size: 80px; filter: drop-shadow(0 0 30px ${color});">${thumbnail}</div>
-                <div style="position: absolute; inset: 0; background: linear-gradient(to top, rgba(0,0,0,0.95) 0%, rgba(0,0,0,0.3) 50%, transparent 100%); display: flex; flex-direction: column; justify-content: flex-end; padding: 24px;"
-                >
-                    <div style="font-size: 10px; color: ${color}; font-family: 'Orbitron', monospace; letter-spacing: 2px; margin-bottom: 8px; text-transform: uppercase;">${subtitle}</div>
-                    <div style="font-size: 22px; font-weight: 700; color: #fff; margin-bottom: 8px; text-shadow: 0 2px 20px rgba(0,0,0,0.8);">${title}</div>
-                    <div style="font-size: 12px; color: #aaa; margin-bottom: 12px;">${desc}</div>
-                    <div style="display: flex; gap: 16px; font-size: 12px;">
-                        <span style="color: ${color}; display: flex; align-items: center; gap: 4px;">⏱ ${duration}</span>
-                        <span style="color: #888; display: flex; align-items: center; gap: 4px;">👁 ${views}</span>
-                        <span style="color: #888; display: flex; align-items: center; gap: 4px;">📊 ${level}</span>
-                    </div>
+            <div style="position: relative; aspect-ratio: 16/9; background: #000; border-radius: 16px; overflow: hidden; margin-bottom: 20px; box-shadow: 0 10px 40px rgba(0,0,0,0.5);">
+                <iframe 
+                    src="https://www.youtube.com/embed/${youtubeId}?autoplay=1&rel=0&modestbranding=1"
+                    style="position: absolute; inset: 0; width: 100%; height: 100%; border: none;"
+                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                    allowfullscreen
+                ></iframe>
+            </div>
+            <div style="margin-bottom: 16px;">
+                <div style="font-size: 10px; color: ${color}; font-family: 'Orbitron', monospace; letter-spacing: 2px; margin-bottom: 8px; text-transform: uppercase;">${subtitle}</div>
+                <div style="font-size: 20px; font-weight: 700; color: #fff; margin-bottom: 8px;">${title}</div>
+                <div style="font-size: 13px; color: #aaa; margin-bottom: 12px; line-height: 1.5;">${desc}</div>
+                <div style="display: flex; gap: 16px; font-size: 12px;">
+                    <span style="color: ${color}; display: flex; align-items: center; gap: 4px;">⏱ ${duration}</span>
+                    <span style="color: #888; display: flex; align-items: center; gap: 4px;">👁 ${views}</span>
+                    <span style="color: #888; display: flex; align-items: center; gap: 4px;">📊 ${level}</span>
                 </div>
             </div>
             <div style="display: flex; gap: 12px;">
                 <button onclick="UI.sendFitnessQuery('请给我详细的${title}训练指导，包括动作要领、组数次数建议和注意事项')" style="flex: 1; background: linear-gradient(135deg, ${color}, ${color}dd); border: none; border-radius: 12px; padding: 14px; color: #000; font-size: 15px; font-weight: 700; cursor: pointer; box-shadow: 0 4px 20px ${color}40; transition: all 0.3s;"
                 onmouseover="this.style.transform='translateY(-2px)'; this.style.boxShadow='0 8px 30px ${color}60';"
                 onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='0 4px 20px ${color}40';"
-                >▶ 开始训练</button>
+                >🤖 AI训练指导</button>
                 <button onclick="this.closest('.video-player').remove()" style="width: 48px; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.2); border-radius: 12px; color: #fff; font-size: 16px; cursor: pointer; transition: all 0.3s;"
                 onmouseover="this.style.background='rgba(255,255,255,0.1)'; this.style.borderColor='rgba(255,255,255,0.3)';"
                 onmouseout="this.style.background='rgba(255,255,255,0.05)'; this.style.borderColor='rgba(255,255,255,0.2)';"
