@@ -191,180 +191,300 @@ const UI = {
         }
     },
 
-    // 健身智能助手菜单
+    // 健身智能助手 - 高端卡片式界面
     showFitnessMenu() {
-        const menuText = `🏋️ **健身智能助手**\n\n请选择功能模块：`;
-        this.addMessage(menuText, 'bot');
-
-        setTimeout(() => {
-            this.addFitnessMenuButtons();
-        }, 300);
-    },
-
-    addFitnessMenuButtons() {
-        const menuDiv = document.createElement('div');
-        menuDiv.className = 'fitness-menu';
-        menuDiv.style.cssText = `
-            display: flex;
-            flex-direction: column;
-            gap: 12px;
-            margin: 12px 0;
-            padding: 0 20px;
+        // 创建主容器
+        const container = document.createElement('div');
+        container.className = 'fitness-hub';
+        container.style.cssText = `
+            background: linear-gradient(180deg, rgba(10,12,20,0.95) 0%, rgba(5,5,8,0.98) 100%);
+            border-radius: 20px;
+            padding: 24px;
+            margin: 16px 0;
+            border: 1px solid rgba(0,243,255,0.2);
+            box-shadow: 0 0 40px rgba(0,243,255,0.1), inset 0 1px 0 rgba(255,255,255,0.05);
         `;
 
-        const buttons = [
-            { icon: '🏋️', text: '健身训练教学', color: '#00f3ff', action: 'training' },
-            { icon: '🥗', text: '科学饮食推荐', color: '#00ff88', action: 'diet' },
-            { icon: '📊', text: '健身数据测算', color: '#ff00ff', action: 'data' }
+        // 标题区域
+        const header = document.createElement('div');
+        header.style.cssText = `
+            text-align: center;
+            margin-bottom: 24px;
+            padding-bottom: 20px;
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+        `;
+        header.innerHTML = `
+            <div style="font-size: 40px; margin-bottom: 12px;">🏋️</div>
+            <div style="font-family: 'Orbitron', monospace; font-size: 22px; font-weight: 700; color: #00f3ff; letter-spacing: 3px; text-transform: uppercase; text-shadow: 0 0 20px rgba(0,243,255,0.5);">FITNESS PRO</div>
+            <div style="font-size: 12px; color: #888; margin-top: 8px; letter-spacing: 2px;">AI 智能健身助手</div>
+        `;
+        container.appendChild(header);
+
+        // 三大功能模块卡片
+        const modulesGrid = document.createElement('div');
+        modulesGrid.style.cssText = `
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 16px;
+            margin-bottom: 20px;
+        `;
+
+        const modules = [
+            { 
+                icon: '💪', 
+                title: '训练', 
+                subtitle: 'Training',
+                desc: '增肌·减脂·塑形',
+                color: '#00f3ff',
+                gradient: 'linear-gradient(135deg, rgba(0,243,255,0.15), rgba(0,243,255,0.05))',
+                action: 'training'
+            },
+            { 
+                icon: '🥗', 
+                title: '饮食', 
+                subtitle: 'Nutrition',
+                desc: '科学饮食方案',
+                color: '#00ff88',
+                gradient: 'linear-gradient(135deg, rgba(0,255,136,0.15), rgba(0,255,136,0.05))',
+                action: 'diet'
+            },
+            { 
+                icon: '📊', 
+                title: '数据', 
+                subtitle: 'Metrics',
+                desc: 'BMI·代谢·热量',
+                color: '#ff00ff',
+                gradient: 'linear-gradient(135deg, rgba(255,0,255,0.15), rgba(255,0,255,0.05))',
+                action: 'data'
+            }
         ];
 
-        buttons.forEach(btn => {
-            const button = document.createElement('button');
-            button.style.cssText = `
-                background: linear-gradient(135deg, rgba(10,12,20,0.9), rgba(10,12,20,0.7));
-                border: 1px solid ${btn.color};
-                border-radius: 12px;
-                padding: 16px 20px;
-                color: white;
-                font-family: 'Noto Sans SC', sans-serif;
-                font-size: 16px;
+        modules.forEach(mod => {
+            const card = document.createElement('div');
+            card.style.cssText = `
+                background: ${mod.gradient};
+                border: 1px solid ${mod.color}40;
+                border-radius: 16px;
+                padding: 20px 12px;
+                text-align: center;
                 cursor: pointer;
+                transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+                position: relative;
+                overflow: hidden;
+            `;
+            card.innerHTML = `
+                <div style="font-size: 32px; margin-bottom: 8px; filter: drop-shadow(0 0 10px ${mod.color});">${mod.icon}</div>
+                <div style="font-family: 'Orbitron', monospace; font-size: 14px; font-weight: 700; color: ${mod.color}; letter-spacing: 2px;">${mod.title}</div>
+                <div style="font-size: 10px; color: ${mod.color}80; margin-top: 4px; text-transform: uppercase; letter-spacing: 1px;">${mod.subtitle}</div>
+                <div style="font-size: 11px; color: #888; margin-top: 8px;">${mod.desc}</div>
+            `;
+            card.onmouseover = () => {
+                card.style.transform = 'translateY(-4px) scale(1.02)';
+                card.style.boxShadow = `0 10px 30px ${mod.color}30, 0 0 0 1px ${mod.color}60`;
+                card.style.borderColor = mod.color;
+            };
+            card.onmouseout = () => {
+                card.style.transform = 'translateY(0) scale(1)';
+                card.style.boxShadow = 'none';
+                card.style.borderColor = `${mod.color}40`;
+            };
+            card.onclick = () => {
+                container.remove();
+                this.showFitnessDetail(mod.action);
+            };
+            modulesGrid.appendChild(card);
+        });
+        container.appendChild(modulesGrid);
+
+        // 快速入口
+        const quickAccess = document.createElement('div');
+        quickAccess.style.cssText = `
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 12px;
+            margin-top: 20px;
+            padding-top: 20px;
+            border-top: 1px solid rgba(255,255,255,0.1);
+        `;
+
+        const quickItems = [
+            { icon: '🎯', label: '新手入门', prompt: '我是健身新手，请给我一套完整的入门指南' },
+            { icon: '🔥', label: '今日计划', prompt: '给我今天的健身计划建议' },
+            { icon: '⚡', label: '快速测算', prompt: '帮我计算BMI和每日热量需求' },
+            { icon: '🍎', label: '饮食建议', prompt: '给我今天的饮食建议' }
+        ];
+
+        quickItems.forEach(item => {
+            const btn = document.createElement('div');
+            btn.style.cssText = `
+                background: rgba(255,255,255,0.03);
+                border: 1px solid rgba(255,255,255,0.1);
+                border-radius: 12px;
+                padding: 14px;
                 display: flex;
                 align-items: center;
                 gap: 12px;
-                box-shadow: 0 0 15px ${btn.color}20;
-                transition: all 0.3s ease;
+                cursor: pointer;
+                transition: all 0.2s ease;
             `;
-            button.innerHTML = `<span style="font-size: 24px;">${btn.icon}</span><span style="color: ${btn.color}; font-weight: 600;">${btn.text}</span>`;
-            button.onmouseover = () => {
-                button.style.boxShadow = `0 0 25px ${btn.color}40`;
-                button.style.transform = 'translateY(-2px)';
+            btn.innerHTML = `
+                <span style="font-size: 24px;">${item.icon}</span>
+                <span style="font-size: 14px; color: #e0e0e0; font-weight: 500;">${item.label}</span>
+            `;
+            btn.onmouseover = () => {
+                btn.style.background = 'rgba(0,243,255,0.1)';
+                btn.style.borderColor = 'rgba(0,243,255,0.3)';
             };
-            button.onmouseout = () => {
-                button.style.boxShadow = `0 0 15px ${btn.color}20`;
-                button.style.transform = 'translateY(0)';
+            btn.onmouseout = () => {
+                btn.style.background = 'rgba(255,255,255,0.03)';
+                btn.style.borderColor = 'rgba(255,255,255,0.1)';
             };
-            button.onclick = () => this.showFitnessSubMenu(btn.action);
-            menuDiv.appendChild(button);
+            btn.onclick = () => {
+                container.remove();
+                this.addMessage(`${item.icon} ${item.label}`, 'user');
+                this.sendFitnessQuery(item.prompt);
+            };
+            quickAccess.appendChild(btn);
         });
+        container.appendChild(quickAccess);
 
-        this.messages.appendChild(menuDiv);
+        this.messages.appendChild(container);
         this.scrollToBottom();
     },
 
-    showFitnessSubMenu(category) {
-        const oldMenu = document.querySelector('.fitness-menu');
-        if (oldMenu) oldMenu.remove();
-
-        const subMenus = {
+    // 健身详情页
+    showFitnessDetail(category) {
+        const detailData = {
             training: {
-                title: '🏋️ 健身训练教学',
-                options: [
-                    { icon: '🌱', text: '新手零基础训练', prompt: '我是健身新手，请给我一套零基础入门训练计划' },
-                    { icon: '💪', text: '增肌训练计划 & 动作教学', prompt: '我想增肌，请提供增肌训练计划和动作教学' },
-                    { icon: '🔥', text: '减脂训练计划 & 动作教学', prompt: '我想减脂，请提供减脂训练计划和动作教学' },
-                    { icon: '🧘', text: '拉伸与放松指导', prompt: '请给我一套运动后的拉伸放松指导' }
+                title: '训练教学',
+                subtitle: 'TRAINING CENTER',
+                color: '#00f3ff',
+                items: [
+                    { icon: '🌱', title: '新手入门', desc: '零基础起步指南', prompt: '我是健身新手，请给我一套零基础入门训练计划，包括动作教学和注意事项' },
+                    { icon: '💪', title: '增肌训练', desc: '力量训练计划', prompt: '我想增肌，请提供详细的增肌训练计划和每个动作的教学' },
+                    { icon: '🔥', title: '减脂训练', desc: '燃脂塑形方案', prompt: '我想减脂，请提供高效的减脂训练计划和动作教学' },
+                    { icon: '🧘', title: '拉伸放松', desc: '恢复与柔韧性', prompt: '请给我一套完整的拉伸放松指导，包括运动前后的拉伸动作' },
+                    { icon: '📅', title: '周期计划', desc: '周/月训练安排', prompt: '请给我一周的健身训练计划安排' },
+                    { icon: '🏃', title: '有氧运动', desc: '跑步·骑行·游泳', prompt: '请给我有氧运动的训练建议和计划' }
                 ]
             },
             diet: {
-                title: '🥗 科学饮食推荐',
-                options: [
-                    { icon: '🥩', text: '增肌饮食方案', prompt: '我正在增肌，请给我科学饮食方案和食谱推荐' },
-                    { icon: '🥗', text: '减脂饮食方案', prompt: '我正在减脂，请给我低热量饮食方案和食谱' },
-                    { icon: '🍎', text: '日常健康饮食原则', prompt: '请给我日常健康饮食的基本原则和建议' }
+                title: '饮食管理',
+                subtitle: 'NUTRITION HUB',
+                color: '#00ff88',
+                items: [
+                    { icon: '🥩', title: '增肌饮食', desc: '高蛋白饮食方案', prompt: '我正在增肌，请给我详细的增肌饮食方案和食谱推荐，包括每日营养配比' },
+                    { icon: '🥗', title: '减脂饮食', desc: '低热量饮食计划', prompt: '我正在减脂，请给我低热量饮食方案和食谱，包括每日热量控制建议' },
+                    { icon: '⚖️', title: '饮食原则', desc: '营养搭配基础', prompt: '请给我日常健康饮食的基本原则和营养搭配建议' },
+                    { icon: '🥤', title: '补剂指南', desc: '蛋白粉·肌酸等', prompt: '请给我健身补剂的使用指南和建议' },
+                    { icon: '🍽️', title: '一日食谱', desc: '完整饮食安排', prompt: '请给我今天的完整饮食安排，包括三餐和加餐' },
+                    { icon: '📊', title: '宏量计算', desc: '蛋白质·碳水·脂肪', prompt: '请帮我计算每日需要的蛋白质、碳水和脂肪摄入量' }
                 ]
             },
             data: {
-                title: '📊 健身数据测算',
-                options: [
-                    { icon: '⚖️', text: 'BMI 计算', prompt: '请帮我计算BMI并解释结果含义' },
-                    { icon: '🔥', text: '基础代谢率 (BMR) 测算', prompt: '请帮我计算基础代谢率(BMR)并解释' },
-                    { icon: '📈', text: '每日热量需求计算', prompt: '请帮我计算每日热量需求并提供建议' }
+                title: '数据测算',
+                subtitle: 'BODY METRICS',
+                color: '#ff00ff',
+                items: [
+                    { icon: '⚖️', title: 'BMI 计算', desc: '身体质量指数', prompt: '请帮我计算BMI并详细解释结果含义和健康建议' },
+                    { icon: '🔥', title: '基础代谢', desc: 'BMR 测算', prompt: '请帮我计算基础代谢率(BMR)并解释影响因素' },
+                    { icon: '📈', title: '热量需求', desc: 'TDEE 每日总消耗', prompt: '请帮我计算每日总热量需求(TDEE)并提供饮食建议' },
+                    { icon: '💧', title: '水分计算', desc: '每日饮水建议', prompt: '请帮我计算每日建议饮水量' },
+                    { icon: '🎯', title: '目标设定', desc: '科学目标规划', prompt: '请帮我制定科学的健身目标和时间规划' },
+                    { icon: '📉', title: '进度追踪', desc: '记录与分析', prompt: '请给我健身进度追踪的方法和建议' }
                 ]
             }
         };
 
-        const menu = subMenus[category];
-        if (!menu) return;
+        const data = detailData[category];
+        if (!data) return;
 
-        this.addMessage(`**${menu.title}**\n\n请选择具体功能：`, 'bot');
+        // 创建详情容器
+        const container = document.createElement('div');
+        container.className = 'fitness-detail';
+        container.style.cssText = `
+            background: linear-gradient(180deg, rgba(10,12,20,0.95) 0%, rgba(5,5,8,0.98) 100%);
+            border-radius: 20px;
+            padding: 24px;
+            margin: 16px 0;
+            border: 1px solid ${data.color}40;
+            box-shadow: 0 0 40px ${data.color}15, inset 0 1px 0 rgba(255,255,255,0.05);
+        `;
 
-        setTimeout(() => {
-            const subMenuDiv = document.createElement('div');
-            subMenuDiv.className = 'fitness-submenu';
-            subMenuDiv.style.cssText = `
-                display: flex;
-                flex-direction: column;
-                gap: 8px;
-                margin: 12px 0;
-                padding: 0 20px 0 40px;
-            `;
+        // 头部
+        const header = document.createElement('div');
+        header.style.cssText = `
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 24px;
+            padding-bottom: 20px;
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+        `;
+        header.innerHTML = `
+            <div>
+                <div style="font-family: 'Orbitron', monospace; font-size: 20px; font-weight: 700; color: ${data.color}; letter-spacing: 2px;">${data.title}</div>
+                <div style="font-size: 11px; color: ${data.color}80; letter-spacing: 3px; margin-top: 4px;">${data.subtitle}</div>
+            </div>
+            <button class="back-btn" style="background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.2); border-radius: 8px; padding: 8px 16px; color: #888; font-size: 13px; cursor: pointer; transition: all 0.2s;">← 返回</button>
+        `;
+        header.querySelector('.back-btn').onclick = () => {
+            container.remove();
+            this.showFitnessMenu();
+        };
+        container.appendChild(header);
 
-            menu.options.forEach(opt => {
-                const button = document.createElement('button');
-                button.style.cssText = `
-                    background: rgba(255,255,255,0.05);
-                    border: 1px solid rgba(255,255,255,0.1);
-                    border-radius: 8px;
-                    padding: 12px 16px;
-                    color: #e0e0e0;
-                    font-family: 'Noto Sans SC', sans-serif;
-                    font-size: 14px;
-                    cursor: pointer;
-                    display: flex;
-                    align-items: center;
-                    gap: 10px;
-                    text-align: left;
-                    transition: all 0.2s ease;
-                `;
-                button.innerHTML = `<span>${opt.icon}</span><span>${opt.text}</span>`;
-                button.onmouseover = () => {
-                    button.style.background = 'rgba(255,255,255,0.1)';
-                    button.style.borderColor = 'rgba(0,243,255,0.3)';
-                };
-                button.onmouseout = () => {
-                    button.style.background = 'rgba(255,255,255,0.05)';
-                    button.style.borderColor = 'rgba(255,255,255,0.1)';
-                };
-                button.onclick = () => {
-                    subMenuDiv.remove();
-                    this.addMessage(`${opt.icon} ${opt.text}`, 'user');
-                    this.sendFitnessQuery(opt.prompt);
-                };
-                subMenuDiv.appendChild(button);
-            });
+        // 功能卡片网格
+        const grid = document.createElement('div');
+        grid.style.cssText = `
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 16px;
+        `;
 
-            const backBtn = document.createElement('button');
-            backBtn.style.cssText = `
-                background: transparent;
-                border: 1px dashed rgba(255,255,255,0.2);
-                border-radius: 8px;
-                padding: 10px 16px;
-                color: #888;
-                font-family: 'Noto Sans SC', sans-serif;
-                font-size: 13px;
+        data.items.forEach(item => {
+            const card = document.createElement('div');
+            card.style.cssText = `
+                background: linear-gradient(135deg, rgba(15,18,30,0.8), rgba(10,12,20,0.9));
+                border: 1px solid ${data.color}30;
+                border-radius: 16px;
+                padding: 20px;
                 cursor: pointer;
-                margin-top: 8px;
-                transition: all 0.2s ease;
+                transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+                position: relative;
+                overflow: hidden;
             `;
-            backBtn.innerHTML = '← 返回主菜单';
-            backBtn.onmouseover = () => {
-                backBtn.style.borderColor = 'rgba(255,255,255,0.4)';
-                backBtn.style.color = '#aaa';
+            card.innerHTML = `
+                <div style="display: flex; align-items: flex-start; gap: 16px;">
+                    <div style="font-size: 36px; filter: drop-shadow(0 0 8px ${data.color});">${item.icon}</div>
+                    <div style="flex: 1;">
+                        <div style="font-size: 16px; font-weight: 600; color: #fff; margin-bottom: 6px;">${item.title}</div>
+                        <div style="font-size: 12px; color: #888; line-height: 1.5;">${item.desc}</div>
+                    </div>
+                    <div style="color: ${data.color}; font-size: 20px;">→</div>
+                </div>
+            `;
+            card.onmouseover = () => {
+                card.style.transform = 'translateY(-3px)';
+                card.style.boxShadow = `0 8px 25px ${data.color}20`;
+                card.style.borderColor = `${data.color}60`;
             };
-            backBtn.onmouseout = () => {
-                backBtn.style.borderColor = 'rgba(255,255,255,0.2)';
-                backBtn.style.color = '#888';
+            card.onmouseout = () => {
+                card.style.transform = 'translateY(0)';
+                card.style.boxShadow = 'none';
+                card.style.borderColor = `${data.color}30`;
             };
-            backBtn.onclick = () => {
-                subMenuDiv.remove();
-                this.showFitnessMenu();
+            card.onclick = () => {
+                container.remove();
+                this.addMessage(`${item.icon} ${item.title}`, 'user');
+                this.sendFitnessQuery(item.prompt);
             };
-            subMenuDiv.appendChild(backBtn);
+            grid.appendChild(card);
+        });
+        container.appendChild(grid);
 
-            this.messages.appendChild(subMenuDiv);
-            this.scrollToBottom();
-        }, 300);
+        this.messages.appendChild(container);
+        this.scrollToBottom();
     },
 
     async sendFitnessQuery(prompt) {
