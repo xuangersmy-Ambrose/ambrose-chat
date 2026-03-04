@@ -165,11 +165,15 @@
         }
         
         .brand-name {
-            font-size: 20px;
+            font-size: 24px;
             font-weight: 700;
             color: var(--primary);
-            letter-spacing: 2px;
+            letter-spacing: 4px;
             text-transform: uppercase;
+            text-shadow: 
+                0 0 10px var(--primary),
+                0 0 20px var(--primary),
+                0 0 40px var(--primary);
         }
         
         .brand-sub {
@@ -186,17 +190,31 @@
         }
         
         .clock-time {
-            font-size: 18px;
+            font-size: 28px;
             font-weight: 700;
             color: var(--primary);
-            letter-spacing: 2px;
-            text-shadow: 0 0 10px var(--primary);
+            letter-spacing: 3px;
+            text-shadow: 
+                0 0 10px var(--primary),
+                0 0 20px var(--primary),
+                0 0 40px var(--primary);
+            animation: pulse-glow 2s ease-in-out infinite;
+        }
+        
+        @keyframes pulse-glow {
+            0%, 100% { 
+                text-shadow: 0 0 10px var(--primary), 0 0 20px var(--primary);
+            }
+            50% { 
+                text-shadow: 0 0 20px var(--primary), 0 0 40px var(--primary), 0 0 60px var(--primary);
+            }
         }
         
         .clock-date {
-            font-size: 10px;
+            font-size: 11px;
             color: var(--text-secondary);
-            letter-spacing: 1px;
+            letter-spacing: 2px;
+            margin-top: 4px;
         }
         
         .clock-label {
@@ -204,6 +222,7 @@
             color: var(--secondary);
             letter-spacing: 2px;
             text-transform: uppercase;
+            margin-bottom: 4px;
         }
         
         /* 消息区域 */
@@ -242,16 +261,24 @@
         .message {
             display: flex;
             margin-bottom: 16px;
-            animation: message-in 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            animation: message-pop 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
+            transition: transform 0.2s ease;
         }
         
-        @keyframes message-in {
-            from {
-                opacity: 0;
-                transform: translateY(20px) scale(0.95);
+        .message:hover {
+            transform: translateY(-2px);
+        }
+        
+        @keyframes message-pop {
+            0% { 
+                opacity: 0; 
+                transform: translateY(20px) scale(0.9);
             }
-            to {
-                opacity: 1;
+            70% {
+                transform: translateY(-4px) scale(1.02);
+            }
+            100% { 
+                opacity: 1; 
                 transform: translateY(0) scale(1);
             }
         }
@@ -305,6 +332,15 @@
             box-shadow: 
                 0 4px 15px rgba(0, 243, 255, 0.1),
                 inset 0 1px 0 rgba(255, 255, 255, 0.1);
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        
+        .message.user:hover .msg-bubble {
+            box-shadow: 
+                0 8px 25px rgba(0, 243, 255, 0.2),
+                inset 0 1px 0 rgba(255, 255, 255, 0.15);
+            border-color: rgba(0, 243, 255, 0.6);
+            transform: translateY(-1px);
         }
         
         .message.bot .msg-bubble {
@@ -313,6 +349,15 @@
             box-shadow: 
                 0 4px 15px rgba(255, 0, 160, 0.1),
                 inset 0 1px 0 rgba(255, 255, 255, 0.1);
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        
+        .message.bot:hover .msg-bubble {
+            box-shadow: 
+                0 8px 25px rgba(255, 0, 160, 0.2),
+                inset 0 1px 0 rgba(255, 255, 255, 0.15);
+            border-color: rgba(255, 0, 160, 0.6);
+            transform: translateY(-1px);
         }
         
         .msg-text {
@@ -338,27 +383,34 @@
             font-size: 9px;
         }
         
-        /* 加载动画 */
+        /* 加载动画 - 科技风 */
         .typing-indicator {
             display: flex;
-            gap: 4px;
-            padding: 8px 4px;
+            gap: 6px;
+            padding: 12px 8px;
+            align-items: center;
         }
         
-        .typing-dot {
-            width: 8px;
-            height: 8px;
-            background: var(--secondary);
-            border-radius: 50%;
-            animation: typing-bounce 1.4s infinite;
+        .typing-bar {
+            width: 4px;
+            height: 20px;
+            background: linear-gradient(180deg, var(--secondary), var(--accent));
+            border-radius: 2px;
+            animation: cyber-wave 1.2s ease-in-out infinite;
         }
         
-        .typing-dot:nth-child(2) { animation-delay: 0.2s; }
-        .typing-dot:nth-child(3) { animation-delay: 0.4s; }
+        .typing-bar:nth-child(2) { animation-delay: 0.1s; }
+        .typing-bar:nth-child(3) { animation-delay: 0.2s; }
         
-        @keyframes typing-bounce {
-            0%, 60%, 100% { transform: translateY(0); opacity: 0.4; }
-            30% { transform: translateY(-10px); opacity: 1; }
+        @keyframes cyber-wave {
+            0%, 60%, 100% { 
+                transform: scaleY(0.6);
+                opacity: 0.4;
+            }
+            30% { 
+                transform: scaleY(1);
+                opacity: 1;
+            }
         }
         
         /* 输入区域 */
@@ -379,6 +431,15 @@
             border-radius: 16px;
             padding: 8px 12px;
             box-shadow: inset 0 2px 10px rgba(0, 0, 0, 0.3);
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        
+        .input-wrapper:focus-within {
+            box-shadow: 
+                0 0 0 1px rgba(0, 243, 255, 0.5),
+                0 0 30px rgba(0, 243, 255, 0.2),
+                inset 0 2px 10px rgba(0, 0, 0, 0.2);
+            border-color: rgba(0, 243, 255, 0.6);
         }
         
         .message-input {
@@ -415,17 +476,26 @@
             box-shadow: 
                 0 4px 15px rgba(0, 243, 255, 0.3),
                 inset 0 1px 0 rgba(255, 255, 255, 0.3);
-            transition: all 0.3s;
+            transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        
+        .send-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 
+                0 6px 25px rgba(0, 243, 255, 0.5),
+                inset 0 1px 0 rgba(255, 255, 255, 0.4);
         }
         
         .send-button:active {
-            transform: scale(0.95);
+            transform: translateY(0) scale(0.95);
             box-shadow: 0 2px 8px rgba(0, 243, 255, 0.3);
         }
         
         .send-button:disabled {
-            opacity: 0.5;
+            opacity: 0.3;
             cursor: not-allowed;
+            transform: none;
+            box-shadow: none;
         }
         
         /* 退出按钮 */
@@ -447,6 +517,52 @@
             background: rgba(255, 0, 160, 0.2);
             box-shadow: 0 0 15px rgba(255, 0, 160, 0.3);
         }
+        /* 状态指示器 */
+        .status-indicator {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            font-family: 'Rajdhani', monospace;
+            font-size: 10px;
+            color: var(--text-secondary);
+            letter-spacing: 1px;
+        }
+        
+        .status-dot {
+            width: 8px;
+            height: 8px;
+            background: #00ff88;
+            border-radius: 50%;
+            box-shadow: 0 0 10px #00ff88;
+            animation: status-pulse 2s ease-in-out infinite;
+        }
+        
+        @keyframes status-pulse {
+            0%, 100% { 
+                opacity: 1;
+                box-shadow: 0 0 10px #00ff88;
+            }
+            50% { 
+                opacity: 0.6;
+                box-shadow: 0 0 20px #00ff88, 0 0 30px #00ff88;
+            }
+        }
+        
+        .network-icon {
+            font-size: 12px;
+            color: var(--primary);
+            margin-left: 4px;
+        }
+        
+        /* 版本标签 */
+        .version-tag {
+            font-family: 'Rajdhani', monospace;
+            font-size: 9px;
+            color: var(--text-dim);
+            letter-spacing: 1px;
+            margin-top: 2px;
+        }
+
     </style>
 </head>
 <body>
@@ -462,17 +578,25 @@
                 <div class="brand-icon">🧰</div>
                 <div class="brand-text">
                     <div class="brand-name">AMBROSE</div>
-                    <div class="brand-sub">NEURAL LINK v2.0</div>
+                    <div class="version-tag">NEURAL LINK v2.0</div>
                 </div>
             </div>
             
-            <div class="clock-display">
-                <div class="clock-label">SYSTEM TIME</div>
-                <div class="clock-time" id="clock">--:--:--</div>
-                <div class="clock-date" id="date">----/--/--</div>
+            <div style="display: flex; align-items: center; gap: 16px;">
+                <div class="status-indicator">
+                    <div class="status-dot"></div>
+                    <span>ONLINE</span>
+                </div>
+                
+                <div class="clock-display">
+                    <div class="clock-time" id="clock">--:--:--</div>
+                    <div class="clock-date" id="date">----/--/--</div>
+                </div>
+                
+                <span class="network-icon">📡</span>
+                
+                <button class="logout-btn" onclick="Auth.logout()">切换身份</button>
             </div>
-            
-            <button class="logout-btn" onclick="Auth.logout()">切换身份</button>
         </div>
         
         <!-- 消息区域 -->
@@ -488,14 +612,62 @@
     </div>
     
     <script>
-        // 生成粒子
+        // 分层粒子系统 - 3层深度
         const particlesContainer = document.getElementById('particles');
-        for (let i = 0; i < 30; i++) {
+        
+        // 背景层 - 大粒子，慢速
+        for (let i = 0; i < 20; i++) {
             const particle = document.createElement('div');
-            particle.className = 'particle';
-            particle.style.left = Math.random() * 100 + '%';
-            particle.style.animationDelay = Math.random() * 10 + 's';
-            particle.style.animationDuration = (8 + Math.random() * 6) + 's';
+            particle.className = 'particle layer-back';
+            particle.style.cssText = `
+                position: absolute;
+                width: ${3 + Math.random() * 2}px;
+                height: ${3 + Math.random() * 2}px;
+                background: rgba(0, 243, 255, ${0.3 + Math.random() * 0.3});
+                border-radius: 50%;
+                left: ${Math.random() * 100}%;
+                top: ${Math.random() * 100}%;
+                animation: float-up ${12 + Math.random() * 8}s linear infinite;
+                animation-delay: ${Math.random() * 10}s;
+                filter: blur(1px);
+            `;
+            particlesContainer.appendChild(particle);
+        }
+        
+        // 中景层 - 中粒子，中速
+        for (let i = 0; i < 15; i++) {
+            const particle = document.createElement('div');
+            particle.className = 'particle layer-mid';
+            particle.style.cssText = `
+                position: absolute;
+                width: ${2 + Math.random() * 1.5}px;
+                height: ${2 + Math.random() * 1.5}px;
+                background: rgba(255, 0, 160, ${0.4 + Math.random() * 0.3});
+                border-radius: 50%;
+                left: ${Math.random() * 100}%;
+                top: ${Math.random() * 100}%;
+                animation: float-up ${8 + Math.random() * 6}s linear infinite;
+                animation-delay: ${Math.random() * 8}s;
+            `;
+            particlesContainer.appendChild(particle);
+        }
+        
+        // 前景层 - 小粒子，快速
+        for (let i = 0; i < 5; i++) {
+            const particle = document.createElement('div');
+            particle.className = 'particle layer-front';
+            particle.style.cssText = `
+                position: absolute;
+                width: ${1 + Math.random()}px;
+                height: ${1 + Math.random()}px;
+                background: rgba(255, 255, 255, ${0.5 + Math.random() * 0.5});
+                border-radius: 50%;
+                left: ${Math.random() * 100}%;
+                top: ${Math.random() * 100}%;
+                animation: float-up ${5 + Math.random() * 4}s linear infinite;
+                animation-delay: ${Math.random() * 5}s;
+                box-shadow: 0 0 4px rgba(255, 255, 255, 0.8);
+            `;
             particlesContainer.appendChild(particle);
         }
     </script>

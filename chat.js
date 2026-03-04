@@ -222,7 +222,7 @@ const UI = {
             hints = '\n\n💡 可用指令：\n• 发送"统计"查看使用情况\n• 发送"改设计:描述"请求界面更改';
         }
         
-        this.addMessage(`${greeting}，我是 AMBROSE。\n\n当前时间：${TimeUtil.getFullTimestamp()}${hints}\n\n有什么可以帮你的？`, 'bot');
+        this.addMessage(`${greeting}，我是 AMBROSE。${hints}\n\n有什么可以帮你的？`, 'bot');
     },
     
     bindEvents() {
@@ -358,10 +358,10 @@ const UI = {
         div.innerHTML = `
             <div class="avatar">🧰</div>
             <div class="bubble">
-                <div class="typing">
-                    <span></span>
-                    <span></span>
-                    <span></span>
+                <div class="typing-indicator">
+                    <div class="typing-bar"></div>
+                    <div class="typing-bar"></div>
+                    <div class="typing-bar"></div>
                 </div>
             </div>
         `;
