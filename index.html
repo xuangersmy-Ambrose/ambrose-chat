@@ -2,84 +2,120 @@
 <html lang="zh-CN">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-    <title>AMBROSE // CYBERPUNK</title>
-    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Noto+Sans+SC:wght@300;400;700&display=swap" rel="stylesheet">
+    <meta name="theme-color" content="#0a0a0f">
+    <title>AMBROSE | NEURAL LINK</title>
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;700;900&family=Rajdhani:wght@400;500;600;700&family=Noto+Sans+SC:wght@300;400;500;700&display=swap" rel="stylesheet">
     <style>
         :root {
-            --neon-blue: #00f3ff;
-            --neon-pink: #ff00ff;
-            --neon-purple: #b829dd;
-            --neon-cyan: #00ffff;
-            --dark-bg: #0a0a0f;
-            --darker-bg: #050508;
-            --grid-color: rgba(0, 243, 255, 0.05);
-            --text-primary: #e0e0e0;
-            --text-secondary: #888;
-            --glitch-red: #ff0040;
-            --glitch-blue: #00ffff;
+            --primary: #00f3ff;
+            --secondary: #ff00a0;
+            --accent: #b829dd;
+            --warning: #ffaa00;
+            --danger: #ff0040;
+            --bg-dark: #050508;
+            --bg-panel: rgba(10, 12, 20, 0.95);
+            --bg-glass: rgba(15, 18, 30, 0.85);
+            --text-primary: #ffffff;
+            --text-secondary: #8899aa;
+            --text-dim: #556677;
+            --border-glow: rgba(0, 243, 255, 0.5);
+            --shadow-primary: 0 0 20px rgba(0, 243, 255, 0.4);
+            --shadow-secondary: 0 0 20px rgba(255, 0, 160, 0.4);
         }
         
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent;
         }
         
-        body {
-            font-family: 'Noto Sans SC', sans-serif;
-            background: var(--dark-bg);
+        html, body {
+            height: 100%;
+            font-family: 'Noto Sans SC', 'Rajdhani', sans-serif;
+            background: var(--bg-dark);
             color: var(--text-primary);
-            height: 100vh;
             overflow: hidden;
-            position: relative;
         }
         
-        /* 赛博朋克网格背景 */
-        body::before {
-            content: '';
+        /* 动态背景 */
+        .bg-grid {
             position: fixed;
             top: 0;
             left: 0;
             right: 0;
             bottom: 0;
             background-image: 
-                linear-gradient(var(--grid-color) 1px, transparent 1px),
-                linear-gradient(90deg, var(--grid-color) 1px, transparent 1px);
-            background-size: 50px 50px;
-            pointer-events: none;
-            z-index: 0;
+                linear-gradient(rgba(0, 243, 255, 0.03) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(0, 243, 255, 0.03) 1px, transparent 1px);
+            background-size: 40px 40px;
+            perspective: 1000px;
+            animation: grid-move 20s linear infinite;
         }
         
-        /* 扫描线效果 */
-        body::after {
-            content: '';
+        @keyframes grid-move {
+            0% { transform: translateY(0); }
+            100% { transform: translateY(40px); }
+        }
+        
+        /* 粒子效果 */
+        .particles {
             position: fixed;
             top: 0;
             left: 0;
             right: 0;
             bottom: 0;
-            background: repeating-linear-gradient(
-                0deg,
-                rgba(0, 0, 0, 0.15),
-                rgba(0, 0, 0, 0.15) 1px,
-                transparent 1px,
-                transparent 2px
-            );
             pointer-events: none;
-            z-index: 1000;
-            animation: scanline 8s linear infinite;
+            overflow: hidden;
         }
         
-        @keyframes scanline {
-            0% { transform: translateY(0); }
+        .particle {
+            position: absolute;
+            width: 2px;
+            height: 2px;
+            background: var(--primary);
+            border-radius: 50%;
+            opacity: 0;
+            animation: float-up 10s infinite;
+        }
+        
+        @keyframes float-up {
+            0% { 
+                transform: translateY(100vh) translateX(0);
+                opacity: 0;
+            }
+            10% { opacity: 0.6; }
+            90% { opacity: 0.6; }
+            100% { 
+                transform: translateY(-100px) translateX(50px);
+                opacity: 0;
+            }
+        }
+        
+        /* 扫描线 */
+        .scanline {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(90deg, transparent, var(--primary), transparent);
+            opacity: 0.3;
+            animation: scan 4s linear infinite;
+            pointer-events: none;
+            z-index: 9999;
+        }
+        
+        @keyframes scan {
+            0% { transform: translateY(-100%); }
             100% { transform: translateY(100vh); }
         }
         
         /* 容器 */
-        .container {
+        .app-container {
             display: flex;
             flex-direction: column;
             height: 100vh;
@@ -87,120 +123,136 @@
             z-index: 1;
         }
         
-        /* 顶部标题栏 */
-        .header {
-            background: linear-gradient(180deg, rgba(10,10,15,0.95) 0%, rgba(10,10,15,0.8) 100%);
-            border-bottom: 2px solid var(--neon-blue);
-            padding: 16px 20px;
-            padding-top: max(16px, env(safe-area-inset-top));
+        /* 顶部状态栏 */
+        .status-bar {
+            background: var(--bg-panel);
+            border-bottom: 1px solid rgba(0, 243, 255, 0.3);
+            padding: 12px 20px;
+            padding-top: max(12px, env(safe-area-inset-top));
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            backdrop-filter: blur(20px);
+            box-shadow: 0 4px 30px rgba(0, 0, 0, 0.5);
+        }
+        
+        .brand {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        
+        .brand-icon {
+            width: 40px;
+            height: 40px;
+            background: linear-gradient(135deg, var(--primary), var(--accent));
+            border-radius: 8px;
             display: flex;
             align-items: center;
             justify-content: center;
-            position: relative;
-            backdrop-filter: blur(10px);
-            box-shadow: 0 0 20px rgba(0, 243, 255, 0.3);
-        }
-        
-        .header::before,
-        .header::after {
-            content: '';
-            position: absolute;
-            bottom: -2px;
-            width: 30%;
-            height: 2px;
-            background: linear-gradient(90deg, transparent, var(--neon-pink), transparent);
+            font-size: 24px;
+            box-shadow: var(--shadow-primary);
             animation: pulse-glow 2s ease-in-out infinite;
         }
         
-        .header::before { left: 0; }
-        .header::after { right: 0; }
-        
         @keyframes pulse-glow {
-            0%, 100% { opacity: 0.5; }
-            50% { opacity: 1; }
+            0%, 100% { box-shadow: 0 0 10px var(--primary); }
+            50% { box-shadow: 0 0 25px var(--primary), 0 0 40px var(--primary); }
         }
         
-        .header-title {
+        .brand-text {
             font-family: 'Orbitron', monospace;
-            font-size: 24px;
-            font-weight: 900;
-            color: var(--neon-blue);
+        }
+        
+        .brand-name {
+            font-size: 20px;
+            font-weight: 700;
+            color: var(--primary);
+            letter-spacing: 2px;
             text-transform: uppercase;
-            letter-spacing: 4px;
-            text-shadow: 
-                0 0 10px var(--neon-blue),
-                0 0 20px var(--neon-blue),
-                0 0 40px var(--neon-blue);
-            animation: flicker 3s infinite;
         }
         
-        @keyframes flicker {
-            0%, 100% { opacity: 1; }
-            41% { opacity: 1; }
-            42% { opacity: 0.8; }
-            43% { opacity: 1; }
-            45% { opacity: 0.3; }
-            46% { opacity: 1; }
-        }
-        
-        .header-subtitle {
-            position: absolute;
-            right: 20px;
-            font-family: 'Orbitron', monospace;
+        .brand-sub {
             font-size: 10px;
-            color: var(--neon-pink);
+            color: var(--secondary);
+            letter-spacing: 3px;
+            text-transform: uppercase;
+        }
+        
+        /* 时钟显示 */
+        .clock-display {
+            font-family: 'Orbitron', monospace;
+            text-align: right;
+        }
+        
+        .clock-time {
+            font-size: 18px;
+            font-weight: 700;
+            color: var(--primary);
+            letter-spacing: 2px;
+            text-shadow: 0 0 10px var(--primary);
+        }
+        
+        .clock-date {
+            font-size: 10px;
+            color: var(--text-secondary);
+            letter-spacing: 1px;
+        }
+        
+        .clock-label {
+            font-size: 9px;
+            color: var(--secondary);
             letter-spacing: 2px;
             text-transform: uppercase;
         }
         
         /* 消息区域 */
-        .messages {
+        .messages-container {
             flex: 1;
             overflow-y: auto;
             padding: 20px;
-            background: linear-gradient(180deg, var(--darker-bg) 0%, var(--dark-bg) 100%);
+            background: linear-gradient(180deg, var(--bg-dark) 0%, rgba(5, 5, 8, 0.9) 100%);
         }
         
-        .messages::-webkit-scrollbar {
+        .messages-container::-webkit-scrollbar {
             width: 4px;
         }
         
-        .messages::-webkit-scrollbar-track {
-            background: var(--darker-bg);
+        .messages-container::-webkit-scrollbar-track {
+            background: transparent;
         }
         
-        .messages::-webkit-scrollbar-thumb {
-            background: var(--neon-blue);
+        .messages-container::-webkit-scrollbar-thumb {
+            background: var(--primary);
             border-radius: 2px;
         }
         
-        /* 时间戳 */
-        .timestamp {
+        /* 系统消息 */
+        .system-msg {
             text-align: center;
-            color: var(--neon-purple);
-            font-family: 'Orbitron', monospace;
+            margin: 16px 0;
             font-size: 11px;
+            color: var(--text-dim);
+            font-family: 'Rajdhani', monospace;
             letter-spacing: 2px;
-            margin: 20px 0;
             text-transform: uppercase;
-            opacity: 0.7;
         }
         
         /* 消息气泡 */
         .message {
             display: flex;
-            margin-bottom: 20px;
-            animation: slide-in 0.3s ease;
+            margin-bottom: 16px;
+            animation: message-in 0.4s cubic-bezier(0.4, 0, 0.2, 1);
         }
         
-        @keyframes slide-in {
+        @keyframes message-in {
             from {
                 opacity: 0;
-                transform: translateX(-20px);
+                transform: translateY(20px) scale(0.95);
             }
             to {
                 opacity: 1;
-                transform: translateX(0);
+                transform: translateY(0) scale(1);
             }
         }
         
@@ -208,250 +260,247 @@
             flex-direction: row-reverse;
         }
         
-        .message.user .bubble {
-            background: linear-gradient(135deg, rgba(0, 243, 255, 0.15) 0%, rgba(0, 243, 255, 0.05) 100%);
-            border: 1px solid var(--neon-blue);
-            box-shadow: 
-                0 0 10px rgba(0, 243, 255, 0.3),
-                inset 0 0 20px rgba(0, 243, 255, 0.05);
-        }
-        
-        .message.bot .bubble {
-            background: linear-gradient(135deg, rgba(255, 0, 255, 0.15) 0%, rgba(255, 0, 255, 0.05) 100%);
-            border: 1px solid var(--neon-pink);
-            box-shadow: 
-                0 0 10px rgba(255, 0, 255, 0.3),
-                inset 0 0 20px rgba(255, 0, 255, 0.05);
-        }
-        
-        .avatar {
-            width: 44px;
-            height: 44px;
+        .msg-avatar {
+            width: 36px;
+            height: 36px;
             border-radius: 50%;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 24px;
+            font-size: 18px;
             flex-shrink: 0;
-            background: var(--darker-bg);
             border: 2px solid;
-            box-shadow: 0 0 15px currentColor;
+            background: var(--bg-panel);
         }
         
-        .message.user .avatar {
-            border-color: var(--neon-blue);
-            color: var(--neon-blue);
+        .message.user .msg-avatar {
+            border-color: var(--primary);
+            color: var(--primary);
+            box-shadow: 0 0 10px rgba(0, 243, 255, 0.3);
         }
         
-        .message.bot .avatar {
-            border-color: var(--neon-pink);
-            color: var(--neon-pink);
-            animation: pulse-avatar 2s ease-in-out infinite;
+        .message.bot .msg-avatar {
+            border-color: var(--secondary);
+            color: var(--secondary);
+            box-shadow: 0 0 10px rgba(255, 0, 160, 0.3);
         }
         
-        @keyframes pulse-avatar {
-            0%, 100% { box-shadow: 0 0 15px var(--neon-pink); }
-            50% { box-shadow: 0 0 25px var(--neon-pink), 0 0 40px var(--neon-pink); }
-        }
-        
-        .bubble {
+        .msg-content {
             max-width: 75%;
             margin: 0 12px;
-            padding: 14px 18px;
-            border-radius: 16px;
-            font-size: 15px;
+        }
+        
+        .msg-bubble {
+            padding: 12px 16px;
+            border-radius: 12px;
+            font-size: 14px;
             line-height: 1.6;
-            word-wrap: break-word;
             position: relative;
+            backdrop-filter: blur(10px);
         }
         
-        .bubble .text {
+        .message.user .msg-bubble {
+            background: linear-gradient(135deg, rgba(0, 243, 255, 0.15), rgba(0, 243, 255, 0.05));
+            border: 1px solid rgba(0, 243, 255, 0.4);
+            box-shadow: 
+                0 4px 15px rgba(0, 243, 255, 0.1),
+                inset 0 1px 0 rgba(255, 255, 255, 0.1);
+        }
+        
+        .message.bot .msg-bubble {
+            background: linear-gradient(135deg, rgba(255, 0, 160, 0.15), rgba(255, 0, 160, 0.05));
+            border: 1px solid rgba(255, 0, 160, 0.4);
+            box-shadow: 
+                0 4px 15px rgba(255, 0, 160, 0.1),
+                inset 0 1px 0 rgba(255, 255, 255, 0.1);
+        }
+        
+        .msg-text {
             color: var(--text-primary);
-            text-shadow: 0 0 2px rgba(255, 255, 255, 0.1);
         }
         
-        .bubble .time {
-            font-family: 'Orbitron', monospace;
-            font-size: 9px;
-            color: var(--text-secondary);
-            margin-top: 8px;
-            text-align: right;
+        .msg-meta {
+            font-family: 'Rajdhani', monospace;
+            font-size: 10px;
+            color: var(--text-dim);
+            margin-top: 6px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .msg-time {
             letter-spacing: 1px;
-            opacity: 0.6;
+        }
+        
+        .msg-status {
+            color: var(--primary);
+            font-size: 9px;
         }
         
         /* 加载动画 */
-        .loading-msg .bubble {
+        .typing-indicator {
             display: flex;
-            gap: 6px;
-            padding: 20px 24px;
-            background: linear-gradient(135deg, rgba(184, 41, 221, 0.2) 0%, rgba(184, 41, 221, 0.05) 100%);
-            border-color: var(--neon-purple);
+            gap: 4px;
+            padding: 8px 4px;
         }
         
-        .dot {
-            width: 10px;
-            height: 10px;
-            background: var(--neon-purple);
+        .typing-dot {
+            width: 8px;
+            height: 8px;
+            background: var(--secondary);
             border-radius: 50%;
-            box-shadow: 0 0 10px var(--neon-purple);
-            animation: cyber-bounce 1.4s infinite;
+            animation: typing-bounce 1.4s infinite;
         }
         
-        .dot:nth-child(2) { animation-delay: 0.2s; }
-        .dot:nth-child(3) { animation-delay: 0.4s; }
+        .typing-dot:nth-child(2) { animation-delay: 0.2s; }
+        .typing-dot:nth-child(3) { animation-delay: 0.4s; }
         
-        @keyframes cyber-bounce {
-            0%, 60%, 100% { 
-                transform: translateY(0);
-                box-shadow: 0 0 10px var(--neon-purple);
-            }
-            30% { 
-                transform: translateY(-12px);
-                box-shadow: 0 0 20px var(--neon-purple), 0 0 40px var(--neon-purple);
-            }
+        @keyframes typing-bounce {
+            0%, 60%, 100% { transform: translateY(0); opacity: 0.4; }
+            30% { transform: translateY(-10px); opacity: 1; }
         }
         
         /* 输入区域 */
-        .input-area {
-            background: linear-gradient(0deg, rgba(10,10,15,0.95) 0%, rgba(10,10,15,0.8) 100%);
-            border-top: 2px solid var(--neon-pink);
+        .input-container {
+            background: var(--bg-panel);
+            border-top: 1px solid rgba(0, 243, 255, 0.3);
             padding: 16px 20px;
             padding-bottom: max(16px, env(safe-area-inset-bottom));
+            backdrop-filter: blur(20px);
+        }
+        
+        .input-wrapper {
             display: flex;
             gap: 12px;
             align-items: flex-end;
-            backdrop-filter: blur(10px);
-            box-shadow: 0 0 20px rgba(255, 0, 255, 0.2);
+            background: var(--bg-glass);
+            border: 1px solid rgba(0, 243, 255, 0.2);
+            border-radius: 16px;
+            padding: 8px 12px;
+            box-shadow: inset 0 2px 10px rgba(0, 0, 0, 0.3);
         }
         
-        .input-area::before {
-            content: '';
-            position: absolute;
-            top: -2px;
-            left: 0;
-            right: 0;
-            height: 2px;
-            background: linear-gradient(90deg, var(--neon-blue), var(--neon-pink), var(--neon-purple), var(--neon-blue));
-            background-size: 300% 100%;
-            animation: gradient-shift 3s linear infinite;
-        }
-        
-        @keyframes gradient-shift {
-            0% { background-position: 0% 50%; }
-            100% { background-position: 300% 50%; }
-        }
-        
-        .input-box {
+        .message-input {
             flex: 1;
-            background: rgba(0, 0, 0, 0.5);
-            border: 1px solid var(--neon-blue);
-            border-radius: 12px;
-            padding: 12px 16px;
+            background: transparent;
+            border: none;
+            padding: 10px;
             font-size: 15px;
             color: var(--text-primary);
             outline: none;
             resize: none;
             min-height: 44px;
             max-height: 120px;
-            line-height: 20px;
-            font-family: 'Noto Sans SC', sans-serif;
-            box-shadow: 
-                inset 0 0 10px rgba(0, 243, 255, 0.1),
-                0 0 10px rgba(0, 243, 255, 0.1);
-            transition: all 0.3s;
+            line-height: 1.5;
+            font-family: inherit;
         }
         
-        .input-box:focus {
-            border-color: var(--neon-cyan);
-            box-shadow: 
-                inset 0 0 15px rgba(0, 255, 255, 0.15),
-                0 0 20px rgba(0, 255, 255, 0.3);
+        .message-input::placeholder {
+            color: var(--text-dim);
         }
         
-        .input-box::placeholder {
-            color: var(--text-secondary);
-        }
-        
-        .send-btn {
-            width: 64px;
+        .send-button {
+            width: 44px;
             height: 44px;
-            background: linear-gradient(135deg, var(--neon-pink) 0%, var(--neon-purple) 100%);
-            color: white;
+            background: linear-gradient(135deg, var(--primary), var(--accent));
             border: none;
             border-radius: 12px;
-            font-family: 'Orbitron', monospace;
-            font-size: 13px;
-            font-weight: 700;
-            letter-spacing: 1px;
-            text-transform: uppercase;
+            color: #000;
+            font-size: 20px;
             cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
             box-shadow: 
-                0 0 15px rgba(255, 0, 255, 0.4),
-                inset 0 0 10px rgba(255, 255, 255, 0.2);
+                0 4px 15px rgba(0, 243, 255, 0.3),
+                inset 0 1px 0 rgba(255, 255, 255, 0.3);
             transition: all 0.3s;
         }
         
-        .send-btn:active {
+        .send-button:active {
             transform: scale(0.95);
-            box-shadow: 
-                0 0 25px rgba(255, 0, 255, 0.6),
-                inset 0 0 15px rgba(255, 255, 255, 0.3);
+            box-shadow: 0 2px 8px rgba(0, 243, 255, 0.3);
         }
         
-        .send-btn:disabled {
-            background: #333;
-            box-shadow: none;
+        .send-button:disabled {
             opacity: 0.5;
+            cursor: not-allowed;
         }
         
         /* 退出按钮 */
         .logout-btn {
-            position: absolute;
-            right: 16px;
             background: transparent;
-            border: 1px solid var(--neon-pink);
-            color: var(--neon-pink);
-            font-family: 'Orbitron', monospace;
-            font-size: 10px;
-            padding: 4px 10px;
-            border-radius: 4px;
-            letter-spacing: 1px;
+            border: 1px solid rgba(255, 0, 160, 0.5);
+            color: var(--secondary);
+            font-family: 'Rajdhani', monospace;
+            font-size: 11px;
+            padding: 6px 12px;
+            border-radius: 6px;
             cursor: pointer;
+            letter-spacing: 1px;
             text-transform: uppercase;
             transition: all 0.3s;
         }
         
         .logout-btn:hover {
-            background: var(--neon-pink);
-            color: var(--dark-bg);
-            box-shadow: 0 0 15px var(--neon-pink);
+            background: rgba(255, 0, 160, 0.2);
+            box-shadow: 0 0 15px rgba(255, 0, 160, 0.3);
         }
     </style>
 </head>
 <body>
-    <div class="container">
-        <div class="header">
-            <span class="header-title">AMBROSE</span>
-            <span class="header-subtitle">CYBERPUNK // 2088</span>
+    <!-- 背景效果 -->
+    <div class="bg-grid"></div>
+    <div class="particles" id="particles"></div>
+    <div class="scanline"></div>
+    
+    <div class="app-container">
+        <!-- 顶部状态栏 -->
+        <div class="status-bar">
+            <div class="brand">
+                <div class="brand-icon">🧰</div>
+                <div class="brand-text">
+                    <div class="brand-name">AMBROSE</div>
+                    <div class="brand-sub">NEURAL LINK v2.0</div>
+                </div>
+            </div>
+            
+            <div class="clock-display">
+                <div class="clock-label">SYSTEM TIME</div>
+                <div class="clock-time" id="clock">--:--:--</div>
+                <div class="clock-date" id="date">----/--/--</div>
+            </div>
+            
+            <button class="logout-btn" onclick="Auth.logout()">断开</button>
         </div>
         
-        <div class="messages" id="messages">
-            <div class="timestamp">SYSTEM ONLINE</div>
-        </div>
+        <!-- 消息区域 -->
+        <div class="messages-container" id="messages"></div>
         
-        <div class="input-area">
-            <textarea class="input-box" id="messageInput" placeholder="输入指令..." rows="1"></textarea>
-            <button class="send-btn" id="sendBtn">发送</button>
+        <!-- 输入区域 -->
+        <div class="input-container">
+            <div class="input-wrapper">
+                <textarea class="message-input" id="messageInput" placeholder="输入神经指令..." rows="1"></textarea>
+                <button class="send-button" id="sendBtn">⚡</button>
+            </div>
         </div>
     </div>
     
-    <script src="auth.js?v=3"></script>
-    <script src="chat.js?v=3"></script>
     <script>
-        document.addEventListener('DOMContentLoaded', () => {
-            Auth.init();
-        });
+        // 生成粒子
+        const particlesContainer = document.getElementById('particles');
+        for (let i = 0; i < 30; i++) {
+            const particle = document.createElement('div');
+            particle.className = 'particle';
+            particle.style.left = Math.random() * 100 + '%';
+            particle.style.animationDelay = Math.random() * 10 + 's';
+            particle.style.animationDuration = (8 + Math.random() * 6) + 's';
+            particlesContainer.appendChild(particle);
+        }
     </script>
+    
+    <script src="auth.js?v=4"></script>
+    <script src="chat.js?v=4"></script>
 </body>
 </html>
