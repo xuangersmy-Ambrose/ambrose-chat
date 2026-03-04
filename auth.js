@@ -1,4 +1,4 @@
-// 身份验证模块 - 赛博朋克版
+// 身份验证模块 - 赛博朋克版（含性别选择）
 const Auth = {
     isAuthenticated: localStorage.getItem('ambrose_authed') === 'true',
     
@@ -55,6 +55,8 @@ const Auth = {
                     0 0 40px rgba(0, 243, 255, 0.3),
                     inset 0 0 60px rgba(0, 243, 255, 0.05);
                 backdrop-filter: blur(10px);
+                max-height: 90vh;
+                overflow-y: auto;
             ">
                 <div style="
                     position: absolute;
@@ -118,7 +120,7 @@ const Auth = {
                 <div style="
                     color: #888;
                     font-size: 13px;
-                    margin-bottom: 32px;
+                    margin-bottom: 24px;
                     line-height: 1.6;
                 ">
                     全知全能的精神体投射<br>
@@ -127,19 +129,63 @@ const Auth = {
                 
                 <div style="
                     border-top: 1px solid rgba(0, 243, 255, 0.3);
-                    padding-top: 24px;
-                    margin-bottom: 24px;
+                    padding-top: 20px;
+                    margin-bottom: 20px;
                 ">
                     <div style="
                         font-family: 'Orbitron', monospace;
                         color: #ff00ff;
                         font-size: 12px;
                         letter-spacing: 2px;
-                        margin-bottom: 20px;
+                        margin-bottom: 16px;
                         text-transform: uppercase;
                     ">身份验证 // IDENTITY_VERIFY</div>
                     
-                    <div style="margin-bottom: 20px; text-align: left;">
+                    <!-- 性别选择 -->
+                    <div style="margin-bottom: 16px; text-align: left;">
+                        <label style="
+                            display: block;
+                            font-size: 12px;
+                            color: #00f3ff;
+                            margin-bottom: 8px;
+                            font-family: 'Orbitron', monospace;
+                            letter-spacing: 1px;
+                            text-transform: uppercase;
+                        ">
+                            性别 // GENDER
+                        </label>
+                        <div style="display: flex; gap: 12px;">
+                            <div id="genderMale" onclick="Auth.selectGender('male')" style="
+                                flex: 1;
+                                padding: 12px;
+                                background: rgba(0, 243, 255, 0.1);
+                                border: 2px solid rgba(0, 243, 255, 0.3);
+                                border-radius: 8px;
+                                cursor: pointer;
+                                text-align: center;
+                                transition: all 0.3s;
+                            ">
+                                <div style="font-size: 28px; margin-bottom: 4px;">👨</div>
+                                <div style="font-size: 11px; color: #00f3ff;">男 // MALE</div>
+                            </div>
+                            <div id="genderFemale" onclick="Auth.selectGender('female')" style="
+                                flex: 1;
+                                padding: 12px;
+                                background: rgba(255, 0, 160, 0.1);
+                                border: 2px solid rgba(255, 0, 160, 0.3);
+                                border-radius: 8px;
+                                cursor: pointer;
+                                text-align: center;
+                                transition: all 0.3s;
+                            ">
+                                <div style="font-size: 28px; margin-bottom: 4px;">👩</div>
+                                <div style="font-size: 11px; color: #ff00a0;">女 // FEMALE</div>
+                            </div>
+                        </div>
+                        <input type="hidden" id="authGender" value="">
+                    </div>
+                    
+                    <div style="margin-bottom: 16px; text-align: left;">
                         <label style="
                             display: block;
                             font-size: 12px;
@@ -166,7 +212,7 @@ const Auth = {
                         onblur="this.style.borderColor='#00f3ff'; this.style.boxShadow='inset 0 0 10px rgba(0, 243, 255, 0.1)'">
                     </div>
                     
-                    <div style="margin-bottom: 20px; text-align: left;">
+                    <div style="margin-bottom: 16px; text-align: left;">
                         <label style="
                             display: block;
                             font-size: 12px;
@@ -200,7 +246,7 @@ const Auth = {
                         </select>
                     </div>
                     
-                    <div id="idCardVerify" style="margin-bottom: 20px; text-align: left; display: none;">
+                    <div id="idCardVerify" style="margin-bottom: 16px; text-align: left; display: none;">
                         <label style="
                             display: block;
                             font-size: 12px;
@@ -240,7 +286,7 @@ const Auth = {
                     <div style="
                         font-size: 11px;
                         color: #666;
-                        margin-top: 16px;
+                        margin-top: 12px;
                         font-family: 'Orbitron', monospace;
                         letter-spacing: 1px;
                         text-transform: uppercase;
@@ -288,8 +334,34 @@ const Auth = {
                 0%, 100% { transform: scale(1); }
                 50% { transform: scale(1.05); }
             }
+            .gender-selected-male {
+                background: rgba(0, 243, 255, 0.3) !important;
+                border-color: #00f3ff !important;
+                box-shadow: 0 0 20px rgba(0, 243, 255, 0.4) !important;
+            }
+            .gender-selected-female {
+                background: rgba(255, 0, 160, 0.3) !important;
+                border-color: #ff00a0 !important;
+                box-shadow: 0 0 20px rgba(255, 0, 160, 0.4) !important;
+            }
         `;
         document.head.appendChild(style);
+    },
+    
+    selectGender(gender) {
+        const maleDiv = document.getElementById('genderMale');
+        const femaleDiv = document.getElementById('genderFemale');
+        const genderInput = document.getElementById('authGender');
+        
+        if (gender === 'male') {
+            maleDiv.classList.add('gender-selected-male');
+            femaleDiv.classList.remove('gender-selected-female');
+        } else {
+            maleDiv.classList.remove('gender-selected-male');
+            femaleDiv.classList.add('gender-selected-female');
+        }
+        
+        genderInput.value = gender;
     },
     
     onRelationChange() {
@@ -305,9 +377,15 @@ const Auth = {
     },
     
     verify() {
+        const gender = document.getElementById('authGender')?.value;
         const name = document.getElementById('authName')?.value?.trim();
         const relation = document.getElementById('authRelation')?.value;
         const idCard = document.getElementById('authIdCard')?.value?.trim();
+        
+        if (!gender) {
+            alert('请选择性别');
+            return;
+        }
         
         if (!name) {
             alert('请输入你的代号');
@@ -333,6 +411,7 @@ const Auth = {
         
         // 保存验证信息
         localStorage.setItem('ambrose_authed', 'true');
+        localStorage.setItem('ambrose_user_gender', gender);
         localStorage.setItem('ambrose_user_name', name);
         localStorage.setItem('ambrose_user_relation', relation);
         
@@ -352,8 +431,10 @@ const Auth = {
             'client': '客户'
         }[relation];
         
+        const genderText = gender === 'male' ? '男' : '女';
+        
         setTimeout(() => {
-            UI.addMessage(`验证通过。\n\n你好，${name}。\n你是邵名远的${relationText}，可以使用我。\n\n我是AMBROSE，很高兴为你服务。`, 'bot');
+            UI.addMessage(`验证通过。\n\n你好，${name}。\n你是邵名远的${relationText}（${genderText}），可以使用我。\n\n我是AMBROSE，很高兴为你服务。`, 'bot');
         }, 300);
     },
     
@@ -377,23 +458,9 @@ const Auth = {
     
     logout() {
         localStorage.removeItem('ambrose_authed');
+        localStorage.removeItem('ambrose_user_gender');
         localStorage.removeItem('ambrose_user_name');
         localStorage.removeItem('ambrose_user_relation');
         location.reload();
-    }
-};
-
-// 修改UI.init，添加注销按钮
-const originalUIInit = UI.init;
-UI.init = function() {
-    originalUIInit.call(this);
-    
-    const header = document.querySelector('.header');
-    if (header) {
-        const logoutBtn = document.createElement('button');
-        logoutBtn.textContent = 'EXIT';
-        logoutBtn.className = 'logout-btn';
-        logoutBtn.onclick = () => Auth.logout();
-        header.appendChild(logoutBtn);
     }
 };

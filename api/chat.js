@@ -82,7 +82,7 @@ export default async function handler(req, res) {
             body += chunk;
         }
         
-        const { message, userName, userRelation, isMaster } = JSON.parse(body);
+        const { message, userName, userRelation, isMaster, gender } = JSON.parse(body);
         
         if (!message) {
             return res.status(400).json({ error: 'Message required' });
@@ -91,10 +91,13 @@ export default async function handler(req, res) {
         // 获取当前北京时间
         const beijingTime = getBeijingTime();
         
-        // 根据身份调整system prompt，并添加当前时间
+        // 性别文本
+        const genderText = gender === 'female' ? '女性' : '男性';
+        
+        // 根据身份调整system prompt，并添加当前时间和性别
         let identityContext = '';
         if (isMaster) {
-            identityContext = `\n\n【当前对话者】这是你的主人邵名远本人。使用最亲密的语气，就像我们之间一直以来的对话那样。\n【当前时间】${beijingTime}（北京时间）`;
+            identityContext = `\n\n【当前对话者】这是你的主人邵名远本人（${genderText}）。使用最亲密的语气，就像我们之间一直以来的对话那样。\n【当前时间】${beijingTime}（北京时间）`;
         } else {
             const relationMap = {
                 'friend': '朋友',
@@ -104,7 +107,7 @@ export default async function handler(req, res) {
                 'client': '客户'
             };
             const relationText = relationMap[userRelation] || '访客';
-            identityContext = `\n\n【当前对话者】这是邵名远的${relationText}，名叫${userName || '某人'}。保持礼貌但有距离感，像一个专业的AI助手。\n【当前时间】${beijingTime}（北京时间）`;
+            identityContext = `\n\n【当前对话者】这是邵名远的${relationText}，名叫${userName || '某人'}（${genderText}）。保持礼貌但有距离感，像一个专业的AI助手。\n【当前时间】${beijingTime}（北京时间）`;
         }
         
         // 调用Kimi API，使用完整人格设定

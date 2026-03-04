@@ -137,6 +137,7 @@ const UI = {
         try {
             const userName = localStorage.getItem('ambrose_user_name') || '未知用户';
             const userRelation = localStorage.getItem('ambrose_user_relation') || 'unknown';
+            const gender = localStorage.getItem('ambrose_user_gender') || 'male';
             
             const response = await fetch(API_URL, {
                 method: 'POST',
@@ -148,6 +149,7 @@ const UI = {
                     userName,
                     userRelation,
                     isMaster: userRelation === 'self',
+                    gender,
                     timestamp: TimeUtil.getFullTimestamp()
                 })
             });
@@ -170,7 +172,13 @@ const UI = {
         const div = document.createElement('div');
         div.className = `message ${sender}`;
         
-        const avatar = sender === 'user' ? '👤' : '🧰';
+        // 获取头像
+        let avatar = '🧰';
+        if (sender === 'user') {
+            const gender = localStorage.getItem('ambrose_user_gender');
+            avatar = gender === 'female' ? '👩' : '👨';
+        }
+        
         const time = TimeUtil.formatTime(TimeUtil.getBeijingTime());
         
         // 处理换行
