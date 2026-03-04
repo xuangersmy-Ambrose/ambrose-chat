@@ -1,10 +1,11 @@
 /**
  * AMBROSE Chat - 终极赛博朋克版
- * 高精度报时 + 科幻界面 + 用户统计
+ * 高精度报时 + 科幻界面 + 用户统计 + 管理员功能
  */
 
 const API_URL = window.location.origin + '/api/chat';
 const STATS_URL = window.location.origin + '/api/stats';
+const ADMIN_URL = window.location.origin + '/api/admin';
 
 // 高精度时间工具
 const TimeUtil = {
@@ -44,11 +45,16 @@ const UI = {
     messages: null,
     input: null,
     clockElement: null,
+    isMaster: false,
     
     init() {
         this.messages = document.getElementById('messages');
         this.input = document.getElementById('messageInput');
         this.clockElement = document.getElementById('clock');
+        
+        // 检查是否是主人
+        const userRelation = localStorage.getItem('ambrose_user_relation');
+        this.isMaster = userRelation === 'self';
         
         this.bindEvents();
         this.startClock();
@@ -80,15 +86,26 @@ const UI = {
     
     // 查询统计信息（仅本人可用）
     async showStats() {
-        const userRelation = localStorage.getItem('ambrose_user_relation');
-        if (userRelation !== 'self') {
-            this.addMessage('抱歉，只有邵名远本人可以查看使用统计。', 'bot');
+        if (!this.isMaster) {
+            this.addMessage('抱歉，只有 BOSS Shao 本人可以查看使用统计。', 'bot');
             return;
         }
         
         try {
-            const response = await fetch(STATS_URL);
+            // 携带身份验证参数
+            const response = await fetch(`${STATS_URL}?isMaster=true&userRelation=self`);
+            
+            if (response.status === 403) {
+                this.addMessage('权限验证失败，无法查看统计信息。', 'bot');
+                return;
+            }
+            
             const stats = await response.json();
+            
+            if (stats.error) {
+                this.addMessage(`获取统计失败：${stats.message}`, 'bot');
+                return;
+            }
             
             const related = stats.relatedUsers;
             const breakdown = related.breakdown;
@@ -135,6 +152,45 @@ const UI = {
         }
     },
     
+    // 提交设计更改请求（仅本人可用）
+    async requestDesignChange(description) {
+        if (!this.isMaster) {
+            this.addMessage('抱歉，只有 BOSS Shao 本人可以请求更改设计。', 'bot');
+            return;
+        }
+        
+        try {
+            const response = await fetch(ADMIN_URL, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    action: 'designChange',
+                    userRelation: 'self',
+                    isMaster: true,
+                    masterCode: '0812',
+                    description: description
+                })
+            });
+            
+            const data = await response.json();
+            
+            if (response.status === 403) {
+                this.addMessage('权限验证失败，无法提交设计更改请求。', 'bot');
+                return;
+            }
+            
+            if (data.success) {
+                this.addMessage(`✅ 设计更改请求已提交\n\n${data.note}\n\n请求内容：${description}`, 'bot');
+            } else {
+                this.addMessage(`提交失败：${data.message || '未知错误'}`, 'bot');
+            }
+            
+        } catch (err) {
+            console.error('Design change error:', err);
+            this.addMessage('提交设计更改请求失败，请稍后重试。', 'bot');
+        }
+    },
+    
     startClock() {
         this.updateClock();
         setInterval(() => this.updateClock(), 1000);
@@ -161,13 +217,12 @@ const UI = {
         else if (hour < 18) greeting = '下午好';
         else greeting = '晚上好';
         
-        const userRelation = localStorage.getItem('ambrose_user_relation');
-        let statsHint = '';
-        if (userRelation === 'self') {
-            statsHint = '\n\n💡 发送"统计"或"/stats"可查看使用情况';
+        let hints = '';
+        if (this.isMaster) {
+            hints = '\n\n💡 可用指令：\n• 发送"统计"查看使用情况\n• 发送"改设计:描述"请求界面更改';
         }
         
-        this.addMessage(`${greeting}，我是 AMBROSE。\n\n当前时间：${TimeUtil.getFullTimestamp()}${statsHint}\n\n有什么可以帮你的？`, 'bot');
+        this.addMessage(`${greeting}，我是 AMBROSE。\n\n当前时间：${TimeUtil.getFullTimestamp()}${hints}\n\n有什么可以帮你的？`, 'bot');
     },
     
     bindEvents() {
@@ -198,6 +253,20 @@ const UI = {
             this.input.value = '';
             this.input.style.height = 'auto';
             await this.showStats();
+            return;
+        }
+        
+        // 检查是否是设计更改请求（仅主人可用）
+        if (text.startsWith('改设计:') || text.startsWith('改设计：')) {
+            this.addMessage(text, 'user');
+            this.input.value = '';
+            this.input.style.height = 'auto';
+            const description = text.replace(/^改设计[：:]/, '').trim();
+            if (description) {
+                await this.requestDesignChange(description);
+            } else {
+                this.addMessage('请描述需要更改的设计内容，例如：\n改设计:把按钮改成红色', 'bot');
+            }
             return;
         }
         

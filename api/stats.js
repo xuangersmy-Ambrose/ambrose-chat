@@ -1,4 +1,4 @@
-// Vercel Serverless API - 用户统计
+// Vercel Serverless API - 用户统计（带权限验证）
 // 追踪使用 AMBROSE 的用户
 
 // 简单内存存储（Vercel 冷启动会重置，生产环境应使用 Redis/KV）
@@ -32,7 +32,7 @@ export default async function handler(req, res) {
         return res.status(200).end();
     }
     
-    // 记录用户访问 (POST)
+    // 记录用户访问 (POST) - 任何人都可以记录
     if (req.method === 'POST') {
         try {
             let body = '';
@@ -47,7 +47,6 @@ export default async function handler(req, res) {
                 const existingUser = userStats.users.get(userKey);
                 
                 if (!existingUser) {
-                    // 新用户
                     userStats.users.set(userKey, {
                         name: userName,
                         relation: userRelation,
@@ -57,7 +56,6 @@ export default async function handler(req, res) {
                         visitCount: 1
                     });
                 } else {
-                    // 更新现有用户
                     existingUser.lastVisit = getBeijingTime();
                     existingUser.visitCount++;
                     userStats.users.set(userKey, existingUser);
@@ -76,12 +74,22 @@ export default async function handler(req, res) {
         }
     }
     
-    // 获取统计信息 (GET)
+    // 获取统计信息 (GET) - 只有本人可以查询
     if (req.method === 'GET') {
         try {
+            // 从查询参数获取身份验证信息
+            const { isMaster, userRelation } = req.query;
+            
+            // 严格权限验证：必须是本人（self）且 isMaster=true
+            if (userRelation !== 'self' || isMaster !== 'true') {
+                return res.status(403).json({ 
+                    error: 'Access denied',
+                    message: '只有 BOSS Shao 本人可以查看使用统计'
+                });
+            }
+            
             const users = Array.from(userStats.users.values());
             
-            // 分类统计
             const relatedUsers = users.filter(u => 
                 ['self', 'friend', 'lover', 'spouse', 'family', 'client'].includes(u.relation)
             );
@@ -90,7 +98,6 @@ export default async function handler(req, res) {
                 !['self', 'friend', 'lover', 'spouse', 'family', 'client'].includes(u.relation)
             );
             
-            // 按关系分组
             const byRelation = {
                 self: users.filter(u => u.relation === 'self'),
                 friend: users.filter(u => u.relation === 'friend'),
