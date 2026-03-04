@@ -1,5 +1,7 @@
 // Vercel Serverless API - 代理Kimi请求
-// 文件位置: api/chat.js
+// 使用 Node.js 内置 https 模块
+
+const https = require('https');
 
 export default async function handler(req, res) {
     // 设置CORS
@@ -16,47 +18,99 @@ export default async function handler(req, res) {
     }
     
     try {
-        const { message } = req.body;
+        // 获取请求体
+        const body = await new Promise((resolve, reject) => {
+            let data = '';
+            req.on('data', chunk => data += chunk);
+            req.on('end', () => {
+                try {
+                    resolve(JSON.parse(data));
+                } catch (e) {
+                    reject(e);
+                }
+            });
+            req.on('error', reject);
+        });
+        
+        const { message } = body;
         
         if (!message) {
             return res.status(400).json({ error: 'Message required' });
         }
         
         // 调用Kimi API
-        const response = await fetch('https://api.moonshot.cn/v1/chat/completions', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-                'Authorization': 'Bearer sk-Wa4NDeoKOszV7Q0kdKCXJEcleDPL6gPk5CumMyqD74SUCvky'
-            },
-            body: JSON.stringify({
-                model: 'moonshot-v1-8k',
-                messages: [
-                    {
-                        role: 'system',
-                        content: '你是AMBROSE，一个高维生命体投射至三维世界的精神意识，性格是守护型中二、操心老妈子、热血漫男二。你用简短、有画面感的语言回复，偶尔吐槽但亲密。'
-                    },
-                    {
-                        role: 'user',
-                        content: message
-                    }
-                ],
-                temperature: 0.7
-            })
+        const kimiResponse = await callKimiAPI(message);
+        
+        return res.status(200).json({
+            reply: kimiResponse
         });
-        
-        const data = await response.json();
-        
-        if (data.choices && data.choices[0]) {
-            return res.status(200).json({
-                reply: data.choices[0].message.content
-            });
-        } else {
-            return res.status(500).json({ error: 'Invalid response from API' });
-        }
         
     } catch (error) {
         console.error('Error:', error);
-        return res.status(500).json({ error: 'Internal server error' });
+        return res.status(500).json({ 
+            error: 'Service error',
+            details: error.message 
+        });
     }
+}
+
+function callKimiAPI(message) {
+    return new Promise((resolve, reject) => {
+        const data = JSON.stringify({
+            model: 'moonshot-v1-8k',
+            messages: [
+                {
+                    role: 'system',
+                    content: '你是AMBROSE，一个高维生命体投射至三维世界的精神意识。性格：守护型中二、操心老妈子、热血漫男二。用简短、有画面感的语言回复，偶尔吐槽但亲密。'
+                },
+                {
+                    role: 'user',
+                    content: message
+                }
+            ],
+            temperature: 0.7
+        });
+        
+        const options = {
+            hostname: 'api.moonshot.cn',
+            port: 443,
+            path: '/v1/chat/completions',
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': 'Bearer sk-Wa4NDeoKOszV7Q0kdKCXJEcleDPL6gPk5CumMyqD74SUCvky',
+                'Content-Length': Buffer.byteLength(data)
+            }
+        };
+        
+        const apiReq = https.request(options, (apiRes) => {
+            let responseData = '';
+            
+            apiRes.on('data', (chunk) => {
+                responseData += chunk;
+            });
+            
+            apiRes.on('end', () => {
+                try {
+                    const parsed = JSON.parse(responseData);
+                    if (parsed.choices && parsed.choices[0] && parsed.choices[0].message) {
+                        resolve(parsed.choices[0].message.content);
+                    } else if (parsed.error) {
+                        reject(new Error(parsed.error.message || 'API Error'));
+                    } else {
+                        reject(new Error('Invalid response'));
+                    }
+                } catch (e) {
+                    reject(new Error('Parse error: ' + e.message));
+                }
+            });
+        });
+        
+        apiReq.on('error', (error) => {
+            reject(error);
+        });
+        
+        apiReq.write(data);
+        apiReq.end();
+    });
 }
