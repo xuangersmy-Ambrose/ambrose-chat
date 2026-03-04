@@ -279,7 +279,7 @@ const Auth = {
                             font-family: 'Orbitron', monospace;
                             letter-spacing: 1px;
                         ">
-                            ⚠ 需要邀请码才能使用，请向邵名远索取
+                            ⚠ 请输入邀请码 8888，或向邵名远本人索取
                         </div>
                     </div>
                     
@@ -293,9 +293,9 @@ const Auth = {
                             letter-spacing: 1px;
                             text-transform: uppercase;
                         ">
-                            身份证后4位 // ID_VERIFY
+                            专属验证码 // MASTER_CODE
                         </label>
-                        <input type="password" id="authIdCard" placeholder="****" maxlength="4" style="
+                        <input type="password" id="authMasterCode" placeholder="****" maxlength="4" style="
                             width: 100%;
                             padding: 14px;
                             background: rgba(0, 0, 0, 0.5);
@@ -316,7 +316,7 @@ const Auth = {
                             font-family: 'Orbitron', monospace;
                             letter-spacing: 1px;
                         ">
-                            ⚠ 本人身份需要额外验证身份证后4位
+                            ⚠ 本人身份需要输入专属验证码 0812
                         </div>
                     </div>
                     
@@ -403,13 +403,13 @@ const Auth = {
     
     onRelationChange() {
         const relation = document.getElementById('authRelation')?.value;
-        const idCardDiv = document.getElementById('idCardVerify');
+        const masterCodeDiv = document.getElementById('idCardVerify');
         
         if (relation === 'self') {
-            idCardDiv.style.display = 'block';
+            masterCodeDiv.style.display = 'block';
         } else {
-            idCardDiv.style.display = 'none';
-            document.getElementById('authIdCard').value = '';
+            masterCodeDiv.style.display = 'none';
+            document.getElementById('authMasterCode').value = '';
         }
     },
     
@@ -418,7 +418,7 @@ const Auth = {
         const name = document.getElementById('authName')?.value?.trim();
         const relation = document.getElementById('authRelation')?.value;
         const inviteCode = document.getElementById('authInviteCode')?.value?.trim();
-        const idCard = document.getElementById('authIdCard')?.value?.trim();
+        const masterCode = document.getElementById('authMasterCode')?.value?.trim();
         
         if (!gender) {
             alert('请选择性别');
@@ -435,25 +435,25 @@ const Auth = {
             return;
         }
         
-        // 所有用户都需要验证邀请码
+        // 所有用户都需要验证邀请码 8888
         if (!inviteCode) {
             alert('请输入邀请码');
             return;
         }
         
-        if (inviteCode !== '0812') {
+        if (inviteCode !== '8888') {
             alert('邀请码错误，请向邵名远本人索取正确的邀请码');
             return;
         }
         
-        // 本人身份需要额外验证身份证后4位
+        // 本人身份需要额外验证专属验证码 0812
         if (relation === 'self') {
-            if (!idCard) {
-                alert('本人身份需要输入身份证后4位');
+            if (!masterCode) {
+                alert('本人身份需要输入专属验证码');
                 return;
             }
-            if (idCard !== '0812') {
-                alert('身份证验证失败，无法以本人身份登录');
+            if (masterCode !== '0812') {
+                alert('专属验证码错误，无法以本人身份登录');
                 return;
             }
         }
