@@ -505,10 +505,28 @@ const Auth = {
     },
     
     logout() {
+        // 清除登录状态
         localStorage.removeItem('ambrose_authed');
         localStorage.removeItem('ambrose_user_gender');
         localStorage.removeItem('ambrose_user_name');
         localStorage.removeItem('ambrose_user_relation');
-        location.reload();
+        
+        // 重置认证状态
+        this.isAuthenticated = false;
+        
+        // 隐藏当前聊天界面
+        const appContainer = document.querySelector('.app-container');
+        if (appContainer) {
+            appContainer.style.display = 'none';
+        }
+        
+        // 移除可能存在的旧登录弹窗
+        const oldModal = document.getElementById('authModal');
+        if (oldModal) {
+            oldModal.remove();
+        }
+        
+        // 显示登录界面（不刷新页面）
+        this.showAuthModal();
     }
 };
