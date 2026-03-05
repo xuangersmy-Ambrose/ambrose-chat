@@ -69,6 +69,42 @@ class HealthDashboard {
         window.dispatchEvent(new Event('healthDataUpdated'));
     }
 
+    // 渲染环形进度条
+    renderCircularProgress(value, max, color, icon, label) {
+        const percentage = Math.min((value / max) * 100, 100);
+        const radius = 26;
+        const circumference = 2 * Math.PI * radius;
+        const strokeDashoffset = circumference - (percentage / 100) * circumference;
+        
+        return `
+            <div style="display: flex; flex-direction: column; align-items: center; gap: 6px;">
+                <div style="position: relative; width: 60px; height: 60px;">
+                    <svg width="60" height="60" style="transform: rotate(-90deg);">
+                        <circle cx="30" cy="30" r="${radius}" fill="none" 
+                            stroke="rgba(255,255,255,0.08)" stroke-width="5"/>
+                        <circle cx="30" cy="30" r="${radius}" fill="none" 
+                            stroke="${color}" stroke-width="5" 
+                            stroke-linecap="round"
+                            stroke-dasharray="${circumference}"
+                            stroke-dashoffset="${strokeDashoffset}"
+                            style="transition: stroke-dashoffset 0.6s cubic-bezier(0.16, 1, 0.3, 1);"
+                            filter="drop-shadow(0 0 3px ${color})"/>
+                    </svg>
+                    <div style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); 
+                                font-size: 18px;">${icon}</div>
+                </div>
+                <div style="text-align: center;">
+                    <div style="font-size: 14px; font-weight: 700; color: ${color}; font-family: 'JetBrains Mono', monospace;">
+                        ${value ? value.toLocaleString() : '0'}
+                    </div>
+                    <div style="font-size: 9px; color: var(--text-tertiary); text-transform: uppercase; letter-spacing: 1px;">
+                        ${label}
+                    </div>
+                </div>
+            </div>
+        `;
+    }
+
     // 显示健康中心主面板
     showHealthHub() {
         const today = new Date().toLocaleDateString('zh-CN', { month: 'long', day: 'numeric', weekday: 'short' });
@@ -81,12 +117,22 @@ class HealthDashboard {
                     <div style="font-size: 12px; color: var(--text-tertiary); margin-top: 4px;">${today} · 你的个人健康数据中心</div>
                 </div>
 
-                <!-- 今日摘要卡片 -->
-                <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; margin-bottom: 20px;">
-                    ${this.renderSummaryCard('👟 步数', (this.data.exercise.todaySteps || 0).toLocaleString(), '/ 10000', '#00f3ff')}
-                    ${this.renderSummaryCard('🔥 燃烧', (this.data.exercise.todayCalories || 0).toString(), ' kcal', '#ff00ff')}
-                    ${this.renderSummaryCard('😴 睡眠', this.formatSleep(this.data.sleep.lastNight), ' 小时', '#bd00ff')}
-                    ${this.renderSummaryCard('💧 饮水', (this.data.nutrition.water || 0).toString(), ' / 2500ml', '#00ff88')}
+                <!-- 今日摘要环形进度 -->
+                ${this.renderStreakAndAchievements()}
+                <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; margin-bottom: 24px; 
+                            background: var(--bg-card); border: 1px solid var(--border-subtle); border-radius: 20px; padding: 20px;">
+                    ${this.renderCircularProgress(
+                        this.data.exercise.todaySteps, 10000, '#00f3ff', '👟', '步数'
+                    )}
+                    ${this.renderCircularProgress(
+                        this.data.exercise.todayCalories, 500, '#ff00ff', '🔥', '热量'
+                    )}
+                    ${this.renderCircularProgress(
+                        Math.round((this.data.sleep.lastNight || 0) * 100), 800, '#bd00ff', '😴', '睡眠'
+                    )}
+                    ${this.renderCircularProgress(
+                        this.data.nutrition.water, 2500, '#00ff88', '💧', '饮水'
+                    )}
                 </div>
 
                 <!-- 功能入口 -->
@@ -169,6 +215,54 @@ class HealthDashboard {
     formatSleep(hours) {
         if (!hours || hours === 0) return '--';
         return hours.toFixed(1);
+    }
+
+    // 显示连续打卡/成就区域
+    renderStreakAndAchievements() {
+        const streakDays = this.calculateStreak();
+        const achievements = this.getAchievements();
+        
+        return `
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 20px;">
+                <div style="background: linear-gradient(135deg, rgba(255,170,0,0.15), rgba(255,170,0,0.05)); 
+                            border: 1px solid rgba(255,170,0,0.3); border-radius: 16px; padding: 16px;">
+                    <div style="display: flex; align-items: center; gap: 12px;">
+                        <div style="font-size: 36px;">🔥</div>
+                        <div>
+                            <div style="font-size: 24px; font-weight: 800; color: #ffb800; font-family: 'JetBrains Mono', monospace;">
+                                ${streakDays}
+                            </div>
+                            <div style="font-size: 11px; color: var(--text-tertiary);">连续打卡天数</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div style="background: linear-gradient(135deg, rgba(0,243,255,0.15), rgba(0,243,255,0.05)); 
+                            border: 1px solid rgba(0,243,255,0.3); border-radius: 16px; padding: 16px;">
+                    <div style="display: flex; align-items: center; gap: 12px;">
+                        <div style="font-size: 36px;">🏆</div>
+                        <div>
+                            <div style="font-size: 24px; font-weight: 800; color: var(--primary-500); font-family: 'JetBrains Mono', monospace;">
+                                ${achievements.length}
+                            </div>
+                            <div style="font-size: 11px; color: var(--text-tertiary);">获得徽章</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        `;
+    }
+
+    calculateStreak() {
+        return this.data.sleep.streak || 0;
+    }
+
+    getAchievements() {
+        const achievements = [];
+        if (this.data.exercise.todaySteps >= 10000) achievements.push({ icon: '👟', name: '万步达人' });
+        if (this.data.nutrition.water >= 2000) achievements.push({ icon: '💧', name: '水润达人' });
+        if (this.data.sleep.lastNight >= 7) achievements.push({ icon: '😴', name: '睡眠大师' });
+        return achievements;
     }
 
     // 打开功能模块
