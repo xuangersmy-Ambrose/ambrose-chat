@@ -1,631 +1,196 @@
 <!DOCTYPE html>
-<html lang="zh-CN">
+<html>
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>AMBROSE</title>
-    <style>
-        * { margin: 0; padding: 0; box-sizing: border-box; }
-        body { 
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; 
-            background: #000; 
-            color: #fff; 
-            min-height: 100vh;
-            -webkit-font-smoothing: antialiased;
-        }
-        
-        /* 认证界面 */
-        #auth {
-            position: fixed;
-            top: 0; left: 0; right: 0; bottom: 0;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            padding: 40px 20px;
-            background: #000;
-            z-index: 100;
-        }
-        
-        .logo {
-            width: 80px;
-            height: 80px;
-            background: linear-gradient(135deg, #00D4FF, #FF2D92);
-            border-radius: 20px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 32px;
-            font-weight: bold;
-            color: #000;
-            margin-bottom: 24px;
-        }
-        
-        h1 { font-size: 28px; margin-bottom: 8px; font-weight: 700; }
-        .subtitle { color: rgba(255,255,255,0.5); margin-bottom: 40px; font-size: 15px; }
-        
-        input[type="text"] {
-            width: 100%;
-            max-width: 280px;
-            padding: 16px 20px;
-            font-size: 17px;
-            background: rgba(255,255,255,0.08);
-            border: 1px solid rgba(255,255,255,0.15);
-            border-radius: 12px;
-            color: #fff;
-            text-align: center;
-            margin-bottom: 12px;
-            outline: none;
-            -webkit-appearance: none;
-        }
-        input[type="text"]:focus {
-            border-color: #00D4FF;
-            background: rgba(255,255,255,0.12);
-        }
-        
-        .btn {
-            width: 100%;
-            max-width: 280px;
-            padding: 16px 24px;
-            font-size: 17px;
-            font-weight: 600;
-            background: #00D4FF;
-            color: #000;
-            border: none;
-            border-radius: 12px;
-            cursor: pointer;
-            -webkit-appearance: none;
-            touch-action: manipulation;
-        }
-        .btn:active {
-            transform: scale(0.98);
-            opacity: 0.9;
-        }
-        .btn-full {
-            max-width: none;
-            width: calc(100% - 40px);
-            margin: 0 20px;
-        }
-        
-        .hidden { display: none !important; }
-        
-        /* 页面 */
-        .screen {
-            display: none;
-            min-height: 100vh;
-            padding-bottom: 100px;
-        }
-        .screen.active {
-            display: block;
-        }
-        
-        /* 首页头部 */
-        .header {
-            padding: 60px 20px 20px;
-        }
-        .time-display {
-            color: #00D4FF;
-            font-size: 14px;
-            margin-bottom: 8px;
-        }
-        .greeting {
-            font-size: 32px;
-            font-weight: 700;
-            margin-bottom: 8px;
-            letter-spacing: -0.5px;
-        }
-        .sub-text {
-            color: rgba(255,255,255,0.5);
-            font-size: 16px;
-        }
-        
-        /* 数据卡片 */
-        .stats-grid {
-            display: grid;
-            grid-template-columns: repeat(2, 1fr);
-            gap: 12px;
-            padding: 20px;
-        }
-        .stat-card {
-            background: rgba(255,255,255,0.06);
-            border: 1px solid rgba(255,255,255,0.08);
-            border-radius: 16px;
-            padding: 20px;
-            cursor: pointer;
-            transition: all 0.2s;
-            -webkit-tap-highlight-color: transparent;
-        }
-        .stat-card:active {
-            background: rgba(255,255,255,0.1);
-            transform: scale(0.98);
-        }
-        .stat-value {
-            font-size: 28px;
-            font-weight: 700;
-            margin-bottom: 4px;
-        }
-        .stat-label {
-            font-size: 13px;
-            color: rgba(255,255,255,0.5);
-        }
-        
-        /* 主按钮 */
-        .action-btn {
-            background: #00D4FF;
-            color: #000;
-            padding: 18px 24px;
-            border-radius: 14px;
-            text-align: center;
-            font-size: 17px;
-            font-weight: 600;
-            margin: 0 20px 20px;
-            cursor: pointer;
-            transition: all 0.2s;
-            -webkit-tap-highlight-color: transparent;
-        }
-        .action-btn:active {
-            transform: scale(0.98);
-            opacity: 0.9;
-        }
-        
-        /* 底部导航 */
-        .bottom-nav {
-            position: fixed;
-            bottom: 0;
-            left: 0;
-            right: 0;
-            display: flex;
-            justify-content: space-around;
-            padding: 12px 0 24px;
-            background: rgba(0,0,0,0.95);
-            backdrop-filter: blur(20px);
-            border-top: 1px solid rgba(255,255,255,0.08);
-            z-index: 50;
-        }
-        .nav-btn {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            gap: 4px;
-            padding: 8px 20px;
-            cursor: pointer;
-            opacity: 0.4;
-            transition: all 0.2s;
-            -webkit-tap-highlight-color: transparent;
-        }
-        .nav-btn.active {
-            opacity: 1;
-        }
-        .nav-btn:active {
-            opacity: 0.7;
-        }
-        .nav-icon {
-            font-size: 22px;
-            line-height: 1;
-        }
-        .nav-text {
-            font-size: 11px;
-            font-weight: 500;
-        }
-        
-        /* 聊天页 */
-        .chat-header {
-            display: flex;
-            align-items: center;
-            padding: 16px 20px;
-            border-bottom: 1px solid rgba(255,255,255,0.08);
-            position: sticky;
-            top: 0;
-            background: #000;
-            z-index: 10;
-        }
-        .back-btn {
-            width: 40px;
-            height: 40px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 20px;
-            cursor: pointer;
-            border-radius: 50%;
-            margin-right: 12px;
-            -webkit-tap-highlight-color: transparent;
-        }
-        .back-btn:active {
-            background: rgba(255,255,255,0.1);
-        }
-        .chat-title {
-            font-size: 17px;
-            font-weight: 600;
-        }
-        .chat-status {
-            font-size: 13px;
-            color: #30D158;
-            display: flex;
-            align-items: center;
-            gap: 6px;
-        }
-        .status-dot {
-            width: 6px;
-            height: 6px;
-            background: #30D158;
-            border-radius: 50%;
-        }
-        
-        .chat-messages {
-            padding: 20px;
-            min-height: calc(100vh - 200px);
-        }
-        .message {
-            margin-bottom: 16px;
-            max-width: 80%;
-        }
-        .message.user {
-            margin-left: auto;
-            text-align: right;
-        }
-        .message-bubble {
-            display: inline-block;
-            padding: 12px 16px;
-            border-radius: 18px;
-            font-size: 15px;
-            line-height: 1.5;
-            word-break: break-word;
-        }
-        .message.ai .message-bubble {
-            background: rgba(255,255,255,0.1);
-            border-bottom-left-radius: 4px;
-        }
-        .message.user .message-bubble {
-            background: #00D4FF;
-            color: #000;
-            border-bottom-right-radius: 4px;
-        }
-        
-        .chat-input-area {
-            position: fixed;
-            bottom: 0;
-            left: 0;
-            right: 0;
-            padding: 12px 16px 24px;
-            background: #000;
-            border-top: 1px solid rgba(255,255,255,0.08);
-            display: flex;
-            gap: 10px;
-            z-index: 20;
-        }
-        .chat-input {
-            flex: 1;
-            padding: 12px 16px !important;
-            margin: 0 !important;
-            text-align: left !important;
-            background: rgba(255,255,255,0.08) !important;
-            border: 1px solid rgba(255,255,255,0.15) !important;
-            border-radius: 24px !important;
-            font-size: 15px !important;
-        }
-        .send-btn {
-            width: 48px !important;
-            height: 48px;
-            padding: 0 !important;
-            border-radius: 50% !important;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 18px;
-            margin: 0 !important;
-        }
-        
-        /* Toast */
-        .toast {
-            position: fixed;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            background: rgba(40,40,40,0.98);
-            padding: 16px 24px;
-            border-radius: 12px;
-            color: #fff;
-            font-size: 15px;
-            z-index: 200;
-            opacity: 0;
-            pointer-events: none;
-            transition: opacity 0.3s;
-        }
-        .toast.show {
-            opacity: 1;
-        }
-    </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+<title>AMBROSE</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:-apple-system,sans-serif;background:#000;color:#fff}
+#auth{position:fixed;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:20px;background:#000;z-index:100}
+.logo{width:80px;height:80px;background:linear-gradient(135deg,#00D4FF,#FF2D92);border-radius:20px;margin-bottom:20px;display:flex;align-items:center;justify-content:center;font-size:32px;font-weight:bold;color:#000}
+h1{font-size:28px;margin-bottom:8px}
+p{color:rgba(255,255,255,0.5);margin-bottom:30px}
+input{width:100%;max-width:280px;padding:15px;font-size:17px;background:rgba(255,255,255,0.1);border:1px solid rgba(255,255,255,0.2);border-radius:10px;color:#fff;text-align:center;margin-bottom:10px}
+button{width:100%;max-width:280px;padding:15px;font-size:17px;font-weight:bold;background:#00D4FF;color:#000;border:none;border-radius:10px;cursor:pointer}
+.hide{display:none!important}
+.screen{display:none;min-height:100vh;padding-bottom:80px}
+.screen.active{display:block}
+.header{padding:60px 20px 20px}
+.time{color:#00D4FF;font-size:14px;margin-bottom:8px}
+.greeting{font-size:32px;font-weight:bold;margin-bottom:8px}
+.sub{color:rgba(255,255,255,0.5)}
+.stats{display:grid;grid-template-columns:repeat(2,1fr);gap:12px;padding:20px}
+.stat{background:rgba(255,255,255,0.08);padding:20px;border-radius:12px;text-align:center;cursor:pointer}
+.stat-num{font-size:28px;font-weight:bold;margin-bottom:4px}
+.stat-label{font-size:13px;color:rgba(255,255,255,0.5)}
+.main-btn{background:#00D4FF;color:#000;padding:18px;margin:0 20px 20px;border-radius:12px;text-align:center;font-size:17px;font-weight:bold;cursor:pointer}
+.nav{position:fixed;bottom:0;left:0;right:0;display:flex;justify-content:space-around;padding:15px;background:rgba(0,0,0,0.95);border-top:1px solid rgba(255,255,255,0.1)}
+.nav-item{text-align:center;cursor:pointer;opacity:0.4;padding:8px 20px}
+.nav-item.active{opacity:1}
+.chat-header{display:flex;align-items:center;padding:16px;border-bottom:1px solid rgba(255,255,255,0.1)}
+.back{width:40px;height:40px;display:flex;align-items:center;justify-content:center;font-size:20px;cursor:pointer;margin-right:12px}
+.chat-messages{padding:20px;min-height:calc(100vh - 180px)}
+.msg{margin-bottom:16px;max-width:80%}
+.msg.user{margin-left:auto;text-align:right}
+.bubble{display:inline-block;padding:12px 16px;border-radius:18px;font-size:15px}
+.msg.ai .bubble{background:rgba(255,255,255,0.1)}
+.msg.user .bubble{background:#00D4FF;color:#000}
+.chat-input{position:fixed;bottom:0;left:0;right:0;padding:12px 16px 24px;background:#000;border-top:1px solid rgba(255,255,255,0.1);display:flex;gap:10px}
+.chat-input input{flex:1;margin:0;text-align:left}
+.chat-input button{width:auto;padding:15px 20px;margin:0}
+.toast{position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);background:rgba(40,40,40,0.98);padding:16px 24px;border-radius:12px;color:#fff;font-size:15px;z-index:200;display:none}
+.toast.show{display:block}
+</style>
 </head>
 <body>
-    <!-- Toast -->
-    <div class="toast" id="toast"></div>
 
-    <!-- 认证界面 -->
-    <div id="auth">
-        <div class="logo">A</div>
-        <h1>AMBROSE</h1>
-        <div class="subtitle">AI Health Coach</div>
-        
-        <input type="text" id="inviteCode" placeholder="邀请码" maxlength="4" autocomplete="off">
-        <input type="text" id="verifyCode" placeholder="身份验证码" maxlength="4" autocomplete="off" class="hidden">
-        
-        <button class="btn" id="loginBtn">进入</button>
-    </div>
+<div class="toast" id="toast"></div>
 
-    <!-- 首页 -->
-    <div class="screen" id="homeScreen">
-        <div class="header">
-            <div class="time-display" id="timeDisplay">--:--</div>
-            <div class="greeting" id="greetingText">你好</div>
-            <div class="sub-text">今天感觉如何？</div>
-        </div>
+<!-- 认证 -->
+<div id="auth">
+<div class="logo">A</div>
+<h1>AMBROSE</h1>
+<p>AI Health Coach</p>
+<input type="text" id="code1" placeholder="邀请码 8888" maxlength="4">
+<input type="text" id="code2" placeholder="验证码 0812" maxlength="4" class="hide">
+<button id="btnLogin">进入</button>
+</div>
 
-        <div class="stats-grid">
-            <div class="stat-card" data-stat="steps">
-                <div class="stat-value">8,432</div>
-                <div class="stat-label">步数</div>
-            </div>
-            <div class="stat-card" data-stat="calories">
-                <div class="stat-value">342</div>
-                <div class="stat-label">千卡</div>
-            </div>
-            <div class="stat-card" data-stat="sleep">
-                <div class="stat-value">7.5</div>
-                <div class="stat-label">小时</div>
-            </div>
-            <div class="stat-card" data-stat="water">
-                <div class="stat-value">1.2L</div>
-                <div class="stat-label">饮水</div>
-            </div>
-        </div>
+<!-- 首页 -->
+<div class="screen" id="home">
+<div class="header">
+<div class="time" id="time">--:--</div>
+<div class="greeting" id="greet">你好</div>
+<div class="sub">今天感觉如何？</div>
+</div>
 
-        <div class="action-btn" id="chatActionBtn">
-            💬 开始对话
-        </div>
+<div class="stats">
+<div class="stat" id="s1"><div class="stat-num">8,432</div><div class="stat-label">步数</div></div>
+<div class="stat" id="s2"><div class="stat-num">342</div><div class="stat-label">千卡</div></div>
+<div class="stat" id="s3"><div class="stat-num">7.5</div><div class="stat-label">小时</div></div>
+<div class="stat" id="s4"><div class="stat-num">1.2L</div><div class="stat-label">饮水</div></div>
+</div>
 
-        <div class="bottom-nav">
-            <div class="nav-btn active" data-page="home">
-                <span class="nav-icon">🏠</span>
-                <span class="nav-text">首页</span>
-            </div>
-            <div class="nav-btn" data-page="data">
-                <span class="nav-icon">📊</span>
-                <span class="nav-text">数据</span>
-            </div>
-            <div class="nav-btn" data-page="chat">
-                <span class="nav-icon">💬</span>
-                <span class="nav-text">对话</span>
-            </div>
-            <div class="nav-btn" data-page="profile">
-                <span class="nav-icon">👤</span>
-                <span class="nav-text">我的</span>
-            </div>
-        </div>
-    </div>
+<div class="main-btn" id="btnChat">💬 开始对话</div>
 
-    <!-- 聊天页 -->
-    <div class="screen" id="chatScreen">
-        <div class="chat-header">
-            <div class="back-btn" id="backBtn">←</div>
-            <div>
-                <div class="chat-title">AMBROSE</div>
-                <div class="chat-status">
-                    <span class="status-dot"></span>
-                    <span>在线</span>
-                </div>
-            </div>
-        </div>
+<div class="nav">
+<div class="nav-item active" id="nav1">🏠<br><small>首页</small></div>
+<div class="nav-item" id="nav2">📊<br><small>数据</small></div>
+<div class="nav-item" id="nav3">💬<br><small>对话</small></div>
+<div class="nav-item" id="nav4">👤<br><small>我的</small></div>
+</div>
+</div>
 
-        <div class="chat-messages" id="messages">
-            <div class="message ai">
-                <div class="message-bubble">你好！我是AMBROSE，你的AI健康教练。今天有什么可以帮助你的吗？</div>
-            </div>
-        </div>
+<!-- 聊天 -->
+<div class="screen" id="chat">
+<div class="chat-header">
+<div class="back" id="btnBack">←</div>
+<div><div style="font-weight:bold">AMBROSE</div><div style="font-size:13px;color:#30D158">● 在线</div></div>
+</div>
+<div class="chat-messages" id="msgs">
+<div class="msg ai"><div class="bubble">你好！我是AMBROSE，你的AI健康教练。</div></div>
+</div>
+<div class="chat-input">
+<input type="text" id="msgIn" placeholder="输入消息...">
+<button id="btnSend">发送</button>
+</div>
+</div>
 
-        <div class="chat-input-area">
-            <input type="text" class="chat-input" id="messageInput" placeholder="输入消息..." autocomplete="off">
-            <button class="btn send-btn" id="sendBtn">➤</button>
-        </div>
-    </div>
+<script>
+// 配置
+const INVITE='8888',VERIFY='0812';
 
-    <script>
-        // 配置
-        const CONFIG = {
-            INVITE_CODE: '8888',
-            VERIFY_CODE: '0812'
-        };
+// 获取元素
+const d=document;
+const $=id=>d.getElementById(id);
 
-        // DOM元素
-        const elements = {
-            auth: document.getElementById('auth'),
-            homeScreen: document.getElementById('homeScreen'),
-            chatScreen: document.getElementById('chatScreen'),
-            inviteCode: document.getElementById('inviteCode'),
-            verifyCode: document.getElementById('verifyCode'),
-            loginBtn: document.getElementById('loginBtn'),
-            greetingText: document.getElementById('greetingText'),
-            timeDisplay: document.getElementById('timeDisplay'),
-            toast: document.getElementById('toast'),
-            messageInput: document.getElementById('messageInput'),
-            messages: document.getElementById('messages'),
-            sendBtn: document.getElementById('sendBtn'),
-            backBtn: document.getElementById('backBtn'),
-            chatActionBtn: document.getElementById('chatActionBtn')
-        };
+// 显示提示
+function toast(msg){
+const t=$('toast');
+t.textContent=msg;
+t.classList.add('show');
+setTimeout(()=>t.classList.remove('show'),2000);
+}
 
-        // 显示Toast
-        function showToast(message) {
-            elements.toast.textContent = message;
-            elements.toast.classList.add('show');
-            setTimeout(() => {
-                elements.toast.classList.remove('show');
-            }, 2000);
-        }
+// 更新时间
+function updateTime(){
+const now=new Date();
+const utc=now.getTime()+now.getTimezoneOffset()*60000;
+const bj=new Date(utc+3600000*8);
+$('time').textContent=bj.toTimeString().slice(0,5);
+}
+setInterval(updateTime,1000);
+updateTime();
 
-        // 更新时间
-        function updateTime() {
-            const now = new Date();
-            const utc = now.getTime() + (now.getTimezoneOffset() * 60000);
-            const bj = new Date(utc + (3600000 * 8));
-            const hours = String(bj.getHours()).padStart(2, '0');
-            const minutes = String(bj.getMinutes()).padStart(2, '0');
-            elements.timeDisplay.textContent = hours + ':' + minutes;
-            
-            const hour = bj.getHours();
-            let greet = '晚上好';
-            if (hour < 12) greet = '早上好';
-            else if (hour < 18) greet = '下午好';
-            
-            const savedUser = localStorage.getItem('user');
-            const name = savedUser === 'boss' ? 'BOSS Shao' : (savedUser === 'guest' ? '朋友' : '');
-            if (name && !elements.greetingText.textContent.includes(name)) {
-                elements.greetingText.textContent = greet + (name ? '，' + name : '');
-            }
-        }
+// 登录
+$('btnLogin').onclick=function(){
+const c1=$('code1').value,c2=$('code2').value;
+if(c1!==INVITE){toast('邀请码错误');return;}
+$('auth').style.display='none';
+$('home').classList.add('active');
+localStorage.setItem('user',c2===VERIFY?'boss':'guest');
+$('greet').textContent=(c2===VERIFY?'BOSS Shao':'朋友')+'，你好';
+};
 
-        // 登录
-        function handleLogin() {
-            const code1 = elements.inviteCode.value.trim();
-            const code2 = elements.verifyCode.value.trim();
-            
-            if (code1 !== CONFIG.INVITE_CODE) {
-                showToast('邀请码错误');
-                return;
-            }
-            
-            const isBoss = code2 === CONFIG.VERIFY_CODE;
-            localStorage.setItem('user', isBoss ? 'boss' : 'guest');
-            
-            elements.auth.style.display = 'none';
-            elements.homeScreen.classList.add('active');
-            
-            updateTime();
-            showToast('欢迎回来');
-        }
+// 邀请码输入
+$('code1').oninput=function(){
+this.value=this.value.replace(/\D/g,'');
+if(this.value===INVITE)$('code2').classList.remove('hide');
+};
 
-        // 邀请码输入
-        function handleInviteInput() {
-            this.value = this.value.replace(/[^0-9]/g, '');
-            if (this.value === CONFIG.INVITE_CODE) {
-                elements.verifyCode.classList.remove('hidden');
-                elements.verifyCode.focus();
-            }
-        }
+// 检查已登录
+if(localStorage.getItem('user')){
+$('auth').style.display='none';
+$('home').classList.add('active');
+$('greet').textContent=(localStorage.getItem('user')==='boss'?'BOSS Shao':'朋友')+'，你好';
+}
 
-        // 显示聊天
-        function showChat() {
-            elements.homeScreen.classList.remove('active');
-            elements.chatScreen.classList.add('active');
-        }
+// 显示聊天
+function showChat(){
+$('home').classList.remove('active');
+$('chat').classList.add('active');
+}
 
-        // 显示首页
-        function showHome() {
-            elements.chatScreen.classList.remove('active');
-            elements.homeScreen.classList.add('active');
-            
-            // 更新导航状态
-            document.querySelectorAll('.nav-btn').forEach(btn => {
-                btn.classList.remove('active');
-            });
-            document.querySelector('[data-page="home"]').classList.add('active');
-        }
+// 显示首页
+function showHome(){
+$('chat').classList.remove('active');
+$('home').classList.add('active');
+d.querySelectorAll('.nav-item').forEach((n,i)=>n.classList.toggle('active',i===0));
+}
 
-        // 发送消息
-        function sendMessage() {
-            const text = elements.messageInput.value.trim();
-            if (!text) return;
-            
-            // 用户消息
-            const userMsg = document.createElement('div');
-            userMsg.className = 'message user';
-            userMsg.innerHTML = '<div class="message-bubble">' + text + '</div>';
-            elements.messages.appendChild(userMsg);
-            
-            elements.messageInput.value = '';
-            elements.messages.scrollTop = elements.messages.scrollHeight;
-            
-            // AI回复
-            setTimeout(() => {
-                const aiMsg = document.createElement('div');
-                aiMsg.className = 'message ai';
-                aiMsg.innerHTML = '<div class="message-bubble">收到！我会帮你记录下来。</div>';
-                elements.messages.appendChild(aiMsg);
-                elements.messages.scrollTop = elements.messages.scrollHeight;
-            }, 800);
-        }
+// 绑定按钮
+$('btnChat').onclick=showChat;
+$('btnBack').onclick=showHome;
+$('nav3').onclick=showChat;
+$('nav1').onclick=showHome;
 
-        // 检查登录状态
-        function checkLogin() {
-            const savedUser = localStorage.getItem('user');
-            if (savedUser) {
-                elements.auth.style.display = 'none';
-                elements.homeScreen.classList.add('active');
-                updateTime();
-                setInterval(updateTime, 1000);
-            }
-        }
+// 数据卡片
+$('s1').onclick=()=>toast('步数: 8,432步');
+$('s2').onclick=()=>toast('消耗: 342千卡');
+$('s3').onclick=()=>toast('睡眠: 7.5小时');
+$('s4').onclick=()=>toast('饮水: 1.2L');
 
-        // 事件绑定
-        function bindEvents() {
-            // 登录按钮
-            elements.loginBtn.addEventListener('click', handleLogin);
-            
-            // 邀请码输入
-            elements.inviteCode.addEventListener('input', handleInviteInput);
-            elements.inviteCode.addEventListener('keypress', function(e) {
-                if (e.key === 'Enter') handleLogin();
-            });
-            elements.verifyCode.addEventListener('keypress', function(e) {
-                if (e.key === 'Enter') handleLogin();
-            });
-            
-            // 开始对话按钮
-            elements.chatActionBtn.addEventListener('click', showChat);
-            
-            // 底部导航
-            document.querySelectorAll('.nav-btn').forEach(btn => {
-                btn.addEventListener('click', function() {
-                    const page = this.getAttribute('data-page');
-                    if (page === 'chat') {
-                        showChat();
-                    } else if (page === 'home') {
-                        showHome();
-                    } else {
-                        showToast('功能开发中');
-                    }
-                });
-            });
-            
-            // 数据卡片
-            document.querySelectorAll('.stat-card').forEach(card => {
-                card.addEventListener('click', function() {
-                    const stat = this.getAttribute('data-stat');
-                    const labels = {
-                        steps: '今日步数: 8,432步',
-                        calories: '今日消耗: 342千卡',
-                        sleep: '昨晚睡眠: 7.5小时',
-                        water: '今日饮水: 1.2L'
-                    };
-                    showToast(labels[stat] || '数据详情');
-                });
-            });
-            
-            // 返回按钮
-            elements.backBtn.addEventListener('click', showHome);
-            
-            // 发送按钮
-            elements.sendBtn.addEventListener('click', sendMessage);
-            elements.messageInput.addEventListener('keypress', function(e) {
-                if (e.key === 'Enter') sendMessage();
-            });
-        }
+// 导航
+$('nav2').onclick=()=>toast('数据页面开发中');
+$('nav4').onclick=()=>toast('我的页面开发中');
 
-        // 初始化
-        document.addEventListener('DOMContentLoaded', function() {
-            checkLogin();
-            bindEvents();
-        });
-    </script>
+// 发送消息
+$('btnSend').onclick=function(){
+const txt=$('msgIn').value.trim();
+if(!txt)return;
+$('msgs').innerHTML+='<div class="msg user"><div class="bubble">'+txt+'</div></div>';
+$('msgIn').value='';
+setTimeout(()=>{
+$('msgs').innerHTML+='<div class="msg ai"><div class="bubble">收到！我会帮你记录下来。</div></div>';
+},500);
+};
+
+// 回车发送
+$('msgIn').onkeypress=function(e){
+if(e.key==='Enter')$('btnSend').click();
+};
+</script>
+
 </body>
 </html>
