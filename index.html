@@ -130,6 +130,12 @@ button:disabled{opacity:0.5}
 
 <div class="main-btn" id="chatBtn">💬 开始对话</div>
 
+<!-- 功能按钮区 -->
+<div style="padding:0 20px;display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:12px;">
+<div class="main-btn" id="healthBtn" style="margin:0;background:linear-gradient(135deg,#FF2D92,#00D4FF);">❤️ 健康中心</div>
+<div class="main-btn" id="nutritionBtn" style="margin:0;background:linear-gradient(135deg,#30D158,#00D4FF);">🥗 饮食记录</div>
+</div>
+
 <div class="nav">
 <div class="nav-item active" id="navHome"><span>🏠</span><small>首页</small></div>
 <div class="nav-item" id="navData"><span>📊</span><small>数据</small></div>
@@ -788,6 +794,63 @@ button:disabled{opacity:0.5}
     };
     
 })();
+</script>
+
+<!-- 功能模块 (核心功能) -->
+<script src="/ui-components.js"></script>
+<script src="/design-system.js"></script>
+<script src="/health-dashboard.js"></script>
+<script src="/fitness-pro.js"></script>
+<script src="/nutrition-system.js"></script>
+<script src="/weight-tracker.js"></script>
+<script src="/ai-coach.js"></script>
+<script src="/user-profile-system.js"></script>
+
+<script>
+// 初始化功能模块
+document.addEventListener('DOMContentLoaded', function() {
+    // 等待所有脚本加载完成
+    setTimeout(function() {
+        try {
+            // 初始化健康数据中心
+            if (window.HealthDashboard) {
+                window.healthDashboard = new HealthDashboard();
+                console.log('✅ HealthDashboard 已加载');
+            }
+            
+            // 初始化营养系统
+            if (window.NutritionSystem) {
+                window.nutritionSystem = new NutritionSystem();
+                console.log('✅ NutritionSystem 已加载');
+            }
+            
+            // 初始化体重追踪
+            if (window.WeightTracker) {
+                window.weightTracker = new WeightTracker();
+                console.log('✅ WeightTracker 已加载');
+            }
+            
+            // 绑定按钮事件
+            var healthBtn = document.getElementById('healthBtn');
+            if (healthBtn && window.healthDashboard) {
+                healthBtn.onclick = function() {
+                    window.healthDashboard.showHealthHub();
+                };
+            }
+            
+            var nutritionBtn = document.getElementById('nutritionBtn');
+            if (nutritionBtn && window.nutritionSystem) {
+                nutritionBtn.onclick = function() {
+                    window.nutritionSystem.showNutritionHub();
+                };
+            }
+            
+            console.log('✅ 所有功能模块已初始化');
+        } catch (e) {
+            console.error('❌ 功能模块初始化失败:', e);
+        }
+    }, 500);
+});
 </script>
 
 </body>
