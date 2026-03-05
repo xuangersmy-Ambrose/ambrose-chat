@@ -26,6 +26,9 @@ const UI = {
         // 初始化健身系统
         this.fitnessPro = new FitnessPro(this);
         
+        // 初始化健康数据中心
+        this.healthDashboard = new HealthDashboard(this);
+        
         // 检查身份
         const userRelation = localStorage.getItem('ambrose_user_relation');
         this.isMaster = userRelation === 'self';
@@ -34,10 +37,10 @@ const UI = {
         this.startClock();
         this.addWelcomeMessage();
         
-        // 显示健身按钮
+        // 显示健康中心按钮
         const fitnessBtn = document.getElementById('fitnessBtn');
         if (fitnessBtn) {
-            fitnessBtn.onclick = () => this.fitnessPro.showFitnessHub();
+            fitnessBtn.onclick = () => this.healthDashboard.showHealthHub();
         }
     },
 
@@ -314,9 +317,9 @@ const UI = {
         const userName = localStorage.getItem('ambrose_user_name') || '朋友';
         
         if (this.isMaster) {
-            this.addMessage(`${greeting}，BOSS Shao。我是 AMBROSE，随时为您服务。点击下方的 🏋️ 按钮可以打开健身助手，或直接在输入框中和我聊天。`, 'bot');
+            this.addMessage(`${greeting}，BOSS Shao。我是 AMBROSE，你的 AI 健康教练。\n\n今天想聊点什么？\n• 💪 制定今日运动计划\n• 🥗 记录饮食 & 营养分析\n• 😴 昨晚睡眠质量如何\n• 🧘 情绪压力需要疏导\n• 💊 健康症状咨询\n\n点击下方的 ❤️ 按钮可以打开健康中心，或者直接在输入框和我聊聊。`, 'bot');
         } else {
-            this.addMessage(`${greeting}，${userName}。我是 AMBROSE，BOSS Shao 的 AI 助手。有什么我可以帮您的吗？`, 'bot');
+            this.addMessage(`${greeting}，${userName}。我是 AMBROSE，BOSS Shao 的 AI 健康助手。\n\n我可以帮你：\n• 解答健康养生问题\n• 提供运动建议\n• 饮食营养指导\n• 情绪陪伴支持\n\n有什么想聊的吗？`, 'bot');
         }
     }
 };
