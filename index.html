@@ -13,8 +13,8 @@
             /* 主色调 */
             --primary-500: #00f3ff;
             --primary-600: #00c2cc;
-            --secondary-500: #ff00a0;
-            --accent-500: #b829dd;
+            --secondary-500: #ff00ff;
+            --accent-500: #bd00ff;
             --success: #00ff88;
             --warning: #ffaa00;
             --danger: #ff0040;
@@ -46,8 +46,10 @@
             --text-secondary: #a1a1aa;
             --text-tertiary: #636366;
             
-            /* 阴影 */
-            --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.3);
+            /* 渐变色 */
+            --gradient-primary: linear-gradient(135deg, #00f3ff 0%, #00ff88 100%);
+            --gradient-secondary: linear-gradient(135deg, #ff00ff 0%, #bd00ff 100%);
+            --gradient-health: linear-gradient(135deg, #00ff88 0%, #00f3ff 50%, #bd00ff 100%);
             --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.4);
             --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.5);
             --shadow-glow: 0 0 20px rgba(0, 243, 255, 0.4);
@@ -460,14 +462,16 @@
         }
         
         .tool-btn.fitness {
-            background: linear-gradient(135deg, rgba(0, 255, 136, 0.15), rgba(0, 255, 136, 0.05));
-            color: var(--success);
-            border: 1px solid rgba(0, 255, 136, 0.3);
+            background: linear-gradient(135deg, rgba(255, 0, 255, 0.15), rgba(189, 0, 255, 0.05));
+            color: #ff00ff;
+            border: 1px solid rgba(255, 0, 255, 0.4);
+            box-shadow: 0 0 15px rgba(255, 0, 255, 0.2);
         }
         
         .tool-btn.fitness:hover {
-            background: linear-gradient(135deg, rgba(0, 255, 136, 0.25), rgba(0, 255, 136, 0.1));
-            box-shadow: 0 0 20px rgba(0, 255, 136, 0.3);
+            background: linear-gradient(135deg, rgba(255, 0, 255, 0.25), rgba(189, 0, 255, 0.1));
+            box-shadow: 0 0 25px rgba(255, 0, 255, 0.4);
+            transform: scale(1.1);
         }
         
         .send-btn {

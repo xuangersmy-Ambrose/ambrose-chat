@@ -71,13 +71,14 @@ class HealthDashboard {
 
     // 显示健康中心主面板
     showHealthHub() {
+        const today = new Date().toLocaleDateString('zh-CN', { month: 'long', day: 'numeric', weekday: 'short' });
         const html = `
             <div style="width: 100%; max-width: 600px;">
                 <!-- 健康中心标题 -->
                 <div style="text-align: center; margin-bottom: 24px;">
-                    <div style="font-size: 32px; margin-bottom: 8px;">🏥</div>
+                    <div style="font-size: 40px; margin-bottom: 8px; animation: pulse-glow 2s infinite;">🏥</div>
                     <div style="font-size: 20px; font-weight: 700; color: var(--primary-500);">HEALTH CENTER</div>
-                    <div style="font-size: 12px; color: var(--text-tertiary); margin-top: 4px;">你的个人健康数据中心</div>
+                    <div style="font-size: 12px; color: var(--text-tertiary); margin-top: 4px;">${today} · 你的个人健康数据中心</div>
                 </div>
 
                 <!-- 今日摘要卡片 -->

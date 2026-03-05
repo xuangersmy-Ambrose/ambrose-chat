@@ -308,18 +308,34 @@ const UI = {
     addWelcomeMessage() {
         const hour = new Date().getHours();
         let greeting = '你好';
+        let healthTip = '';
         
-        if (hour < 6) greeting = '夜深了';
-        else if (hour < 12) greeting = '早上好';
-        else if (hour < 18) greeting = '下午好';
-        else greeting = '晚上好';
+        if (hour < 6) {
+            greeting = '夜深了';
+            healthTip = '💤 熬夜伤身，记得补充水分';
+        } else if (hour < 9) {
+            greeting = '早上好';
+            healthTip = '🌅 新的一天，从一杯温水开始';
+        } else if (hour < 12) {
+            greeting = '上午好';
+            healthTip = '☀️ 上午是运动的最佳时间';
+        } else if (hour < 14) {
+            greeting = '中午好';
+            healthTip = '🥗 午餐记得营养均衡';
+        } else if (hour < 18) {
+            greeting = '下午好';
+            healthTip = '💧 下午茶时间，记得补水';
+        } else {
+            greeting = '晚上好';
+            healthTip = '🌙 晚上少食，有助于睡眠';
+        }
 
         const userName = localStorage.getItem('ambrose_user_name') || '朋友';
         
         if (this.isMaster) {
-            this.addMessage(`${greeting}，BOSS Shao。我是 AMBROSE，你的 AI 健康教练。\n\n今天想聊点什么？\n• 💪 制定今日运动计划\n• 🥗 记录饮食 & 营养分析\n• 😴 昨晚睡眠质量如何\n• 🧘 情绪压力需要疏导\n• 💊 健康症状咨询\n\n点击下方的 ❤️ 按钮可以打开健康中心，或者直接在输入框和我聊聊。`, 'bot');
+            this.addMessage(`${greeting}，BOSS Shao。我是 AMBROSE，你的 AI 健康教练。${healthTip ? '\n\n' + healthTip : ''}\n\n今天想聊点什么？\n• 💪 制定今日运动计划\n• 🥗 记录饮食 & 营养分析\n• 😴 昨晚睡眠质量如何\n• 🧘 情绪压力需要疏导\n• 💊 健康症状咨询\n\n点击下方的 ❤️ 按钮可以打开健康中心，或者直接在输入框和我聊聊。`, 'bot');
         } else {
-            this.addMessage(`${greeting}，${userName}。我是 AMBROSE，BOSS Shao 的 AI 健康助手。\n\n我可以帮你：\n• 解答健康养生问题\n• 提供运动建议\n• 饮食营养指导\n• 情绪陪伴支持\n\n有什么想聊的吗？`, 'bot');
+            this.addMessage(`${greeting}，${userName}。我是 AMBROSE，BOSS Shao 的 AI 健康助手。${healthTip ? '\n\n' + healthTip : ''}\n\n我可以帮你：\n• 解答健康养生问题\n• 提供运动建议\n• 饮食营养指导\n• 情绪陪伴支持\n\n有什么想聊的吗？`, 'bot');
         }
     }
 };
