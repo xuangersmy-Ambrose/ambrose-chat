@@ -69,15 +69,16 @@ class HealthDashboard {
         window.dispatchEvent(new Event('healthDataUpdated'));
     }
 
-    // 渲染环形进度条
+    // 渲染环形进度条 - 增强动画效果
     renderCircularProgress(value, max, color, icon, label) {
         const percentage = Math.min((value / max) * 100, 100);
         const radius = 26;
         const circumference = 2 * Math.PI * radius;
         const strokeDashoffset = circumference - (percentage / 100) * circumference;
+        const isComplete = percentage >= 100;
         
         return `
-            <div style="display: flex; flex-direction: column; align-items: center; gap: 6px;">
+            <div style="display: flex; flex-direction: column; align-items: center; gap: 6px; ${isComplete ? 'animation: pulse-glow 2s infinite;' : ''}">
                 <div style="position: relative; width: 60px; height: 60px;">
                     <svg width="60" height="60" style="transform: rotate(-90deg);">
                         <circle cx="30" cy="30" r="${radius}" fill="none" 
@@ -87,14 +88,14 @@ class HealthDashboard {
                             stroke-linecap="round"
                             stroke-dasharray="${circumference}"
                             stroke-dashoffset="${strokeDashoffset}"
-                            style="transition: stroke-dashoffset 0.6s cubic-bezier(0.16, 1, 0.3, 1);"
+                            style="transition: stroke-dashoffset 0.8s cubic-bezier(0.16, 1, 0.3, 1); ${isComplete ? 'filter: drop-shadow(0 0 6px ' + color + ');' : ''}"
                             filter="drop-shadow(0 0 3px ${color})"/>
                     </svg>
                     <div style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); 
-                                font-size: 18px;">${icon}</div>
+                                font-size: 18px; ${isComplete ? 'animation: bounce 0.5s ease;' : ''}">${isComplete ? '✨' : icon}</div>
                 </div>
                 <div style="text-align: center;">
-                    <div style="font-size: 14px; font-weight: 700; color: ${color}; font-family: 'JetBrains Mono', monospace;">
+                    <div style="font-size: 14px; font-weight: 700; color: ${isComplete ? 'var(--success)' : color}; font-family: 'JetBrains Mono', monospace;">
                         ${value ? value.toLocaleString() : '0'}
                     </div>
                     <div style="font-size: 9px; color: var(--text-tertiary); text-transform: uppercase; letter-spacing: 1px;">
