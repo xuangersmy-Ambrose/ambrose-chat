@@ -50,7 +50,7 @@ class NutritionSystem {
         window.dispatchEvent(new Event('nutritionDataUpdated'));
     }
 
-    // 初始化食物数据库 (简化版)
+    // 初始化食物数据库 - 扩展
     initFoodDatabase() {
         this.foodDatabase = {
             // 早餐类
@@ -61,6 +61,8 @@ class NutritionSystem {
             '牛奶': { calories: 150, protein: 8, carbs: 12, fat: 8, unit: '杯' },
             '面包': { calories: 260, protein: 8, carbs: 48, fat: 3, unit: '片' },
             '燕麦粥': { calories: 120, protein: 4, carbs: 22, fat: 2, unit: '碗' },
+            '煎饼': { calories: 350, protein: 8, carbs: 55, fat: 10, unit: '个' },
+            '小笼包': { calories: 80, protein: 4, carbs: 12, fat: 2.5, unit: '个' },
             
             // 主食类
             '米饭': { calories: 200, protein: 4, carbs: 45, fat: 0.5, unit: '碗' },
