@@ -2,245 +2,430 @@
 <html>
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-<title>AMBROSE</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="format-detection" content="telephone=no">
+<title>AMBROSE - AI Health Coach</title>
 <style>
-*{margin:0;padding:0;box-sizing:border-box}
-body{font-family:-apple-system,sans-serif;background:#000;color:#fff}
-
-/* 认证界面 */
-.auth{position:fixed;top:0;left:0;right:0;bottom:0;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:20px;background:#000;z-index:9999}
-.auth.hide{display:none}
-.logo{width:80px;height:80px;background:linear-gradient(135deg,#00D4FF,#FF2D92);border-radius:20px;margin-bottom:20px;display:flex;align-items:center;justify-content:center;font-size:32px;font-weight:bold;color:#000}
-h1{font-size:28px;margin-bottom:10px}
-p{color:rgba(255,255,255,0.5);margin-bottom:30px}
-input{width:280px;padding:15px;font-size:17px;background:rgba(255,255,255,0.1);border:1px solid rgba(255,255,255,0.2);border-radius:10px;color:#fff;text-align:center;margin-bottom:10px;display:block}
-input.hide{display:none}
-button{width:280px;padding:15px;font-size:17px;font-weight:bold;background:#00D4FF;color:#000;border:none;border-radius:10px;cursor:pointer}
-
-/* 页面 */
-.page{display:none}
+*{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+body{font-family:-apple-system,BlinkMacSystemFont,'PingFang SC','Hiragino Sans GB','Microsoft YaHei',sans-serif;background:#000;color:#fff;-webkit-overflow-scrolling:touch}
+.page{display:none;min-height:100vh;padding-bottom:100px}
 .page.show{display:block}
 
+/* 微信兼容 */
+.auth{position:fixed;top:0;left:0;right:0;bottom:0;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:20px;background:#000;z-index:99999}
+.auth.hide{display:none}
+.logo{width:80px;height:80px;background:linear-gradient(135deg,#00D4FF,#FF2D92);border-radius:20px;margin-bottom:20px;display:flex;align-items:center;justify-content:center;font-size:32px;font-weight:bold;color:#000;box-shadow:0 4px 20px rgba(0,212,255,0.3)}
+h1{font-size:28px;margin-bottom:10px;font-weight:600}
+p{color:rgba(255,255,255,0.5);margin-bottom:30px;font-size:15px}
+input{width:280px;padding:15px;font-size:17px;background:rgba(255,255,255,0.1);border:1px solid rgba(255,255,255,0.2);border-radius:10px;color:#fff;text-align:center;margin-bottom:12px;-webkit-appearance:none;outline:none}
+input:focus{border-color:#00D4FF;background:rgba(255,255,255,0.15)}
+input.hide{display:none !important}
+button{width:280px;padding:16px;font-size:17px;font-weight:600;background:#00D4FF;color:#000;border:none;border-radius:10px;cursor:pointer;-webkit-appearance:none;outline:none}
+button:active{opacity:0.8;transform:scale(0.98)}
+button:disabled{opacity:0.5}
+
 /* 首页 */
-.header{padding:50px 20px 20px}
-.time{color:#00D4FF;font-size:14px;margin-bottom:5px}
-.greeting{font-size:28px;font-weight:bold;margin-bottom:5px}
-.sub{color:rgba(255,255,255,0.5)}
-
-/* 数据卡片 */
-.stats{display:flex;flex-wrap:wrap;padding:10px}
-.stat{flex:1 1 40%;margin:10px;background:rgba(255,255,255,0.1);padding:20px;border-radius:10px;text-align:center;min-width:140px}
-.stat-num{font-size:24px;font-weight:bold;margin-bottom:5px}
+.header{padding:60px 20px 20px}
+.time{color:#00D4FF;font-size:14px;margin-bottom:8px;font-weight:500}
+.greeting{font-size:32px;font-weight:700;margin-bottom:8px}
+.sub{color:rgba(255,255,255,0.5);font-size:15px}
+.stats{display:grid;grid-template-columns:1fr 1fr;gap:12px;padding:20px}
+.stat{background:rgba(255,255,255,0.08);border:1px solid rgba(255,255,255,0.1);padding:20px;border-radius:16px;text-align:center;cursor:pointer;transition:all 0.2s}
+.stat:active{transform:scale(0.96);background:rgba(255,255,255,0.12)}
+.stat-num{font-size:28px;font-weight:700;margin-bottom:6px;color:#fff}
 .stat-label{font-size:13px;color:rgba(255,255,255,0.5)}
-
-/* 主按钮 */
-.main-btn{background:#00D4FF;color:#000;padding:15px;margin:20px;border-radius:10px;text-align:center;font-size:17px;font-weight:bold;cursor:pointer}
-
-/* 底部导航 */
-.nav{position:fixed;bottom:0;left:0;right:0;display:flex;justify-content:space-around;padding:10px;background:rgba(0,0,0,0.95);border-top:1px solid rgba(255,255,255,0.1)}
-.nav-item{flex:1;text-align:center;padding:10px;cursor:pointer;opacity:0.5}
+.main-btn{background:#00D4FF;color:#000;padding:18px 24px;margin:20px;border-radius:14px;text-align:center;font-size:17px;font-weight:600;cursor:pointer;transition:all 0.2s;box-shadow:0 4px 20px rgba(0,212,255,0.2)}
+.main-btn:active{transform:scale(0.96);opacity:0.9}
+.nav{position:fixed;bottom:0;left:0;right:0;display:flex;justify-content:space-around;padding:12px 0 30px;background:rgba(0,0,0,0.98);border-top:1px solid rgba(255,255,255,0.08);backdrop-filter:blur(20px);z-index:100}
+.nav-item{flex:1;text-align:center;padding:8px;cursor:pointer;opacity:0.4;transition:opacity 0.2s}
 .nav-item.active{opacity:1}
+.nav-item span{display:block;font-size:22px;margin-bottom:2px}
+.nav-item small{font-size:11px;font-weight:500}
 
-/* 聊天页 */
-.chat-header{display:flex;align-items:center;padding:15px;border-bottom:1px solid rgba(255,255,255,0.1)}
-.back-btn{padding:10px;font-size:20px;cursor:pointer;margin-right:10px}
-.chat-title{font-weight:bold}
-.chat-status{font-size:12px;color:#30D158}
-
-.chat-messages{padding:20px;padding-bottom:100px}
-.msg{margin-bottom:15px;max-width:80%;clear:both}
-.msg.user{float:right}
-.msg-bubble{display:inline-block;padding:10px 15px;border-radius:15px;font-size:15px;max-width:100%;word-break:break-word}
-.msg.ai .msg-bubble{background:rgba(255,255,255,0.1);float:left}
-.msg.user .msg-bubble{background:#00D4FF;color:#000;float:right}
-
-.chat-input{position:fixed;bottom:0;left:0;right:0;padding:10px;background:#000;border-top:1px solid rgba(255,255,255,0.1);display:flex}
-.chat-input input{flex:1;margin-right:10px;text-align:left}
-.chat-input button{width:auto;padding:10px 20px}
+/* 聊天 */
+.chat-header{display:flex;align-items:center;padding:16px 20px;padding-top:50px;border-bottom:1px solid rgba(255,255,255,0.08);background:rgba(0,0,0,0.95);position:sticky;top:0;z-index:10}
+.back-btn{width:40px;height:40px;display:flex;align-items:center;justify-content:center;font-size:20px;cursor:pointer;margin-right:12px;border-radius:50%}
+.back-btn:active{background:rgba(255,255,255,0.1)}
+.chat-title{font-size:17px;font-weight:600}
+.chat-status{font-size:13px;color:#30D158;display:flex;align-items:center;gap:6px;margin-top:2px}
+.status-dot{width:6px;height:6px;background:#30D158;border-radius:50%;animation:pulse 2s infinite}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:0.5}}
+.chat-messages{padding:20px;padding-bottom:140px;min-height:calc(100vh - 200px)}
+.msg{margin-bottom:20px;max-width:85%;animation:fadeIn 0.3s ease}
+@keyframes fadeIn{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
+.msg.user{margin-left:auto;text-align:right}
+.msg-bubble{display:inline-block;padding:12px 16px;border-radius:20px;font-size:15px;line-height:1.5;word-break:break-word;max-width:100%}
+.msg.ai .msg-bubble{background:rgba(255,255,255,0.1);border-bottom-left-radius:4px}
+.msg.user .msg-bubble{background:#00D4FF;color:#000;border-bottom-right-radius:4px}
+.chat-input{position:fixed;bottom:0;left:0;right:0;padding:12px 16px 30px;background:#000;border-top:1px solid rgba(255,255,255,0.08);display:flex;gap:10px;z-index:20}
+.chat-input input{flex:1;padding:12px 16px;font-size:15px;background:rgba(255,255,255,0.08);border:1px solid rgba(255,255,255,0.15);border-radius:24px;color:#fff;margin:0;-webkit-appearance:none;outline:none}
+.chat-input input:focus{border-color:#00D4FF}
+.chat-input button{width:auto;padding:12px 24px;margin:0;border-radius:24px;font-size:15px}
 
 /* Toast */
-.toast{position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);background:rgba(40,40,40,0.98);padding:15px 25px;border-radius:10px;color:#fff;font-size:15px;z-index:10000;display:none}
-.toast.show{display:block}
+.toast{position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);background:rgba(40,40,40,0.98);padding:16px 28px;border-radius:12px;color:#fff;font-size:15px;z-index:100000;display:none;text-align:center;max-width:80%}
+.toast.show{display:block;animation:toastIn 0.3s ease}
+@keyframes toastIn{from{opacity:0;transform:translate(-50%,-40%)}to{opacity:1;transform:translate(-50%,-50%)}}
+
+/* 微信特殊处理 */
+.wechat-tip{position:fixed;top:10px;left:50%;transform:translateX(-50%);background:rgba(0,212,255,0.2);border:1px solid rgba(0,212,255,0.3);padding:8px 16px;border-radius:20px;font-size:13px;color:#00D4FF;z-index:100001;display:none}
+.wechat-tip.show{display:block}
 </style>
 </head>
 <body>
 
-<!-- Toast -->
 <div class="toast" id="toast"></div>
+<div class="wechat-tip" id="wechatTip">💡 点击右上角「...」可添加到桌面</div>
 
 <!-- 认证 -->
 <div class="auth" id="authPage">
 <div class="logo">A</div>
 <h1>AMBROSE</h1>
 <p>AI Health Coach</p>
-<input type="text" id="codeInput" placeholder="邀请码 8888" maxlength="4">
-<input type="text" id="verifyInput" placeholder="验证码 0812" maxlength="4" class="hide">
-<button onclick="login()">进入</button>
+<input type="text" id="codeInput" placeholder="邀请码 8888" maxlength="4" autocomplete="off" autocorrect="off" autocapitalize="off">
+<input type="text" id="verifyInput" placeholder="验证码 0812" maxlength="4" class="hide" autocomplete="off" autocorrect="off" autocapitalize="off">
+<button id="loginBtn">进入</button>
 </div>
 
 <!-- 首页 -->
 <div class="page" id="homePage">
 <div class="header">
-<div class="time" id="timeDisplay">00:00</div>
+<div class="time" id="timeDisplay">--:--</div>
 <div class="greeting" id="userGreeting">你好</div>
 <div class="sub">今天感觉如何？</div>
 </div>
 
 <div class="stats">
-<div class="stat" onclick="showStat('步数: 8,432步')">
+<div class="stat" id="stat1">
 <div class="stat-num">8,432</div>
 <div class="stat-label">步数</div>
 </div>
-<div class="stat" onclick="showStat('消耗: 342千卡')">
+<div class="stat" id="stat2">
 <div class="stat-num">342</div>
 <div class="stat-label">千卡</div>
 </div>
-<div class="stat" onclick="showStat('睡眠: 7.5小时')">
+<div class="stat" id="stat3">
 <div class="stat-num">7.5</div>
 <div class="stat-label">小时</div>
 </div>
-<div class="stat" onclick="showStat('饮水: 1.2L')">
+<div class="stat" id="stat4">
 <div class="stat-num">1.2L</div>
 <div class="stat-label">饮水</div>
 </div>
 </div>
 
-<div class="main-btn" onclick="openChatPage()">💬 开始对话</div>
+<div class="main-btn" id="chatBtn">💬 开始对话</div>
 
 <div class="nav">
-<div class="nav-item active" onclick="goHome()">🏠<br><small>首页</small></div>
-<div class="nav-item" onclick="showMessage('数据页面开发中')">📊<br><small>数据</small></div>
-<div class="nav-item" onclick="openChatPage()">💬<br><small>对话</small></div>
-<div class="nav-item" onclick="showMessage('我的页面开发中')">👤<br><small>我的</small></div>
+<div class="nav-item active" id="navHome"><span>🏠</span><small>首页</small></div>
+<div class="nav-item" id="navData"><span>📊</span><small>数据</small></div>
+<div class="nav-item" id="navChat"><span>💬</span><small>对话</small></div>
+<div class="nav-item" id="navProfile"><span>👤</span><small>我的</small></div>
 </div>
 </div>
 
 <!-- 聊天 -->
 <div class="page" id="chatPage">
 <div class="chat-header">
-<div class="back-btn" onclick="goHome()">←</div>
+<div class="back-btn" id="backBtn">←</div>
 <div>
 <div class="chat-title">AMBROSE</div>
-<div class="chat-status">● 在线</div>
+<div class="chat-status"><span class="status-dot"></span><span>在线</span></div>
 </div>
 </div>
 
 <div class="chat-messages" id="chatMessages">
-<div class="msg ai"><div class="msg-bubble">你好！我是AMBROSE，你的AI健康教练。</div></div>
+<div class="msg ai"><div class="msg-bubble">你好！我是AMBROSE，你的AI健康教练。有什么可以帮助你的吗？</div></div>
 </div>
 
 <div class="chat-input">
-<input type="text" id="messageInput" placeholder="输入消息...">
-<button onclick="sendMessage()">发送</button>
+<input type="text" id="messageInput" placeholder="输入消息..." autocomplete="off" autocorrect="off" autocapitalize="off">
+<button id="sendBtn">发送</button>
 </div>
 </div>
 
 <script>
-// 配置
-var INVITE_CODE = '8888';
-var VERIFY_CODE = '0812';
-
-// 显示提示
-function showMessage(msg) {
-    var t = document.getElementById('toast');
-    t.textContent = msg;
-    t.classList.add('show');
-    setTimeout(function() {
-        t.classList.remove('show');
-    }, 2000);
-}
-
-// 更新时间
-function updateTime() {
-    var now = new Date();
-    var utc = now.getTime() + now.getTimezoneOffset() * 60000;
-    var bj = new Date(utc + 3600000 * 8);
-    var h = bj.getHours();
-    var m = bj.getMinutes();
-    document.getElementById('timeDisplay').textContent = 
-        (h < 10 ? '0' : '') + h + ':' + (m < 10 ? '0' : '') + m;
-}
-setInterval(updateTime, 1000);
-updateTime();
-
-// 登录
-function login() {
-    var c1 = document.getElementById('codeInput').value;
-    var c2 = document.getElementById('verifyInput').value;
+(function() {
+    'use strict';
     
-    if (c1 !== INVITE_CODE) {
-        showMessage('邀请码错误');
-        return;
+    // 配置
+    var CONFIG = {
+        INVITE_CODE: '8888',
+        VERIFY_CODE: '0812'
+    };
+    
+    // 检测微信环境
+    var isWechat = /MicroMessenger/i.test(navigator.userAgent);
+    
+    // 获取元素
+    var $ = function(id) { return document.getElementById(id); };
+    
+    // 显示提示
+    function showToast(msg) {
+        var t = $('toast');
+        if (!t) return;
+        t.textContent = msg;
+        t.classList.add('show');
+        setTimeout(function() {
+            t.classList.remove('show');
+        }, 2000);
     }
     
-    document.getElementById('authPage').classList.add('hide');
-    document.getElementById('homePage').classList.add('show');
-    
-    var isBoss = c2 === VERIFY_CODE;
-    localStorage.setItem('user', isBoss ? 'boss' : 'guest');
-    document.getElementById('userGreeting').textContent = 
-        (isBoss ? 'BOSS Shao' : '朋友') + '，你好';
-}
-
-// 邀请码输入
-document.getElementById('codeInput').oninput = function() {
-    this.value = this.value.replace(/\D/g, '');
-    if (this.value === INVITE_CODE) {
-        document.getElementById('verifyInput').classList.remove('hide');
+    // 更新时间
+    function updateTime() {
+        var timeEl = $('timeDisplay');
+        if (!timeEl) return;
+        
+        var now = new Date();
+        var utc = now.getTime() + now.getTimezoneOffset() * 60000;
+        var bj = new Date(utc + 3600000 * 8);
+        var h = bj.getHours();
+        var m = bj.getMinutes();
+        timeEl.textContent = (h < 10 ? '0' : '') + h + ':' + (m < 10 ? '0' : '') + m;
+        
+        // 更新问候语
+        var greetEl = $('userGreeting');
+        if (greetEl && localStorage.getItem('user')) {
+            var saved = localStorage.getItem('user');
+            var hour = bj.getHours();
+            var timeGreet = hour < 12 ? '早上好' : (hour < 18 ? '下午好' : '晚上好');
+            var name = saved === 'boss' ? 'BOSS Shao' : '朋友';
+            greetEl.textContent = timeGreet + '，' + name;
+        }
     }
-};
-
-// 检查已登录
-var savedUser = localStorage.getItem('user');
-if (savedUser) {
-    document.getElementById('authPage').classList.add('hide');
-    document.getElementById('homePage').classList.add('show');
-    document.getElementById('userGreeting').textContent = 
-        (savedUser === 'boss' ? 'BOSS Shao' : '朋友') + '，你好';
-}
-
-// 显示数据详情
-function showStat(text) {
-    showMessage(text);
-}
-
-// 打开聊天页
-function openChatPage() {
-    document.getElementById('homePage').classList.remove('show');
-    document.getElementById('chatPage').classList.add('show');
-}
-
-// 回到首页
-function goHome() {
-    document.getElementById('chatPage').classList.remove('show');
-    document.getElementById('homePage').classList.add('show');
-    document.querySelectorAll('.nav-item').forEach(function(item, index) {
-        item.classList.toggle('active', index === 0);
-    });
-}
-
-// 发送消息
-function sendMessage() {
-    var input = document.getElementById('messageInput');
-    var text = input.value.trim();
-    if (!text) return;
     
-    var container = document.getElementById('chatMessages');
-    container.innerHTML += '<div class="msg user"><div class="msg-bubble">' + text + '</div></div>';
-    input.value = '';
-    container.scrollTop = container.scrollHeight;
+    // 登录功能
+    function handleLogin() {
+        var code1 = $('codeInput').value.trim();
+        var code2 = $('verifyInput').value.trim();
+        
+        if (code1 !== CONFIG.INVITE_CODE) {
+            showToast('邀请码错误');
+            return;
+        }
+        
+        var isBoss = code2 === CONFIG.VERIFY_CODE;
+        localStorage.setItem('user', isBoss ? 'boss' : 'guest');
+        
+        $('authPage').classList.add('hide');
+        $('homePage').classList.add('show');
+        
+        updateTime();
+        showToast('欢迎回来');
+        
+        // 微信环境提示
+        if (isWechat) {
+            setTimeout(function() {
+                $('wechatTip').classList.add('show');
+                setTimeout(function() {
+                    $('wechatTip').classList.remove('show');
+                }, 5000);
+            }, 1000);
+        }
+    }
     
-    setTimeout(function() {
-        container.innerHTML += '<div class="msg ai"><div class="msg-bubble">收到！我会帮你记录下来。</div></div>';
+    // 邀请码输入处理
+    function handleCodeInput() {
+        var val = this.value.replace(/\D/g, '');
+        this.value = val;
+        if (val === CONFIG.INVITE_CODE) {
+            $('verifyInput').classList.remove('hide');
+            $('verifyInput').focus();
+        }
+    }
+    
+    // 检查已登录状态
+    function checkLogin() {
+        var saved = localStorage.getItem('user');
+        if (saved) {
+            $('authPage').classList.add('hide');
+            $('homePage').classList.add('show');
+            updateTime();
+        }
+    }
+    
+    // 页面切换
+    function showChat() {
+        $('homePage').classList.remove('show');
+        $('chatPage').classList.add('show');
+    }
+    
+    function showHome() {
+        $('chatPage').classList.remove('show');
+        $('homePage').classList.add('show');
+        document.querySelectorAll('.nav-item').forEach(function(el, i) {
+            el.classList.toggle('active', i === 0);
+        });
+    }
+    
+    // 发送消息
+    function sendMessage() {
+        var input = $('messageInput');
+        var text = input.value.trim();
+        if (!text) return;
+        
+        var container = $('chatMessages');
+        var userMsg = document.createElement('div');
+        userMsg.className = 'msg user';
+        userMsg.innerHTML = '<div class="msg-bubble">' + escapeHtml(text) + '</div>';
+        container.appendChild(userMsg);
+        
+        input.value = '';
         container.scrollTop = container.scrollHeight;
-    }, 600);
-}
-
-// 回车发送
-document.getElementById('messageInput').onkeypress = function(e) {
-    if (e.key === 'Enter') sendMessage();
-};
+        
+        setTimeout(function() {
+            var aiMsg = document.createElement('div');
+            aiMsg.className = 'msg ai';
+            aiMsg.innerHTML = '<div class="msg-bubble">收到！我会帮你记录下来。</div>';
+            container.appendChild(aiMsg);
+            container.scrollTop = container.scrollHeight;
+        }, 600);
+    }
+    
+    // HTML转义
+    function escapeHtml(text) {
+        var div = document.createElement('div');
+        div.textContent = text;
+        return div.innerHTML;
+    }
+    
+    // 绑定所有事件
+    function bindEvents() {
+        // 登录按钮
+        var loginBtn = $('loginBtn');
+        if (loginBtn) {
+            loginBtn.addEventListener('click', handleLogin);
+            loginBtn.addEventListener('touchstart', function(e) {
+                e.preventDefault();
+                handleLogin();
+            });
+        }
+        
+        // 邀请码输入
+        var codeInput = $('codeInput');
+        if (codeInput) {
+            codeInput.addEventListener('input', handleCodeInput);
+            codeInput.addEventListener('keypress', function(e) {
+                if (e.key === 'Enter') handleLogin();
+            });
+        }
+        
+        // 验证码输入
+        var verifyInput = $('verifyInput');
+        if (verifyInput) {
+            verifyInput.addEventListener('keypress', function(e) {
+                if (e.key === 'Enter') handleLogin();
+            });
+        }
+        
+        // 数据卡片
+        var statLabels = ['步数: 8,432步', '消耗: 342千卡', '睡眠: 7.5小时', '饮水: 1.2L'];
+        for (var i = 1; i <= 4; i++) {
+            (function(idx) {
+                var stat = $('stat' + idx);
+                if (stat) {
+                    stat.addEventListener('click', function() {
+                        showToast(statLabels[idx - 1]);
+                    });
+                    stat.addEventListener('touchstart', function(e) {
+                        e.preventDefault();
+                        showToast(statLabels[idx - 1]);
+                    });
+                }
+            })(i);
+        }
+        
+        // 开始对话按钮
+        var chatBtn = $('chatBtn');
+        if (chatBtn) {
+            chatBtn.addEventListener('click', showChat);
+            chatBtn.addEventListener('touchstart', function(e) {
+                e.preventDefault();
+                showChat();
+            });
+        }
+        
+        // 导航
+        var navChat = $('navChat');
+        if (navChat) {
+            navChat.addEventListener('click', showChat);
+            navChat.addEventListener('touchstart', function(e) {
+                e.preventDefault();
+                showChat();
+            });
+        }
+        
+        var navHome = $('navHome');
+        if (navHome) {
+            navHome.addEventListener('click', function() {
+                showToast('首页');
+            });
+        }
+        
+        var navData = $('navData');
+        if (navData) {
+            navData.addEventListener('click', function() {
+                showToast('数据页面开发中');
+            });
+        }
+        
+        var navProfile = $('navProfile');
+        if (navProfile) {
+            navProfile.addEventListener('click', function() {
+                showToast('我的页面开发中');
+            });
+        }
+        
+        // 返回按钮
+        var backBtn = $('backBtn');
+        if (backBtn) {
+            backBtn.addEventListener('click', showHome);
+            backBtn.addEventListener('touchstart', function(e) {
+                e.preventDefault();
+                showHome();
+            });
+        }
+        
+        // 发送按钮
+        var sendBtn = $('sendBtn');
+        if (sendBtn) {
+            sendBtn.addEventListener('click', sendMessage);
+            sendBtn.addEventListener('touchstart', function(e) {
+                e.preventDefault();
+                sendMessage();
+            });
+        }
+        
+        // 输入框回车
+        var msgInput = $('messageInput');
+        if (msgInput) {
+            msgInput.addEventListener('keypress', function(e) {
+                if (e.key === 'Enter') sendMessage();
+            });
+        }
+    }
+    
+    // 初始化
+    document.addEventListener('DOMContentLoaded', function() {
+        checkLogin();
+        bindEvents();
+        setInterval(updateTime, 1000);
+        updateTime();
+        
+        // 微信分享优化
+        if (isWechat) {
+            document.title = 'AMBROSE - AI健康教练';
+        }
+    });
+    
+    // 防止微信下拉回弹
+    document.addEventListener('touchmove', function(e) {
+        if (e.target.closest('.chat-messages')) return;
+        if (e.target.closest('.stats')) return;
+    }, { passive: false });
+    
+})();
 </script>
 
 </body>
