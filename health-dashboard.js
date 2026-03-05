@@ -83,10 +83,10 @@ class HealthDashboard {
 
                 <!-- 今日摘要卡片 -->
                 <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; margin-bottom: 20px;">
-                    ${this.renderSummaryCard('👟 步数', this.data.exercise.todaySteps.toLocaleString(), '/ 10000', '#00f3ff')}
-                    ${this.renderSummaryCard('🔥 燃烧', this.data.exercise.todayCalories.toString(), ' kcal', '#ff00a0')}
-                    ${this.renderSummaryCard('😴 睡眠', this.formatSleep(this.data.sleep.lastNight), ' 小时', '#b829dd')}
-                    ${this.renderSummaryCard('💧 饮水', this.data.nutrition.water.toString(), ' / 2500ml', '#00ff88')}
+                    ${this.renderSummaryCard('👟 步数', (this.data.exercise.todaySteps || 0).toLocaleString(), '/ 10000', '#00f3ff')}
+                    ${this.renderSummaryCard('🔥 燃烧', (this.data.exercise.todayCalories || 0).toString(), ' kcal', '#ff00ff')}
+                    ${this.renderSummaryCard('😴 睡眠', this.formatSleep(this.data.sleep.lastNight), ' 小时', '#bd00ff')}
+                    ${this.renderSummaryCard('💧 饮水', (this.data.nutrition.water || 0).toString(), ' / 2500ml', '#00ff88')}
                 </div>
 
                 <!-- 功能入口 -->
@@ -193,7 +193,7 @@ class HealthDashboard {
     // 显示运动计划器
     showExercisePlanner() {
         const html = `
-            <div style="width: 100%; max-width: 600px;">
+            <div style="width: 100%; max-width: 600px; animation: slide-up 0.4s ease;">
                 <div style="display: flex; align-items: center; margin-bottom: 20px;">
                     <button onclick="UI.healthDashboard.showHealthHub()" 
                         style="background: transparent; border: 1px solid var(--border-subtle); border-radius: 8px; 
@@ -245,7 +245,8 @@ class HealthDashboard {
 
     // 显示饮食追踪器
     showNutritionTracker() {
-        const remaining = this.data.nutrition.targetCalories - this.data.nutrition.todayCalories;
+        const remaining = Math.max(0, this.data.nutrition.targetCalories - (this.data.nutrition.todayCalories || 0));
+        const progress = Math.min(((this.data.nutrition.todayCalories || 0) / this.data.nutrition.targetCalories) * 100, 100);
         const html = `
             <div style="width: 100%; max-width: 600px;">
                 <div style="display: flex; align-items: center; margin-bottom: 20px;">
@@ -270,10 +271,9 @@ class HealthDashboard {
                         </div>
                     </div>
                     <!-- 进度条 -->
-                    <div style="height: 8px; background: rgba(255,255,255,0.05); border-radius: 4px; overflow: hidden;">
-                        <div style="width: ${Math.min((this.data.nutrition.todayCalories / this.data.nutrition.targetCalories) * 100, 100)}%; 
-                                    height: 100%; background: linear-gradient(90deg, var(--warning), var(--danger)); 
-                                    border-radius: 4px; transition: width 0.3s;"></div>
+                    <div style="height: 10px; background: rgba(255,255,255,0.05); border-radius: 5px; overflow: hidden; box-shadow: inset 0 1px 3px rgba(0,0,0,0.3);">
+                        <div style="width: ${progress}%; height: 100%; background: linear-gradient(90deg, var(--warning), var(--danger)); 
+                                    border-radius: 5px; transition: width 0.5s cubic-bezier(0.4, 0, 0.2, 1); box-shadow: 0 0 10px rgba(255, 170, 0, 0.3);"></div>
                     </div>
                 </div>
 

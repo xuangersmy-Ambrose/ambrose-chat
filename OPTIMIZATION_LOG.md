@@ -70,7 +70,16 @@
 | 3 | UX | 健康中心添加动态日期显示 | health-dashboard.js |
 | 4 | 内容 | 欢迎语根据时段显示健康小贴士 | chat.js |
 | 5 | UI | 健康中心按钮增强发光效果 | index.html |
+| 6 | 交互 | 消息气泡添加hover效果 | index.html |
+| 7 | 修复 | 修复数据为null时的显示问题 | health-dashboard.js |
+| 8 | UI | 添加顶部光晕背景效果 | index.html |
+| 9 | 动画 | 运动计划面板添加入场动画 | health-dashboard.js |
+| 10 | 修复 | 饮食追踪器修复负数显示问题 | health-dashboard.js |
+| 11 | UI | 品牌Logo增大并添加发光 | index.html |
+| 12 | UI | 状态指示器增强发光效果 | index.html |
+| 13 | UI | 饮食进度条增强视觉效果 | health-dashboard.js |
+| 14 | 交互 | 输入框聚焦时添加微浮起效果 | index.html |
 
 ## 今日优化计数
 日期: 2026-03-05
-完成次数: 5次
+完成次数: 14次
