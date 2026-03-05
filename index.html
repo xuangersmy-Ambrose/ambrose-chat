@@ -13,9 +13,9 @@
             /* 主色调 */
             --primary-500: #00f3ff;
             --primary-600: #00d0dc;
-            --secondary-500: #ff00ff;
+            --secondary-500: #ff00ee;
             --secondary-600: #e000e0;
-            --accent-500: #bd00ff;
+            --accent-500: #be00f0;
             --accent-600: #a000e0;
             --success: #00ffd0;
             --warning: #ffcc00;
@@ -98,16 +98,16 @@
             right: 0;
             bottom: 0;
             background-image: 
-                linear-gradient(rgba(0, 243, 255, 0.025) 1px, transparent 1px),
-                linear-gradient(90deg, rgba(0, 243, 255, 0.025) 1px, transparent 1px);
-            background-size: 50px 50px;
-            animation: grid-drift 25s linear infinite;
+                linear-gradient(rgba(0, 243, 255, 0.028) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(0, 243, 255, 0.028) 1px, transparent 1px);
+            background-size: 52px 52px;
+            animation: grid-drift 26s linear infinite;
             pointer-events: none;
         }
         
         @keyframes grid-drift {
             0% { transform: perspective(500px) rotateX(60deg) translateY(0); }
-            100% { transform: perspective(500px) rotateX(60deg) translateY(50px); }
+            100% { transform: perspective(500px) rotateX(60deg) translateY(52px); }
         }
         
         .particles-container {
@@ -123,19 +123,19 @@
         
         .particle {
             position: absolute;
-            width: 4px;
-            height: 4px;
+            width: 3.5px;
+            height: 3.5px;
             background: var(--primary-500);
             border-radius: 50%;
             opacity: 0;
-            animation: particle-float 12s infinite;
+            animation: particle-float 13s infinite;
             filter: blur(1px);
         }
         
         @keyframes particle-float {
             0% { transform: translateY(100vh) translateX(0) scale(0); opacity: 0; }
-            5% { opacity: 0.7; }
-            95% { opacity: 0.7; }
+            5% { opacity: 0.65; }
+            95% { opacity: 0.65; }
             100% { transform: translateY(-100px) translateX(100px) scale(1); opacity: 0; }
         }
         
@@ -416,11 +416,11 @@
         .input-wrapper {
             display: flex;
             align-items: flex-end;
-            gap: 14px;
+            gap: 13px;
             background: var(--bg-card);
             border: 1px solid var(--border-subtle);
-            border-radius: 26px;
-            padding: 10px 10px 10px 22px;
+            border-radius: 25px;
+            padding: 9px 9px 9px 21px;
             transition: all 0.25s ease;
         }
         
@@ -434,13 +434,13 @@
             flex: 1;
             background: transparent;
             border: none;
-            padding: 12px 0;
-            font-size: 16px;
+            padding: 11px 0;
+            font-size: 15px;
             color: var(--text-primary);
             outline: none;
             resize: none;
-            min-height: 48px;
-            max-height: 140px;
+            min-height: 46px;
+            max-height: 130px;
             line-height: 1.6;
             font-family: inherit;
         }
@@ -609,8 +609,8 @@
         }
         
         @keyframes pulse-glow {
-            0%, 100% { box-shadow: 0 0 10px rgba(0, 243, 255, 0.3); }
-            50% { box-shadow: 0 0 25px rgba(0, 243, 255, 0.6); }
+            0%, 100% { box-shadow: 0 0 8px rgba(0, 243, 255, 0.35); }
+            50% { box-shadow: 0 0 22px rgba(0, 243, 255, 0.65); }
         }
         
         /* ===== 状态指示器 ===== */
