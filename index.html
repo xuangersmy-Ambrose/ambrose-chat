@@ -233,13 +233,29 @@
             input.value = '';
             container.scrollTop = container.scrollHeight;
             
-            // AI回复
-            setTimeout(function() {
-                var replies = ['收到！我会记录下来。', '保持良好的健康习惯！', '建议今天多喝水哦。', '你的进步很明显！'];
-                var reply = replies[Math.floor(Math.random() * replies.length)];
+            // 显示加载中
+            var loadingId = 'loading-' + Date.now();
+            container.innerHTML += '<div class="msg ai" id="' + loadingId + '"><div class="msg-bubble">思考中...</div></div>';
+            container.scrollTop = container.scrollHeight;
+            
+            // 调用真实API
+            fetch('/api/chat', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ message: text })
+            })
+            .then(function(res) { return res.json(); })
+            .then(function(data) {
+                document.getElementById(loadingId).remove();
+                var reply = data.reply || data.error || '服务暂时不可用';
                 container.innerHTML += '<div class="msg ai"><div class="msg-bubble">' + reply + '</div></div>';
                 container.scrollTop = container.scrollHeight;
-            }, 1000);
+            })
+            .catch(function(err) {
+                document.getElementById(loadingId).remove();
+                container.innerHTML += '<div class="msg ai"><div class="msg-bubble">网络错误，请稍后重试</div></div>';
+                container.scrollTop = container.scrollHeight;
+            });
         }
         
         // 登录
