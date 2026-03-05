@@ -425,8 +425,140 @@ button:disabled{opacity:0.5}
         if (e.target.closest('.stats')) return;
     }, { passive: false });
     
+    // ==================== Supabase云服务集成 (超频学习实战) ====================
+    
+    // Supabase配置 - 需要替换为实际的项目配置
+    var SUPABASE_CONFIG = {
+        url: 'https://your-project.supabase.co',  // 替换为你的Supabase URL
+        anonKey: 'your-anon-key'  // 替换为你的Anon Key
+    };
+    
+    // 初始化Supabase客户端
+    function initSupabase() {
+        if (typeof supabase !== 'undefined') {
+            window.db = supabase.createClient(SUPABASE_CONFIG.url, SUPABASE_CONFIG.anonKey);
+            console.log('✅ Supabase已连接');
+            return true;
+        }
+        console.log('⚠️ Supabase SDK未加载');
+        return false;
+    }
+    
+    // 云同步: 保存健康数据
+    async function saveHealthToCloud(date, data) {
+        try {
+            var user = localStorage.getItem('user');
+            if (!user || !window.db) return { success: false, error: '未登录或未连接' };
+            
+            var userId = user === 'boss' ? 'boss-shao' : 'guest-user';
+            
+            var { error } = await window.db
+                .from('daily_health')
+                .upsert({
+                    user_id: userId,
+                    date: date,
+                    steps: data.steps || 0,
+                    calories: data.calories || 0,
+                    sleep_hours: data.sleep || 0,
+                    water_ml: data.water || 0,
+                    updated_at: new Date().toISOString()
+                }, { onConflict: ['user_id', 'date'] });
+            
+            if (error) throw error;
+            console.log('✅ 健康数据已同步到云端');
+            return { success: true };
+        } catch (e) {
+            console.error('❌ 云端同步失败:', e);
+            return { success: false, error: e.message };
+        }
+    }
+    
+    // 云同步: 获取健康数据
+    async function getHealthFromCloud(date) {
+        try {
+            var user = localStorage.getItem('user');
+            if (!user || !window.db) return { success: false, data: null };
+            
+            var userId = user === 'boss' ? 'boss-shao' : 'guest-user';
+            
+            var { data, error } = await window.db
+                .from('daily_health')
+                .select('*')
+                .eq('user_id', userId)
+                .eq('date', date)
+                .single();
+            
+            if (error && error.code !== 'PGRST116') throw error; // PGRST116 = 无数据
+            
+            return { success: true, data: data };
+        } catch (e) {
+            console.error('❌ 获取云端数据失败:', e);
+            return { success: false, error: e.message };
+        }
+    }
+    
+    // 云同步: 保存运动记录
+    async function saveExerciseToCloud(exercise) {
+        try {
+            var user = localStorage.getItem('user');
+            if (!user || !window.db) return { success: false };
+            
+            var userId = user === 'boss' ? 'boss-shao' : 'guest-user';
+            
+            var { error } = await window.db
+                .from('exercises')
+                .insert({
+                    user_id: userId,
+                    type: exercise.type,
+                    duration_minutes: exercise.duration,
+                    calories_burned: exercise.calories,
+                    date: new Date().toISOString().split('T')[0],
+                    created_at: new Date().toISOString()
+                });
+            
+            if (error) throw error;
+            console.log('✅ 运动记录已同步到云端');
+            return { success: true };
+        } catch (e) {
+            console.error('❌ 运动记录同步失败:', e);
+            return { success: false, error: e.message };
+        }
+    }
+    
+    // 检查云同步状态
+    function checkCloudSync() {
+        var syncIndicator = document.getElementById('syncIndicator');
+        if (!syncIndicator) {
+            // 创建同步状态指示器
+            syncIndicator = document.createElement('div');
+            syncIndicator.id = 'syncIndicator';
+            syncIndicator.style.cssText = 'position:fixed;top:50px;right:10px;width:8px;height:8px;border-radius:50%;background:#30D158;z-index:99999;transition:all 0.3s';
+            document.body.appendChild(syncIndicator);
+        }
+        
+        if (window.db) {
+            syncIndicator.style.background = '#30D158'; // 绿色 = 已连接
+            syncIndicator.title = '云同步已连接';
+        } else {
+            syncIndicator.style.background = '#FF453A'; // 红色 = 未连接
+            syncIndicator.title = '云同步未连接';
+        }
+    }
+    
+    // 在初始化时尝试连接Supabase
+    document.addEventListener('DOMContentLoaded', function() {
+        setTimeout(function() {
+            if (initSupabase()) {
+                checkCloudSync();
+            }
+        }, 1000);
+    });
+    
 })();
 </script>
+
+<!-- Supabase SDK -->
+<script src="https://unpkg.com/@supabase/supabase-js@2"></script>
 
 </body>
 </html>
