@@ -1,0 +1,9 @@
+{
+  "name": "AMBROSE Health Setup",
+  "short_name": "AMBROSE Setup",
+  "description": "AMBROSE Health 配置助手",
+  "start_url": "/setup.html",
+  "display": "standalone",
+  "background_color": "#ffffff",
+  "theme_color": "#667eea"
+}
