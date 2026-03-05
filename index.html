@@ -161,19 +161,19 @@ button:disabled{opacity:0.5}
 <script>
 (function() {
     'use strict';
-    
+
     // 配置
     var CONFIG = {
         INVITE_CODE: '8888',
         VERIFY_CODE: '0812'
     };
-    
+
     // 检测微信环境
     var isWechat = /MicroMessenger/i.test(navigator.userAgent);
-    
+
     // 获取元素
     var $ = function(id) { return document.getElementById(id); };
-    
+
     // 显示提示
     function showToast(msg) {
         var t = $('toast');
@@ -184,19 +184,19 @@ button:disabled{opacity:0.5}
             t.classList.remove('show');
         }, 2000);
     }
-    
+
     // 更新时间
     function updateTime() {
         var timeEl = $('timeDisplay');
         if (!timeEl) return;
-        
+
         var now = new Date();
         var utc = now.getTime() + now.getTimezoneOffset() * 60000;
         var bj = new Date(utc + 3600000 * 8);
         var h = bj.getHours();
         var m = bj.getMinutes();
         timeEl.textContent = (h < 10 ? '0' : '') + h + ':' + (m < 10 ? '0' : '') + m;
-        
+
         // 更新问候语
         var greetEl = $('userGreeting');
         if (greetEl && localStorage.getItem('user')) {
@@ -207,26 +207,26 @@ button:disabled{opacity:0.5}
             greetEl.textContent = timeGreet + '，' + name;
         }
     }
-    
+
     // 登录功能
     function handleLogin() {
         var code1 = $('codeInput').value.trim();
         var code2 = $('verifyInput').value.trim();
-        
+
         if (code1 !== CONFIG.INVITE_CODE) {
             showToast('邀请码错误');
             return;
         }
-        
+
         var isBoss = code2 === CONFIG.VERIFY_CODE;
         localStorage.setItem('user', isBoss ? 'boss' : 'guest');
-        
+
         $('authPage').classList.add('hide');
         $('homePage').classList.add('show');
-        
+
         updateTime();
         showToast('欢迎回来');
-        
+
         // 微信环境提示
         if (isWechat) {
             setTimeout(function() {
@@ -237,7 +237,7 @@ button:disabled{opacity:0.5}
             }, 1000);
         }
     }
-    
+
     // 邀请码输入处理
     function handleCodeInput() {
         var val = this.value.replace(/\D/g, '');
@@ -247,7 +247,7 @@ button:disabled{opacity:0.5}
             $('verifyInput').focus();
         }
     }
-    
+
     // 检查已登录状态
     function checkLogin() {
         var saved = localStorage.getItem('user');
@@ -257,13 +257,13 @@ button:disabled{opacity:0.5}
             updateTime();
         }
     }
-    
+
     // 页面切换
     function showChat() {
         $('homePage').classList.remove('show');
         $('chatPage').classList.add('show');
     }
-    
+
     function showHome() {
         $('chatPage').classList.remove('show');
         $('homePage').classList.add('show');
@@ -271,22 +271,22 @@ button:disabled{opacity:0.5}
             el.classList.toggle('active', i === 0);
         });
     }
-    
+
     // 发送消息
     function sendMessage() {
         var input = $('messageInput');
         var text = input.value.trim();
         if (!text) return;
-        
+
         var container = $('chatMessages');
         var userMsg = document.createElement('div');
         userMsg.className = 'msg user';
         userMsg.innerHTML = '<div class="msg-bubble">' + escapeHtml(text) + '</div>';
         container.appendChild(userMsg);
-        
+
         input.value = '';
         container.scrollTop = container.scrollHeight;
-        
+
         setTimeout(function() {
             var aiMsg = document.createElement('div');
             aiMsg.className = 'msg ai';
@@ -295,14 +295,14 @@ button:disabled{opacity:0.5}
             container.scrollTop = container.scrollHeight;
         }, 600);
     }
-    
+
     // HTML转义
     function escapeHtml(text) {
         var div = document.createElement('div');
         div.textContent = text;
         return div.innerHTML;
     }
-    
+
     // 绑定所有事件
     function bindEvents() {
         // 登录按钮
@@ -314,7 +314,7 @@ button:disabled{opacity:0.5}
                 handleLogin();
             });
         }
-        
+
         // 邀请码输入
         var codeInput = $('codeInput');
         if (codeInput) {
@@ -323,7 +323,7 @@ button:disabled{opacity:0.5}
                 if (e.key === 'Enter') handleLogin();
             });
         }
-        
+
         // 验证码输入
         var verifyInput = $('verifyInput');
         if (verifyInput) {
@@ -331,7 +331,7 @@ button:disabled{opacity:0.5}
                 if (e.key === 'Enter') handleLogin();
             });
         }
-        
+
         // 数据卡片
         var statLabels = ['步数: 8,432步', '消耗: 342千卡', '睡眠: 7.5小时', '饮水: 1.2L'];
         for (var i = 1; i <= 4; i++) {
@@ -348,7 +348,7 @@ button:disabled{opacity:0.5}
                 }
             })(i);
         }
-        
+
         // 开始对话按钮
         var chatBtn = $('chatBtn');
         if (chatBtn) {
@@ -358,7 +358,7 @@ button:disabled{opacity:0.5}
                 showChat();
             });
         }
-        
+
         // 导航
         var navChat = $('navChat');
         if (navChat) {
@@ -368,28 +368,28 @@ button:disabled{opacity:0.5}
                 showChat();
             });
         }
-        
+
         var navHome = $('navHome');
         if (navHome) {
             navHome.addEventListener('click', function() {
                 showToast('首页');
             });
         }
-        
+
         var navData = $('navData');
         if (navData) {
             navData.addEventListener('click', function() {
                 showToast('数据页面开发中');
             });
         }
-        
+
         var navProfile = $('navProfile');
         if (navProfile) {
             navProfile.addEventListener('click', function() {
                 showToast('我的页面开发中');
             });
         }
-        
+
         // 返回按钮
         var backBtn = $('backBtn');
         if (backBtn) {
@@ -399,7 +399,7 @@ button:disabled{opacity:0.5}
                 showHome();
             });
         }
-        
+
         // 发送按钮
         var sendBtn = $('sendBtn');
         if (sendBtn) {
@@ -409,7 +409,7 @@ button:disabled{opacity:0.5}
                 sendMessage();
             });
         }
-        
+
         // 输入框回车
         var msgInput = $('messageInput');
         if (msgInput) {
@@ -418,34 +418,34 @@ button:disabled{opacity:0.5}
             });
         }
     }
-    
+
     // 初始化
     document.addEventListener('DOMContentLoaded', function() {
         checkLogin();
         bindEvents();
         setInterval(updateTime, 1000);
         updateTime();
-        
+
         // 微信分享优化
         if (isWechat) {
             document.title = 'AMBROSE - AI健康教练';
         }
     });
-    
+
     // 防止微信下拉回弹
     document.addEventListener('touchmove', function(e) {
         if (e.target.closest('.chat-messages')) return;
         if (e.target.closest('.stats')) return;
     }, { passive: false });
-    
+
     // ==================== Supabase云服务集成 (超频学习实战) ====================
-    
+
     // Supabase配置 - 需要替换为实际的项目配置
     var SUPABASE_CONFIG = {
         url: 'https://your-project.supabase.co',  // 替换为你的Supabase URL
         anonKey: 'your-anon-key'  // 替换为你的Anon Key
     };
-    
+
     // 初始化Supabase客户端
     function initSupabase() {
         if (typeof supabase !== 'undefined') {
@@ -456,15 +456,15 @@ button:disabled{opacity:0.5}
         console.log('⚠️ Supabase SDK未加载');
         return false;
     }
-    
+
     // 云同步: 保存健康数据
     async function saveHealthToCloud(date, data) {
         try {
             var user = localStorage.getItem('user');
             if (!user || !window.db) return { success: false, error: '未登录或未连接' };
-            
+
             var userId = user === 'boss' ? 'boss-shao' : 'guest-user';
-            
+
             var { error } = await window.db
                 .from('daily_health')
                 .upsert({
@@ -476,7 +476,7 @@ button:disabled{opacity:0.5}
                     water_ml: data.water || 0,
                     updated_at: new Date().toISOString()
                 }, { onConflict: ['user_id', 'date'] });
-            
+
             if (error) throw error;
             console.log('✅ 健康数据已同步到云端');
             return { success: true };
@@ -485,39 +485,39 @@ button:disabled{opacity:0.5}
             return { success: false, error: e.message };
         }
     }
-    
+
     // 云同步: 获取健康数据
     async function getHealthFromCloud(date) {
         try {
             var user = localStorage.getItem('user');
             if (!user || !window.db) return { success: false, data: null };
-            
+
             var userId = user === 'boss' ? 'boss-shao' : 'guest-user';
-            
+
             var { data, error } = await window.db
                 .from('daily_health')
                 .select('*')
                 .eq('user_id', userId)
                 .eq('date', date)
                 .single();
-            
+
             if (error && error.code !== 'PGRST116') throw error; // PGRST116 = 无数据
-            
+
             return { success: true, data: data };
         } catch (e) {
             console.error('❌ 获取云端数据失败:', e);
             return { success: false, error: e.message };
         }
     }
-    
+
     // 云同步: 保存运动记录
     async function saveExerciseToCloud(exercise) {
         try {
             var user = localStorage.getItem('user');
             if (!user || !window.db) return { success: false };
-            
+
             var userId = user === 'boss' ? 'boss-shao' : 'guest-user';
-            
+
             var { error } = await window.db
                 .from('exercises')
                 .insert({
@@ -528,7 +528,7 @@ button:disabled{opacity:0.5}
                     date: new Date().toISOString().split('T')[0],
                     created_at: new Date().toISOString()
                 });
-            
+
             if (error) throw error;
             console.log('✅ 运动记录已同步到云端');
             return { success: true };
@@ -537,7 +537,7 @@ button:disabled{opacity:0.5}
             return { success: false, error: e.message };
         }
     }
-    
+
     // 检查云同步状态
     function checkCloudSync() {
         var syncIndicator = document.getElementById('syncIndicator');
@@ -548,7 +548,7 @@ button:disabled{opacity:0.5}
             syncIndicator.style.cssText = 'position:fixed;top:50px;right:10px;width:8px;height:8px;border-radius:50%;background:#30D158;z-index:99999;transition:all 0.3s';
             document.body.appendChild(syncIndicator);
         }
-        
+
         if (window.db) {
             syncIndicator.style.background = '#30D158'; // 绿色 = 已连接
             syncIndicator.title = '云同步已连接';
@@ -557,7 +557,7 @@ button:disabled{opacity:0.5}
             syncIndicator.title = '云同步未连接';
         }
     }
-    
+
     // 在初始化时尝试连接Supabase
     document.addEventListener('DOMContentLoaded', function() {
         setTimeout(function() {
@@ -566,7 +566,7 @@ button:disabled{opacity:0.5}
             }
         }, 1000);
     });
-    
+
 })();
 </script>
 
@@ -582,7 +582,7 @@ button:disabled{opacity:0.5}
 <script>
 (function() {
     'use strict';
-    
+
     // 注册 Service Worker
     if ('serviceWorker' in navigator) {
         window.addEventListener('load', function() {
@@ -595,43 +595,43 @@ button:disabled{opacity:0.5}
                 });
         });
     }
-    
+
     // 检测是否可安装
     let deferredPrompt;
     window.addEventListener('beforeinstallprompt', function(e) {
         e.preventDefault();
         deferredPrompt = e;
         console.log('[PWA] App can be installed');
-        
+
         // 可以在这里显示安装按钮
         // showInstallButton();
     });
-    
+
     // 安装成功
     window.addEventListener('appinstalled', function() {
         console.log('[PWA] App was installed');
         deferredPrompt = null;
     });
-    
+
     // 检测是否已安装 (standalone 模式)
     if (window.matchMedia('(display-mode: standalone)').matches) {
         console.log('[PWA] Running in standalone mode');
     }
-    
+
     // 在线/离线状态
     function updateOnlineStatus() {
         const isOnline = navigator.onLine;
         console.log('[PWA] Network status:', isOnline ? 'online' : 'offline');
-        
+
         // 显示离线提示
         if (!isOnline) {
             showToast('已切换到离线模式');
         }
     }
-    
+
     window.addEventListener('online', updateOnlineStatus);
     window.addEventListener('offline', updateOnlineStatus);
-    
+
     // 请求通知权限
     function requestNotificationPermission() {
         if ('Notification' in window) {
@@ -640,12 +640,12 @@ button:disabled{opacity:0.5}
             });
         }
     }
-    
+
     // 页面加载完成后请求权限
     document.addEventListener('DOMContentLoaded', function() {
         setTimeout(requestNotificationPermission, 5000);
     });
-    
+
 })();
 </script>
 
@@ -653,29 +653,39 @@ button:disabled{opacity:0.5}
 <script>
 (function() {
     'use strict';
-    
-    // 这些配置将通过 Vercel 环境变量注入
-    window.APP_CONFIG = {
-        // Supabase 配置 (需要在 Vercel 环境变量中设置)
-        SUPABASE_URL: 'https://your-project.supabase.co',
-        SUPABASE_ANON_KEY: 'your-anon-key',
-        
-        // Stripe 配置
-        STRIPE_PUBLIC_KEY: 'pk_test_your_key_here',
-        
-        // Sentry 配置
-        SENTRY_DSN: null, // 如果需要监控，填入你的 DSN
-        
-        // App 版本
+
+    // 默认配置 (占位符，会被环境变量覆盖)
+    const DEFAULT_CONFIG = {
+        SUPABASE_URL: null,
+        SUPABASE_ANON_KEY: null,
+        STRIPE_PUBLIC_KEY: null,
+        SENTRY_DSN: null,
         VERSION: '1.1.0',
         BUILD_DATE: '2026-03-06'
     };
-    
-    // 从 window 对象读取 (如果后端注入了)
+
+    // 如果后端注入了 __ENV__，使用它
     if (window.__ENV__) {
-        Object.assign(window.APP_CONFIG, window.__ENV__);
+        window.APP_CONFIG = Object.assign({}, DEFAULT_CONFIG, window.__ENV__);
+    } else {
+        window.APP_CONFIG = DEFAULT_CONFIG;
     }
-    
+
+    // 检查配置是否完整
+    window.isConfigValid = function() {
+        return window.APP_CONFIG.SUPABASE_URL &&
+               window.APP_CONFIG.SUPABASE_URL !== 'https://your-project.supabase.co' &&
+               window.APP_CONFIG.SUPABASE_ANON_KEY &&
+               window.APP_CONFIG.SUPABASE_ANON_KEY !== 'your-anon-key';
+    };
+
+    // 检查支付配置
+    window.isStripeConfigured = function() {
+        return window.APP_CONFIG.STRIPE_PUBLIC_KEY &&
+               window.APP_CONFIG.STRIPE_PUBLIC_KEY !== 'pk_test_your_key_here' &&
+               !window.APP_CONFIG.STRIPE_PUBLIC_KEY.includes('your_key');
+    };
+
 })();
 </script>
 
@@ -685,37 +695,54 @@ button:disabled{opacity:0.5}
     'use strict';
     
     document.addEventListener('DOMContentLoaded', async function() {
+        console.log('🚀 AMBROSE Health v' + window.APP_CONFIG.VERSION + ' 启动中...');
         
-        // 1. 初始化 Sentry 监控
+        // 1. 初始化 Sentry 监控 (可选)
         if (window.sentryMonitor && window.APP_CONFIG.SENTRY_DSN) {
             window.SENTRY_DSN = window.APP_CONFIG.SENTRY_DSN;
             await sentryMonitor.init();
             sentryMonitor.addBreadcrumb('app', 'App initialized');
         }
         
-        // 2. 初始化 Supabase (使用 supabase-client.js 中的服务)
-        if (window.supabaseService && window.APP_CONFIG.SUPABASE_URL) {
-            supabaseService.supabaseUrl = window.APP_CONFIG.SUPABASE_URL;
-            supabaseService.supabaseKey = window.APP_CONFIG.SUPABASE_ANON_KEY;
-            
-            // 重新初始化客户端
-            if (typeof supabase !== 'undefined') {
-                supabaseService.client = supabase.createClient(
-                    supabaseService.supabaseUrl, 
-                    supabaseService.supabaseKey
-                );
-                console.log('✅ Supabase 云服务已连接');
+        // 2. 初始化 Supabase (如果配置了)
+        if (window.isConfigValid && window.isConfigValid()) {
+            if (window.supabaseService) {
+                supabaseService.supabaseUrl = window.APP_CONFIG.SUPABASE_URL;
+                supabaseService.supabaseKey = window.APP_CONFIG.SUPABASE_ANON_KEY;
                 
-                // 添加到全局
-                window.db = supabaseService.client;
+                // 重新初始化客户端
+                if (typeof supabase !== 'undefined') {
+                    try {
+                        supabaseService.client = supabase.createClient(
+                            supabaseService.supabaseUrl, 
+                            supabaseService.supabaseKey
+                        );
+                        window.db = supabaseService.client;
+                        console.log('✅ Supabase 云服务已连接');
+                    } catch (e) {
+                        console.error('❌ Supabase 连接失败:', e);
+                    }
+                }
             }
+        } else {
+            console.log('ℹ️ Supabase 未配置，使用本地模式');
+            console.log('   查看 SUPABASE_SETUP.md 了解如何配置');
         }
         
-        // 3. 初始化 Stripe
-        if (window.stripeService) {
-            stripeService.publishableKey = window.APP_CONFIG.STRIPE_PUBLIC_KEY;
-            await stripeService.init();
-            console.log('✅ Stripe 支付服务已就绪');
+        // 3. 初始化 Stripe (如果配置了)
+        if (window.isStripeConfigured && window.isStripeConfigured()) {
+            if (window.stripeService) {
+                stripeService.publishableKey = window.APP_CONFIG.STRIPE_PUBLIC_KEY;
+                try {
+                    await stripeService.init();
+                    console.log('✅ Stripe 支付服务已就绪');
+                } catch (e) {
+                    console.error('❌ Stripe 初始化失败:', e);
+                }
+            }
+        } else {
+            console.log('ℹ️ Stripe 未配置，支付功能不可用');
+            console.log('   查看 VERCEL_ENV.md 了解如何配置');
         }
         
         // 4. 检查支付状态 (从 URL 参数)
@@ -732,13 +759,22 @@ button:disabled{opacity:0.5}
             });
         }
         
-        console.log('🚀 AMBROSE Health v' + window.APP_CONFIG.VERSION + ' 已启动');
+        console.log('✅ 启动完成');
+        
+        // 显示配置状态 (仅开发模式)
+        if (location.hostname === 'localhost' || location.search.includes('debug')) {
+            console.log('📊 配置状态:', {
+                supabase: window.isConfigValid ? window.isConfigValid() : false,
+                stripe: window.isStripeConfigured ? window.isStripeConfigured() : false,
+                sentry: !!window.APP_CONFIG.SENTRY_DSN
+            });
+        }
     });
     
     // 全局错误捕获
     window.onerror = function(msg, url, line, col, error) {
         console.error('[Global Error]', msg, 'at', url + ':' + line);
-        if (window.sentryMonitor) {
+        if (window.sentryMonitor && window.APP_CONFIG.SENTRY_DSN) {
             sentryMonitor.captureError(error || new Error(msg), { url, line, col });
         }
         return false;
@@ -746,7 +782,7 @@ button:disabled{opacity:0.5}
     
     window.onunhandledrejection = function(event) {
         console.error('[Unhandled Promise Rejection]', event.reason);
-        if (window.sentryMonitor) {
+        if (window.sentryMonitor && window.APP_CONFIG.SENTRY_DSN) {
             sentryMonitor.captureError(event.reason, { type: 'unhandledrejection' });
         }
     };
