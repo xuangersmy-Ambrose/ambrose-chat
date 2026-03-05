@@ -79,7 +79,16 @@
 | 12 | UI | 状态指示器增强发光效果 | index.html |
 | 13 | UI | 饮食进度条增强视觉效果 | health-dashboard.js |
 | 14 | 交互 | 输入框聚焦时添加微浮起效果 | index.html |
+| 15 | 内容 | 睡眠提示随机轮换6条建议 | health-dashboard.js |
+| 16 | 动画 | 消息入场动画延长至0.4s | index.html |
+| 17 | UI | 顶部导航栏增加padding | index.html |
+| 18 | UI | 时钟字体增大并统一monospace | index.html |
+| 19 | UI | 发送按钮增大+渐变+边框发光 | index.html |
+| 20 | UI | BMI卡片添加背景光晕装饰 | health-dashboard.js |
+| 21 | UI | 滚动条渐变色彩 | index.html |
+| 22 | UI | 输入指示器添加发光效果 | index.html |
+| 23 | UI | 回到底部按钮增大+阴影 | index.html |
 
 ## 今日优化计数
 日期: 2026-03-05
-完成次数: 14次
+完成次数: 23次

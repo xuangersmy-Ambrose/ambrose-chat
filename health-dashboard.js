@@ -328,6 +328,15 @@ class HealthDashboard {
 
     // 显示睡眠追踪器
     showSleepTracker() {
+        const sleepTips = [
+            '成年人建议每晚睡眠 7-9 小时',
+            '晚上 11 点前入睡有助于身体修复',
+            '睡眠前 1 小时避免蓝光屏幕',
+            '保持卧室温度在 18-22°C 最佳',
+            '睡前泡脚有助于提高睡眠质量',
+            '避免睡前 3 小时进食过多'
+        ];
+        const randomTip = sleepTips[Math.floor(Math.random() * sleepTips.length)];
         const html = `
             <div style="width: 100%; max-width: 600px;">
                 <div style="display: flex; align-items: center; margin-bottom: 20px;">
@@ -385,7 +394,7 @@ class HealthDashboard {
                 <div style="background: linear-gradient(135deg, rgba(184,41,221,0.1), rgba(0,0,0,0.2)); border: 1px solid rgba(184,41,221,0.3); border-radius: 16px; padding: 16px;">
                     <div style="font-size: 14px; font-weight: 600; margin-bottom: 8px; color: var(--accent-500);">💤 睡眠小贴士</div>
                     <ul style="font-size: 13px; color: var(--text-secondary); line-height: 1.8; margin: 0; padding-left: 16px;">
-                        <li>成年人建议每晚睡眠 7-9 小时</li>
+                        <li>${randomTip}</li>
                         <li>晚上 11 点前入睡有助于身体修复</li>
                         <li>睡眠前 1 小时避免蓝光屏幕</li>
                         <li>保持卧室温度在 18-22°C 最佳</li>
@@ -413,7 +422,8 @@ class HealthDashboard {
                 </div>
 
                 <!-- BMI 卡片 -->
-                <div style="background: var(--bg-card); border: 1px solid var(--border-subtle); border-radius: 16px; padding: 20px; margin-bottom: 16px;">
+                <div style="background: var(--bg-card); border: 1px solid var(--border-subtle); border-radius: 16px; padding: 20px; margin-bottom: 16px; position: relative; overflow: hidden;">
+                    <div style="position: absolute; top: -50%; right: -20%; width: 200px; height: 200px; background: radial-gradient(circle, rgba(0,243,255,0.1) 0%, transparent 70%); pointer-events: none;"></div>
                     <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 16px;">
                         <div>
                             <div style="font-size: 12px; color: var(--text-tertiary); text-transform: uppercase; letter-spacing: 1px;">体质指数 (BMI)</div>
