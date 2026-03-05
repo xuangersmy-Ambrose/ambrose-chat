@@ -8,208 +8,53 @@
     <meta name="theme-color" content="#000000">
     <title>AMBROSE</title>
     
-    <!-- Apple Style Font Stack -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=SF+Pro+Display:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     
     <style>
-        /* ============================================
-           JOBS-INSPIRED DESIGN SYSTEM
-           极简主义 · 玻璃拟态 · 深空美学
-           ============================================ */
-        
         :root {
-            /* Apple-style Color System - 深空赛博朋克 */
             --color-bg-primary: #000000;
-            --color-bg-secondary: rgba(28, 28, 30, 0.72);
-            --color-bg-tertiary: rgba(44, 44, 46, 0.60);
-            
-            /* 玻璃拟态层级 */
-            --glass-light: rgba(255, 255, 255, 0.08);
-            --glass-medium: rgba(255, 255, 255, 0.12);
-            --glass-heavy: rgba(255, 255, 255, 0.18);
-            --glass-border: rgba(255, 255, 255, 0.10);
-            
-            /* 霓虹赛博色系 - 克制使用 */
+            --glass-light: rgba(255, 255, 255, 0.06);
+            --glass-medium: rgba(255, 255, 255, 0.10);
+            --glass-border: rgba(255, 255, 255, 0.08);
             --neon-cyan: #00D4FF;
             --neon-magenta: #FF2D92;
             --neon-violet: #BF5AF2;
-            --neon-green: #30D158;
-            --neon-orange: #FF9F0A;
-            
-            /* 文字层级 - Apple风格 */
             --text-primary: #FFFFFF;
-            --text-secondary: rgba(255, 255, 255, 0.82);
-            --text-tertiary: rgba(255, 255, 255, 0.55);
-            --text-quaternary: rgba(255, 255, 255, 0.32);
-            
-            /* 圆角系统 - 连续圆角 */
-            --radius-sm: 8px;
+            --text-secondary: rgba(255, 255, 255, 0.70);
+            --text-tertiary: rgba(255, 255, 255, 0.50);
             --radius-md: 12px;
             --radius-lg: 16px;
             --radius-xl: 20px;
-            --radius-2xl: 28px;
-            --radius-full: 9999px;
-            
-            /* 间距系统 - 8pt网格 */
-            --space-1: 4px;
-            --space-2: 8px;
-            --space-3: 12px;
-            --space-4: 16px;
-            --space-5: 20px;
-            --space-6: 24px;
-            --space-8: 32px;
-            --space-10: 40px;
-            --space-12: 48px;
-            
-            /* 字体 */
-            --font-stack: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'Inter', 'Segoe UI', sans-serif;
-            --font-mono: 'SF Mono', SFMono-Regular, ui-monospace, monospace;
-            
-            /* 阴影 - 柔和的层次 */
-            --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.20);
-            --shadow-md: 0 4px 16px rgba(0, 0, 0, 0.24);
-            --shadow-lg: 0 8px 32px rgba(0, 0, 0, 0.40);
-            --shadow-neon-cyan: 0 0 30px rgba(0, 212, 255, 0.30);
-            --shadow-neon-magenta: 0 0 30px rgba(255, 45, 146, 0.25);
-            
-            /* 动画曲线 - Apple Easing */
-            --ease-smooth: cubic-bezier(0.4, 0.0, 0.2, 1);
-            --ease-bounce: cubic-bezier(0.34, 1.56, 0.64, 1);
-            --ease-accelerate: cubic-bezier(0.4, 0.0, 1, 1);
-            --ease-decelerate: cubic-bezier(0.0, 0.0, 0.2, 1);
-            
-            /* 过渡 */
-            --transition-fast: 150ms var(--ease-smooth);
-            --transition-normal: 250ms var(--ease-smooth);
-            --transition-slow: 400ms var(--ease-smooth);
         }
         
-        /* ============================================
-           BASE STYLES - 极简基础
-           ============================================ */
-        *, *::before, *::after {
+        * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
             -webkit-tap-highlight-color: transparent;
         }
         
-        html {
-            font-size: 16px;
-            -webkit-font-smoothing: antialiased;
-            -moz-osx-font-smoothing: grayscale;
-            text-rendering: optimizeLegibility;
-        }
-        
-        body {
-            font-family: var(--font-stack);
-            background: var(--color-bg-primary);
+        html, body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: #000;
             color: var(--text-primary);
             min-height: 100vh;
-            min-height: 100dvh;
             overflow-x: hidden;
-            line-height: 1.47059;
-            font-weight: 400;
-            letter-spacing: -0.022em;
         }
         
-        /* ============================================
-           BACKGROUND - 深空粒子效果
-           ============================================ */
-        .universe {
-            position: fixed;
-            inset: 0;
-            z-index: -1;
-            background: 
-                radial-gradient(ellipse 80% 50% at 50% -20%, rgba(0, 212, 255, 0.08), transparent),
-                radial-gradient(ellipse 60% 40% at 80% 100%, rgba(255, 45, 146, 0.06), transparent),
-                radial-gradient(ellipse 50% 30% at 20% 100%, rgba(191, 90, 242, 0.05), transparent),
-                #000000;
-            overflow: hidden;
-        }
-        
-        .universe::before {
-            content: '';
-            position: absolute;
-            inset: 0;
-            background-image: 
-                radial-gradient(circle at 20% 30%, rgba(0, 212, 255, 0.03) 0px, transparent 2px),
-                radial-gradient(circle at 80% 70%, rgba(255, 45, 146, 0.02) 0px, transparent 1.5px),
-                radial-gradient(circle at 40% 80%, rgba(191, 90, 242, 0.02) 0px, transparent 2px);
-            background-size: 200px 200px, 150px 150px, 180px 180px;
-            animation: universe-drift 60s linear infinite;
-        }
-        
-        @keyframes universe-drift {
-            0% { transform: translate(0, 0); }
-            100% { transform: translate(-50px, -30px); }
-        }
-        
-        /* 悬浮粒子 */
-        .particles {
+        /* 简化背景 - 静态渐变 */
+        .bg {
             position: fixed;
             inset: 0;
             z-index: 0;
-            pointer-events: none;
-            overflow: hidden;
+            background: 
+                radial-gradient(ellipse at 20% 0%, rgba(0, 212, 255, 0.15) 0%, transparent 50%),
+                radial-gradient(ellipse at 80% 100%, rgba(255, 45, 146, 0.10) 0%, transparent 40%),
+                #000;
         }
         
-        .particle {
-            position: absolute;
-            width: 3px;
-            height: 3px;
-            background: var(--neon-cyan);
-            border-radius: 50%;
-            opacity: 0;
-            animation: float-up 15s ease-in-out infinite;
-            filter: blur(0.5px);
-        }
-        
-        .particle:nth-child(3n) {
-            background: var(--neon-magenta);
-            animation-delay: -5s;
-        }
-        
-        .particle:nth-child(5n) {
-            background: var(--neon-violet);
-            animation-delay: -10s;
-        }
-        
-        @keyframes float-up {
-            0% {
-                transform: translateY(100vh) scale(0);
-                opacity: 0;
-            }
-            10% {
-                opacity: 0.6;
-            }
-            90% {
-                opacity: 0.6;
-            }
-            100% {
-                transform: translateY(-10vh) scale(1);
-                opacity: 0;
-            }
-        }
-        
-        /* ============================================
-           APP CONTAINER
-           ============================================ */
-        .app {
-            position: relative;
-            z-index: 1;
-            min-height: 100vh;
-            display: flex;
-            flex-direction: column;
-            max-width: 430px;
-            margin: 0 auto;
-            background: transparent;
-        }
-        
-        /* ============================================
-           AUTH SCREEN - 极简认证
-           ============================================ */
+        /* 认证界面 */
         .auth-screen {
             position: fixed;
             inset: 0;
@@ -218,11 +63,9 @@
             flex-direction: column;
             align-items: center;
             justify-content: center;
-            padding: var(--space-6);
-            background: rgba(0, 0, 0, 0.85);
-            backdrop-filter: blur(40px) saturate(180%);
-            -webkit-backdrop-filter: blur(40px) saturate(180%);
-            transition: opacity var(--transition-slow), visibility var(--transition-slow);
+            padding: 24px;
+            background: rgba(0, 0, 0, 0.95);
+            transition: opacity 0.3s ease;
         }
         
         .auth-screen.hidden {
@@ -231,168 +74,117 @@
             pointer-events: none;
         }
         
-        /* Logo动画 */
         .auth-logo {
-            width: 120px;
-            height: 120px;
-            margin-bottom: var(--space-8);
-            position: relative;
-        }
-        
-        .auth-logo::before {
-            content: '';
-            position: absolute;
-            inset: -20px;
-            background: conic-gradient(from 0deg, var(--neon-cyan), var(--neon-magenta), var(--neon-violet), var(--neon-cyan));
-            border-radius: var(--radius-2xl);
-            opacity: 0.3;
-            filter: blur(20px);
-            animation: logo-glow 3s ease-in-out infinite;
-        }
-        
-        .auth-logo-inner {
-            position: relative;
-            width: 100%;
-            height: 100%;
-            background: var(--glass-heavy);
-            border: 1px solid var(--glass-border);
-            border-radius: var(--radius-2xl);
+            width: 100px;
+            height: 100px;
+            margin-bottom: 32px;
+            background: linear-gradient(135deg, var(--neon-cyan), var(--neon-violet));
+            border-radius: 24px;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 48px;
-            font-weight: 300;
-            backdrop-filter: blur(20px);
-        }
-        
-        @keyframes logo-glow {
-            0%, 100% { opacity: 0.2; transform: scale(0.95); }
-            50% { opacity: 0.4; transform: scale(1.05); }
+            font-size: 40px;
+            font-weight: 700;
+            color: #000;
         }
         
         .auth-title {
             font-size: 28px;
             font-weight: 700;
-            letter-spacing: -0.021em;
-            margin-bottom: var(--space-2);
-            text-align: center;
+            margin-bottom: 8px;
         }
         
         .auth-subtitle {
-            font-size: 17px;
+            font-size: 15px;
             color: var(--text-secondary);
-            margin-bottom: var(--space-8);
-            text-align: center;
-        }
-        
-        /* 输入框 - Apple风格 */
-        .auth-input-group {
-            width: 100%;
-            max-width: 320px;
-            display: flex;
-            flex-direction: column;
-            gap: var(--space-3);
+            margin-bottom: 32px;
         }
         
         .input-field {
             width: 100%;
-            padding: var(--space-4) var(--space-5);
+            max-width: 280px;
+            padding: 14px 16px;
             font-size: 17px;
-            font-family: var(--font-mono);
             background: var(--glass-light);
             border: 1px solid var(--glass-border);
-            border-radius: var(--radius-lg);
+            border-radius: var(--radius-md);
             color: var(--text-primary);
             text-align: center;
-            letter-spacing: 0.2em;
-            transition: all var(--transition-fast);
+            letter-spacing: 0.1em;
+            margin-bottom: 12px;
             outline: none;
         }
         
-        .input-field::placeholder {
-            color: var(--text-quaternary);
-            letter-spacing: normal;
-        }
-        
         .input-field:focus {
-            background: var(--glass-medium);
             border-color: var(--neon-cyan);
-            box-shadow: 0 0 0 3px rgba(0, 212, 255, 0.15);
         }
         
-        /* 按钮 - 主按钮 */
         .btn-primary {
             width: 100%;
-            max-width: 320px;
-            padding: var(--space-4) var(--space-6);
+            max-width: 280px;
+            padding: 14px;
             font-size: 17px;
             font-weight: 600;
             background: var(--neon-cyan);
             color: #000;
             border: none;
-            border-radius: var(--radius-lg);
+            border-radius: var(--radius-md);
             cursor: pointer;
-            transition: all var(--transition-fast);
-            margin-top: var(--space-4);
-        }
-        
-        .btn-primary:hover {
-            transform: scale(1.02);
-            box-shadow: var(--shadow-neon-cyan);
+            margin-top: 8px;
         }
         
         .btn-primary:active {
             transform: scale(0.98);
         }
         
-        /* ============================================
-           HEADER - 玻璃导航栏
-           ============================================ */
-        .header {
-            position: sticky;
-            top: 0;
-            z-index: 100;
-            padding: var(--space-4);
-            padding-top: max(var(--space-4), env(safe-area-inset-top));
-            background: rgba(0, 0, 0, 0.65);
-            backdrop-filter: blur(20px) saturate(180%);
-            -webkit-backdrop-filter: blur(20px) saturate(180%);
-            border-bottom: 1px solid var(--glass-border);
+        /* 主应用 */
+        .app {
+            position: relative;
+            z-index: 1;
+            max-width: 430px;
+            margin: 0 auto;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            padding-bottom: 80px;
         }
         
-        .header-content {
+        /* 头部 */
+        .header {
+            padding: 16px 20px;
+            padding-top: max(16px, env(safe-area-inset-top));
             display: flex;
             align-items: center;
             justify-content: space-between;
         }
         
-        .header-brand {
+        .brand {
             display: flex;
             align-items: center;
-            gap: var(--space-3);
+            gap: 10px;
         }
         
         .brand-icon {
-            width: 36px;
-            height: 36px;
+            width: 32px;
+            height: 32px;
             background: linear-gradient(135deg, var(--neon-cyan), var(--neon-violet));
-            border-radius: var(--radius-md);
+            border-radius: 8px;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 18px;
-            font-weight: 600;
+            font-size: 16px;
+            font-weight: 700;
+            color: #000;
         }
         
         .brand-text {
             font-size: 20px;
             font-weight: 700;
-            letter-spacing: -0.021em;
         }
         
         .header-actions {
             display: flex;
-            gap: var(--space-2);
+            gap: 8px;
         }
         
         .icon-btn {
@@ -400,466 +192,184 @@
             height: 36px;
             background: var(--glass-light);
             border: 1px solid var(--glass-border);
-            border-radius: var(--radius-md);
+            border-radius: 10px;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 18px;
+            font-size: 16px;
             cursor: pointer;
-            transition: all var(--transition-fast);
+            color: var(--text-primary);
         }
         
-        .icon-btn:hover {
-            background: var(--glass-medium);
-            transform: scale(1.05);
-        }
-        
-        /* ============================================
-           STATUS BAR - 系统状态
-           ============================================ */
+        /* 状态栏 */
         .status-bar {
             display: flex;
             align-items: center;
             justify-content: space-between;
-            padding: var(--space-2) var(--space-4);
-            margin: 0 var(--space-4);
+            padding: 8px 16px;
+            margin: 0 20px 16px;
             background: var(--glass-light);
             border: 1px solid var(--glass-border);
-            border-radius: var(--radius-lg);
-            margin-bottom: var(--space-4);
+            border-radius: var(--radius-md);
         }
         
-        .status-item {
-            display: flex;
-            align-items: center;
-            gap: var(--space-2);
-            font-size: 13px;
-            color: var(--text-secondary);
+        .status-time {
+            font-family: 'SF Mono', monospace;
+            font-size: 14px;
+            color: var(--neon-cyan);
+            font-weight: 500;
         }
         
         .status-dot {
             width: 6px;
             height: 6px;
-            background: var(--neon-green);
+            background: #30D158;
             border-radius: 50%;
-            animation: pulse 2s ease-in-out infinite;
+            display: inline-block;
+            margin-right: 6px;
         }
         
-        @keyframes pulse {
-            0%, 100% { opacity: 1; }
-            50% { opacity: 0.5; }
-        }
-        
-        .status-time {
-            font-family: var(--font-mono);
-            font-weight: 500;
-            color: var(--neon-cyan);
-        }
-        
-        /* ============================================
-           MAIN CONTENT
-           ============================================ */
+        /* 主内容 */
         .main-content {
             flex: 1;
+            padding: 0 20px;
             overflow-y: auto;
-            overflow-x: hidden;
-            padding: var(--space-4);
-            padding-bottom: calc(var(--space-24) + env(safe-area-inset-bottom));
-            scroll-behavior: smooth;
         }
         
-        .main-content::-webkit-scrollbar {
-            display: none;
-        }
-        
-        /* ============================================
-           SECTION TITLE - 区块标题
-           ============================================ */
-        .section-title {
-            font-size: 22px;
-            font-weight: 700;
-            letter-spacing: -0.021em;
-            margin-bottom: var(--space-4);
-            display: flex;
-            align-items: center;
-            gap: var(--space-2);
-        }
-        
-        .section-subtitle {
-            font-size: 15px;
-            color: var(--text-tertiary);
-            margin-bottom: var(--space-4);
-        }
-        
-        /* ============================================
-           WELCOME CARD - 欢迎卡片
-           ============================================ */
+        /* 欢迎卡片 */
         .welcome-card {
-            position: relative;
-            padding: var(--space-6);
-            margin-bottom: var(--space-6);
-            background: linear-gradient(135deg, 
-                rgba(0, 212, 255, 0.10) 0%, 
-                rgba(255, 45, 146, 0.08) 50%,
-                rgba(191, 90, 242, 0.10) 100%);
+            padding: 20px;
+            margin-bottom: 20px;
+            background: linear-gradient(135deg, rgba(0, 212, 255, 0.12), rgba(191, 90, 242, 0.08));
             border: 1px solid var(--glass-border);
-            border-radius: var(--radius-2xl);
-            overflow: hidden;
-        }
-        
-        .welcome-card::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            height: 1px;
-            background: linear-gradient(90deg, transparent, var(--neon-cyan), transparent);
-            opacity: 0.5;
+            border-radius: var(--radius-xl);
         }
         
         .welcome-greeting {
-            font-size: 13px;
+            font-size: 12px;
             font-weight: 600;
             text-transform: uppercase;
             letter-spacing: 0.05em;
             color: var(--neon-cyan);
-            margin-bottom: var(--space-2);
+            margin-bottom: 6px;
         }
         
         .welcome-name {
-            font-size: 28px;
+            font-size: 24px;
             font-weight: 700;
-            letter-spacing: -0.021em;
-            margin-bottom: var(--space-2);
+            margin-bottom: 6px;
         }
         
         .welcome-message {
-            font-size: 15px;
+            font-size: 14px;
             color: var(--text-secondary);
-            line-height: 1.5;
         }
         
-        /* ============================================
-           DASHBOARD GRID - 数据仪表板
-           ============================================ */
+        /* 数据网格 */
         .dashboard-grid {
             display: grid;
             grid-template-columns: repeat(2, 1fr);
-            gap: var(--space-3);
-            margin-bottom: var(--space-6);
+            gap: 12px;
+            margin-bottom: 20px;
         }
         
-        /* 玻璃卡片 */
         .glass-card {
             background: var(--glass-light);
             border: 1px solid var(--glass-border);
-            border-radius: var(--radius-xl);
-            padding: var(--space-4);
-            transition: all var(--transition-normal);
-            position: relative;
-            overflow: hidden;
-        }
-        
-        .glass-card::before {
-            content: '';
-            position: absolute;
-            inset: 0;
-            background: linear-gradient(135deg, rgba(255,255,255,0.05) 0%, transparent 50%);
-            opacity: 0;
-            transition: opacity var(--transition-fast);
-        }
-        
-        .glass-card:hover::before {
-            opacity: 1;
-        }
-        
-        .glass-card:active {
-            transform: scale(0.98);
-        }
-        
-        .glass-card.highlight {
-            background: linear-gradient(135deg, 
-                rgba(0, 212, 255, 0.15) 0%, 
-                rgba(0, 212, 255, 0.05) 100%);
-            border-color: rgba(0, 212, 255, 0.30);
-        }
-        
-        .card-icon {
-            width: 40px;
-            height: 40px;
-            background: var(--glass-medium);
-            border-radius: var(--radius-md);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 20px;
-            margin-bottom: var(--space-3);
-        }
-        
-        .card-label {
-            font-size: 13px;
-            color: var(--text-tertiary);
-            margin-bottom: var(--space-1);
-        }
-        
-        .card-value {
-            font-size: 28px;
-            font-weight: 700;
-            letter-spacing: -0.024em;
-        }
-        
-        .card-value.small {
-            font-size: 22px;
-        }
-        
-        .card-unit {
-            font-size: 15px;
-            font-weight: 400;
-            color: var(--text-secondary);
-            margin-left: var(--space-1);
-        }
-        
-        .card-progress {
-            margin-top: var(--space-3);
-            height: 4px;
-            background: var(--glass-medium);
-            border-radius: var(--radius-full);
-            overflow: hidden;
-        }
-        
-        .card-progress-bar {
-            height: 100%;
-            background: linear-gradient(90deg, var(--neon-cyan), var(--neon-violet));
-            border-radius: var(--radius-full);
-            transition: width 1s var(--ease-smooth);
-        }
-        
-        .card-footer {
-            display: flex;
-            align-items: center;
-            gap: var(--space-1);
-            margin-top: var(--space-2);
-            font-size: 12px;
-            color: var(--text-tertiary);
-        }
-        
-        .trend-up { color: var(--neon-green); }
-        .trend-down { color: var(--neon-orange); }
-        
-        /* 大尺寸卡片 */
-        .glass-card.large {
-            grid-column: span 2;
-            padding: var(--space-5);
-        }
-        
-        .card-header {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            margin-bottom: var(--space-4);
-        }
-        
-        .card-title {
-            font-size: 17px;
-            font-weight: 600;
-        }
-        
-        .card-action {
-            font-size: 13px;
-            color: var(--neon-cyan);
+            border-radius: var(--radius-lg);
+            padding: 16px;
             cursor: pointer;
         }
         
-        /* ============================================
-           CHAT AREA - 对话区域
-           ============================================ */
-        .chat-container {
-            margin-bottom: var(--space-6);
+        .glass-card.large {
+            grid-column: span 2;
         }
         
-        .chat-messages {
-            display: flex;
-            flex-direction: column;
-            gap: var(--space-3);
-            margin-bottom: var(--space-4);
-        }
-        
-        .message {
-            display: flex;
-            gap: var(--space-3);
-            max-width: 85%;
-            animation: message-in 0.3s var(--ease-smooth);
-        }
-        
-        @keyframes message-in {
-            from {
-                opacity: 0;
-                transform: translateY(10px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
-        
-        .message.user {
-            align-self: flex-end;
-            flex-direction: row-reverse;
-        }
-        
-        .message-avatar {
-            width: 32px;
-            height: 32px;
-            border-radius: 50%;
-            flex-shrink: 0;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 14px;
-        }
-        
-        .message.user .message-avatar {
+        .card-icon {
+            width: 36px;
+            height: 36px;
             background: var(--glass-medium);
-        }
-        
-        .message.ai .message-avatar {
-            background: linear-gradient(135deg, var(--neon-cyan), var(--neon-violet));
-        }
-        
-        .message-content {
-            padding: var(--space-3) var(--space-4);
-            border-radius: var(--radius-xl);
-            font-size: 15px;
-            line-height: 1.4;
-        }
-        
-        .message.user .message-content {
-            background: var(--neon-cyan);
-            color: #000;
-            border-bottom-right-radius: var(--space-1);
-        }
-        
-        .message.ai .message-content {
-            background: var(--glass-light);
-            border: 1px solid var(--glass-border);
-            border-bottom-left-radius: var(--space-1);
-        }
-        
-        /* 输入框 */
-        .chat-input-area {
-            position: relative;
-        }
-        
-        .chat-input-container {
-            display: flex;
-            align-items: center;
-            gap: var(--space-2);
-            padding: var(--space-2);
-            background: var(--glass-light);
-            border: 1px solid var(--glass-border);
-            border-radius: var(--radius-2xl);
-        }
-        
-        .chat-input {
-            flex: 1;
-            padding: var(--space-3) var(--space-4);
-            font-size: 15px;
-            background: transparent;
-            border: none;
-            color: var(--text-primary);
-            outline: none;
-        }
-        
-        .chat-input::placeholder {
-            color: var(--text-quaternary);
-        }
-        
-        .chat-send-btn {
-            width: 40px;
-            height: 40px;
-            background: var(--neon-cyan);
-            border: none;
-            border-radius: 50%;
+            border-radius: 10px;
             display: flex;
             align-items: center;
             justify-content: center;
             font-size: 18px;
-            cursor: pointer;
-            transition: all var(--transition-fast);
-            flex-shrink: 0;
+            margin-bottom: 10px;
         }
         
-        .chat-send-btn:hover {
-            transform: scale(1.05);
-            box-shadow: var(--shadow-neon-cyan);
+        .card-label {
+            font-size: 12px;
+            color: var(--text-tertiary);
+            margin-bottom: 4px;
         }
         
-        /* ============================================
-           QUICK ACTIONS - 快捷操作
-           ============================================ */
-        .quick-actions {
-            margin-bottom: var(--space-6);
+        .card-value {
+            font-size: 24px;
+            font-weight: 700;
+        }
+        
+        .card-value.small {
+            font-size: 20px;
+        }
+        
+        .card-unit {
+            font-size: 14px;
+            font-weight: 400;
+            color: var(--text-secondary);
+            margin-left: 4px;
+        }
+        
+        /* 快捷操作 */
+        .section-title {
+            font-size: 18px;
+            font-weight: 600;
+            margin-bottom: 12px;
+            margin-top: 20px;
         }
         
         .actions-grid {
             display: grid;
             grid-template-columns: repeat(4, 1fr);
-            gap: var(--space-3);
+            gap: 10px;
+            margin-bottom: 20px;
         }
         
         .action-item {
             display: flex;
             flex-direction: column;
             align-items: center;
-            gap: var(--space-2);
-            padding: var(--space-3);
+            gap: 6px;
+            padding: 12px 8px;
             background: var(--glass-light);
             border: 1px solid var(--glass-border);
-            border-radius: var(--radius-xl);
+            border-radius: var(--radius-lg);
             cursor: pointer;
-            transition: all var(--transition-fast);
-        }
-        
-        .action-item:hover {
-            background: var(--glass-medium);
-            transform: translateY(-2px);
-        }
-        
-        .action-item:active {
-            transform: scale(0.95);
         }
         
         .action-icon {
-            width: 48px;
-            height: 48px;
+            width: 44px;
+            height: 44px;
             background: var(--glass-medium);
-            border-radius: var(--radius-lg);
+            border-radius: 12px;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 24px;
+            font-size: 22px;
         }
         
         .action-label {
-            font-size: 12px;
+            font-size: 11px;
             color: var(--text-secondary);
-            text-align: center;
         }
         
-        /* ============================================
-           BOTTOM NAV - 底部导航
-           ============================================ */
+        /* 底部导航 */
         .bottom-nav {
             position: fixed;
             bottom: 0;
             left: 0;
             right: 0;
-            z-index: 100;
-            padding: var(--space-2) var(--space-4) max(var(--space-2), env(safe-area-inset-bottom));
-            background: rgba(0, 0, 0, 0.75);
-            backdrop-filter: blur(20px) saturate(180%);
-            -webkit-backdrop-filter: blur(20px) saturate(180%);
+            padding: 8px 0 calc(8px + env(safe-area-inset-bottom));
+            background: rgba(0, 0, 0, 0.9);
             border-top: 1px solid var(--glass-border);
         }
         
@@ -874,265 +384,144 @@
             display: flex;
             flex-direction: column;
             align-items: center;
-            gap: var(--space-1);
-            padding: var(--space-2) var(--space-3);
+            gap: 4px;
+            padding: 6px 20px;
             cursor: pointer;
-            transition: all var(--transition-fast);
-            border-radius: var(--radius-md);
+            opacity: 0.5;
+            transition: opacity 0.2s;
         }
         
-        .nav-item:hover {
-            background: var(--glass-light);
+        .nav-item.active {
+            opacity: 1;
         }
         
         .nav-item.active .nav-icon {
             color: var(--neon-cyan);
         }
         
-        .nav-item.active .nav-label {
-            color: var(--neon-cyan);
-        }
-        
         .nav-icon {
-            font-size: 24px;
-            color: var(--text-tertiary);
-            transition: color var(--transition-fast);
+            font-size: 22px;
         }
         
         .nav-label {
-            font-size: 11px;
-            font-weight: 500;
-            color: var(--text-tertiary);
-            transition: color var(--transition-fast);
+            font-size: 10px;
         }
         
-        /* ============================================
-           UTILITY CLASSES
-           ============================================ */
-        .hidden { display: none !important; }
-        .text-center { text-align: center; }
-        .mb-4 { margin-bottom: var(--space-4); }
-        .mb-6 { margin-bottom: var(--space-6); }
-        
-        /* 霓虹文字效果 */
-        .text-neon-cyan {
-            color: var(--neon-cyan);
-            text-shadow: 0 0 20px rgba(0, 212, 255, 0.5);
+        /* 工具类 */
+        .hidden {
+            display: none !important;
         }
         
-        .text-neon-magenta {
-            color: var(--neon-magenta);
-            text-shadow: 0 0 20px rgba(255, 45, 146, 0.4);
-        }
-        
-        /* 渐变文字 */
-        .text-gradient {
-            background: linear-gradient(135deg, var(--neon-cyan), var(--neon-magenta));
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
-        }
-        
-        /* ============================================
-           ANIMATIONS
-           ============================================ */
-        .fade-in {
-            animation: fade-in 0.4s var(--ease-smooth);
-        }
-        
-        @keyframes fade-in {
-            from { opacity: 0; }
-            to { opacity: 1; }
-        }
-        
-        .slide-up {
-            animation: slide-up 0.4s var(--ease-smooth);
-        }
-        
-        @keyframes slide-up {
-            from { 
-                opacity: 0;
-                transform: translateY(20px);
-            }
-            to { 
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
-        
-        /* ============================================
-           RESPONSIVE
-           ============================================ */
-        @media (min-width: 768px) {
-            .app {
-                max-width: 480px;
-            }
-        }
-        
-        /* 减少动画偏好 */
-        @media (prefers-reduced-motion: reduce) {
-            *, *::before, *::after {
-                animation-duration: 0.01ms !important;
-                animation-iteration-count: 1 !important;
-                transition-duration: 0.01ms !important;
-            }
+        /* Toast */
+        .toast {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: rgba(40, 40, 40, 0.95);
+            padding: 14px 24px;
+            border-radius: 12px;
+            border: 1px solid var(--glass-border);
+            color: white;
+            font-size: 14px;
+            z-index: 9999;
+            pointer-events: none;
         }
     </style>
 </head>
 <body>
-    <!-- 深空背景 -->
-    <div class="universe"></div>
-    
-    <!-- 悬浮粒子 -->
-    <div class="particles" id="particles"></div>
+    <div class="bg"></div>
     
     <!-- 认证屏幕 -->
     <div class="auth-screen" id="authScreen">
-        <div class="auth-logo">
-            <div class="auth-logo-inner">A</div>
-        </div>
+        <div class="auth-logo">A</div>
         <h1 class="auth-title">AMBROSE</h1>
         <p class="auth-subtitle">AI HEALTH COACH</p>
-        
-        <div class="auth-input-group">
-            <input type="text" class="input-field" id="inviteCode" placeholder="输入邀请码" maxlength="4">
-            <input type="text" class="input-field hidden" id="verifyCode" placeholder="身份验证码" maxlength="4">
-        </div>
-        
+        <input type="text" class="input-field" id="inviteCode" placeholder="输入邀请码" maxlength="4">
+        <input type="text" class="input-field hidden" id="verifyCode" placeholder="身份验证码" maxlength="4">
         <button class="btn-primary" id="authBtn">进入系统</button>
     </div>
     
     <!-- 主应用 -->
     <div class="app" id="mainApp">
-        <!-- 头部导航 -->
         <header class="header">
-            <div class="header-content">
-                <div class="header-brand">
-                    <div class="brand-icon">A</div>
-                    <span class="brand-text">AMBROSE</span>
-                </div>
-                <div class="header-actions">
-                    <button class="icon-btn" id="healthBtn" title="健康中心">❤️</button>
-                    <button class="icon-btn" id="settingsBtn" title="设置">⚙️</button>
-                </div>
+            <div class="brand">
+                <div class="brand-icon">A</div>
+                <span class="brand-text">AMBROSE</span>
+            </div>
+            <div class="header-actions">
+                <button class="icon-btn" id="healthBtn">❤️</button>
+                <button class="icon-btn" id="settingsBtn">⚙️</button>
             </div>
         </header>
         
-        <!-- 状态栏 -->
         <div class="status-bar">
-            <div class="status-item">
+            <div>
                 <span class="status-dot"></span>
-                <span>系统在线</span>
+                <span style="font-size: 13px; color: var(--text-secondary);">系统在线</span>
             </div>
-            <div class="status-item">
-                <span class="status-time" id="beijingTime">--:--:--</span>
-            </div>
+            <div class="status-time" id="beijingTime">--:--:--</div>
         </div>
         
-        <!-- 主内容区 -->
         <main class="main-content">
-            <!-- 欢迎卡片 -->
-            <div class="welcome-card slide-up">
+            <div class="welcome-card">
                 <div class="welcome-greeting">NEURAL LINK v3.0</div>
                 <h2 class="welcome-name" id="userGreeting">你好</h2>
                 <p class="welcome-message">我是你的AI健康教练。今天有什么可以帮助你的吗？</p>
             </div>
             
-            <!-- 数据仪表板 -->
-            <section class="dashboard-section mb-6">
-                <h3 class="section-title">
-                    <span>今日概览</span>
-                </h3>
-                <div class="dashboard-grid">
-                    <div class="glass-card">
-                        <div class="card-icon">👟</div>
-                        <div class="card-label">步数</div>
-                        <div class="card-value">
-                            <span id="todaySteps">0</span>
-                            <span class="card-unit">步</span>
-                        </div>
-                        <div class="card-progress">
-                            <div class="card-progress-bar" style="width: 0%"></div>
-                        </div>
-                    </div>
-                    
-                    <div class="glass-card">
-                        <div class="card-icon">🔥</div>
-                        <div class="card-label">消耗</div>
-                        <div class="card-value small">
-                            <span id="todayCalories">0</span>
-                            <span class="card-unit">kcal</span>
-                        </div>
-                    </div>
-                    
-                    <div class="glass-card">
-                        <div class="card-icon">😴</div>
-                        <div class="card-label">睡眠</div>
-                        <div class="card-value small">
-                            <span id="lastSleep">--</span>
-                            <span class="card-unit">h</span>
-                        </div>
-                    </div>
-                    
-                    <div class="glass-card">
-                        <div class="card-icon">💧</div>
-                        <div class="card-label">饮水</div>
-                        <div class="card-value small">
-                            <span id="todayWater">0</span>
-                            <span class="card-unit">ml</span>
-                        </div>
-                    </div>
-                    
-                    <div class="glass-card large highlight">
-                        <div class="card-header">
-                            <span class="card-title">💬 与AMBROSE对话</span>
-                            <span class="card-action">展开 →</span>
-                        </div>
-                        <p style="color: var(--text-secondary); font-size: 15px;">
-                            询问健康问题、获取运动建议、记录饮食，或只是聊聊天。
-                        </p>
+            <div class="dashboard-grid">
+                <div class="glass-card">
+                    <div class="card-icon">👟</div>
+                    <div class="card-label">步数</div>
+                    <div class="card-value">
+                        <span id="todaySteps">0</span><span class="card-unit">步</span>
                     </div>
                 </div>
-            </section>
+                <div class="glass-card">
+                    <div class="card-icon">🔥</div>
+                    <div class="card-label">消耗</div>
+                    <div class="card-value small">
+                        <span id="todayCalories">0</span><span class="card-unit">kcal</span>
+                    </div>
+                </div>
+                <div class="glass-card">
+                    <div class="card-icon">😴</div>
+                    <div class="card-label">睡眠</div>
+                    <div class="card-value small">
+                        <span id="lastSleep">--</span><span class="card-unit">h</span>
+                    </div>
+                </div>
+                <div class="glass-card">
+                    <div class="card-icon">💧</div>
+                    <div class="card-label">饮水</div>
+                    <div class="card-value small">
+                        <span id="todayWater">0</span><span class="card-unit">ml</span>
+                    </div>
+                </div>
+            </div>
             
-            <!-- 快捷操作 -->
-            <section class="quick-actions">
-                <h3 class="section-title">快捷记录</h3>
-                <div class="actions-grid">
-                    <div class="action-item" onclick="showToast('记录体重')">
-                        <div class="action-icon">⚖️</div>
-                        <span class="action-label">体重</span>
-                    </div>
-                    <div class="action-item" onclick="showToast('记录饮食')">
-                        <div class="action-icon">🍽️</div>
-                        <span class="action-label">饮食</span>
-                    </div>
-                    <div class="action-item" onclick="showToast('记录运动')">
-                        <div class="action-icon">🏃</div>
-                        <span class="action-label">运动</span>
-                    </div>
-                    <div class="action-item" onclick="showToast('记录睡眠')">
-                        <div class="action-icon">🌙</div>
-                        <span class="action-label">睡眠</span>
-                    </div>
+            <h3 class="section-title">快捷记录</h3>
+            <div class="actions-grid">
+                <div class="action-item" onclick="showToast('记录体重')">
+                    <div class="action-icon">⚖️</div>
+                    <span class="action-label">体重</span>
                 </div>
-            </section>
-            
-            <!-- 对话区域 -->
-            <section class="chat-container">
-                <h3 class="section-title">最近对话</h3>
-                <div class="chat-messages" id="chatPreview">
-                    <div class="message ai">
-                        <div class="message-avatar">A</div>
-                        <div class="message-content">
-                            你好！我是AMBROSE，你的AI健康教练。今天感觉怎么样？
-                        </div>
-                    </div>
+                <div class="action-item" onclick="showToast('记录饮食')">
+                    <div class="action-icon">🍽️</div>
+                    <span class="action-label">饮食</span>
                 </div>
-            </section>
+                <div class="action-item" onclick="showToast('记录运动')">
+                    <div class="action-icon">🏃</div>
+                    <span class="action-label">运动</span>
+                </div>
+                <div class="action-item" onclick="showToast('记录睡眠')">
+                    <div class="action-icon">🌙</div>
+                    <span class="action-label">睡眠</span>
+                </div>
+            </div>
         </main>
         
-        <!-- 底部导航 -->
         <nav class="bottom-nav">
             <div class="nav-items">
                 <div class="nav-item active" data-page="home">
@@ -1156,26 +545,10 @@
     </div>
     
     <script>
-        /* ============================================
-           AMBROSE Core - 极简内核
-           ============================================ */
-        
-        // 粒子系统
-        function initParticles() {
-            const container = document.getElementById('particles');
-            for (let i = 0; i < 20; i++) {
-                const particle = document.createElement('div');
-                particle.className = 'particle';
-                particle.style.left = Math.random() * 100 + '%';
-                particle.style.animationDuration = (15 + Math.random() * 10) + 's';
-                particle.style.animationDelay = Math.random() * 15 + 's';
-                container.appendChild(particle);
-            }
-        }
-        
         // 北京时间更新
         function updateBeijingTime() {
             const timeEl = document.getElementById('beijingTime');
+            if (!timeEl) return;
             const now = new Date();
             const beijingTime = new Date(now.toLocaleString('en-US', { timeZone: 'Asia/Shanghai' }));
             const hours = String(beijingTime.getHours()).padStart(2, '0');
@@ -1187,32 +560,34 @@
         // 认证系统
         function initAuth() {
             const authScreen = document.getElementById('authScreen');
-            const mainApp = document.getElementById('mainApp');
             const inviteInput = document.getElementById('inviteCode');
             const verifyInput = document.getElementById('verifyCode');
             const authBtn = document.getElementById('authBtn');
             
+            if (!inviteInput || !authBtn) return;
+            
             inviteInput.addEventListener('input', (e) => {
                 if (e.target.value === '8888') {
                     verifyInput.classList.remove('hidden');
-                    verifyInput.focus();
+                    if (verifyInput) verifyInput.focus();
                 }
             });
             
             authBtn.addEventListener('click', () => {
                 const invite = inviteInput.value;
-                const verify = verifyInput.value;
+                const verify = verifyInput ? verifyInput.value : '';
                 
-                if (invite === '8888' && verify === '0812') {
+                if (invite === '8888') {
                     authScreen.classList.add('hidden');
-                    localStorage.setItem('ambrose_user_identity', 'boss');
-                    updateGreeting('BOSS Shao');
-                } else if (invite === '8888') {
-                    authScreen.classList.add('hidden');
-                    localStorage.setItem('ambrose_user_identity', 'guest');
-                    updateGreeting('朋友');
+                    if (verify === '0812') {
+                        localStorage.setItem('ambrose_user_identity', 'boss');
+                        updateGreeting('BOSS Shao');
+                    } else {
+                        localStorage.setItem('ambrose_user_identity', 'guest');
+                        updateGreeting('朋友');
+                    }
                 } else {
-                    inviteInput.style.borderColor = 'var(--neon-magenta)';
+                    inviteInput.style.borderColor = '#FF2D92';
                     setTimeout(() => {
                         inviteInput.style.borderColor = '';
                     }, 1000);
@@ -1222,57 +597,62 @@
         
         // 更新问候语
         function updateGreeting(name) {
-            document.getElementById('userGreeting').textContent = `你好，${name}`;
+            const el = document.getElementById('userGreeting');
+            if (el) el.textContent = `你好，${name}`;
         }
         
         // Toast提示
         function showToast(message) {
+            const existing = document.querySelector('.toast');
+            if (existing) existing.remove();
+            
             const toast = document.createElement('div');
-            toast.style.cssText = `
-                position: fixed;
-                top: 50%;
-                left: 50%;
-                transform: translate(-50%, -50%);
-                background: var(--glass-heavy);
-                backdrop-filter: blur(20px);
-                padding: 16px 24px;
-                border-radius: 12px;
-                border: 1px solid var(--glass-border);
-                color: white;
-                font-size: 15px;
-                z-index: 9999;
-                animation: fade-in 0.2s ease;
-            `;
+            toast.className = 'toast';
             toast.textContent = message;
             document.body.appendChild(toast);
-            setTimeout(() => toast.remove(), 1500);
+            
+            setTimeout(() => {
+                toast.style.opacity = '0';
+                toast.style.transition = 'opacity 0.3s';
+                setTimeout(() => toast.remove(), 300);
+            }, 1500);
         }
         
         // 底部导航
         function initNav() {
             document.querySelectorAll('.nav-item').forEach(item => {
-                item.addEventListener('click', () => {
+                item.addEventListener('click', function() {
                     document.querySelectorAll('.nav-item').forEach(i => i.classList.remove('active'));
-                    item.classList.add('active');
+                    this.classList.add('active');
                 });
             });
         }
         
-        // 初始化
-        document.addEventListener('DOMContentLoaded', () => {
-            initParticles();
-            initAuth();
-            initNav();
-            updateBeijingTime();
-            setInterval(updateBeijingTime, 1000);
-            
-            // 检查登录状态
-            const identity = localStorage.getItem('ambrose_user_identity');
-            if (identity) {
-                document.getElementById('authScreen').classList.add('hidden');
-                updateGreeting(identity === 'boss' ? 'BOSS Shao' : '朋友');
+        // 初始化 - 确保DOM加载完成
+        if (document.readyState === 'loading') {
+            document.addEventListener('DOMContentLoaded', initApp);
+        } else {
+            initApp();
+        }
+        
+        function initApp() {
+            try {
+                initAuth();
+                initNav();
+                updateBeijingTime();
+                setInterval(updateBeijingTime, 1000);
+                
+                // 检查登录状态
+                const identity = localStorage.getItem('ambrose_user_identity');
+                if (identity) {
+                    const authScreen = document.getElementById('authScreen');
+                    if (authScreen) authScreen.classList.add('hidden');
+                    updateGreeting(identity === 'boss' ? 'BOSS Shao' : '朋友');
+                }
+            } catch (e) {
+                console.error('App init error:', e);
             }
-        });
+        }
     </script>
 </body>
 </html>
