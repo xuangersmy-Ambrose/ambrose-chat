@@ -1,10 +1,23 @@
 <!DOCTYPE html>
-<html>
+<html lang="zh-CN">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
 <meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="AMBROSE Health">
 <meta name="format-detection" content="telephone=no">
+<meta name="theme-color" content="#000000">
+<meta name="description" content="AI健康陪伴师 - 私人健康顾问 + 健身教练 + 养生管家">
+
+<!-- PWA -->
+<link rel="manifest" href="/manifest.json">
+<link rel="apple-touch-icon" href="/icon-192x192.png">
+
+<!-- Preconnect -->
+<link rel="preconnect" href="https://unpkg.com">
+<link rel="preconnect" href="https://api.moonshot.cn">
+
 <title>AMBROSE - AI Health Coach</title>
 <style>
 *{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
@@ -32,7 +45,7 @@ button:disabled{opacity:0.5}
 .sub{color:rgba(255,255,255,0.5);font-size:15px}
 .stats{display:grid;grid-template-columns:1fr 1fr;gap:12px;padding:20px}
 .stat{background:rgba(255,255,255,0.08);border:1px solid rgba(255,255,255,0.1);padding:20px;border-radius:16px;text-align:center;cursor:pointer;transition:all 0.2s}
-.stat:active{transform:scale(0.96);background:rgba(255,255,255,0.12)}
+.stat{position:relative;overflow:hidden}.stat::before{content:'';position:absolute;top:50%;left:50%;width:0;height:0;background:rgba(0,212,255,0.3);border-radius:50%;transform:translate(-50%,-50%);transition:width 0.3s,height 0.3s,opacity 0.3s;opacity:0}.stat:active::before{width:200%;height:200%;opacity:1;transition:0s}.stat:active{transform:scale(0.96);background:rgba(255,255,255,0.12)}
 .stat-num{font-size:28px;font-weight:700;margin-bottom:6px;color:#fff}
 .stat-label{font-size:13px;color:rgba(255,255,255,0.5)}
 .main-btn{background:#00D4FF;color:#000;padding:18px 24px;margin:20px;border-radius:14px;text-align:center;font-size:17px;font-weight:600;cursor:pointer;transition:all 0.2s;box-shadow:0 4px 20px rgba(0,212,255,0.2)}
@@ -50,7 +63,7 @@ button:disabled{opacity:0.5}
 .chat-title{font-size:17px;font-weight:600}
 .chat-status{font-size:13px;color:#30D158;display:flex;align-items:center;gap:6px;margin-top:2px}
 .status-dot{width:6px;height:6px;background:#30D158;border-radius:50%;animation:pulse 2s infinite}
-@keyframes pulse{0%,100%{opacity:1}50%{opacity:0.5}}
+@keyframes pulse{0%,100%{opacity:1;box-shadow:0 0 0 0 rgba(48,209,88,0.4)}50%{opacity:0.8;box-shadow:0 0 0 4px rgba(48,209,88,0)}}
 .chat-messages{padding:20px;padding-bottom:140px;min-height:calc(100vh - 200px)}
 .msg{margin-bottom:20px;max-width:85%;animation:fadeIn 0.3s ease}
 @keyframes fadeIn{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
@@ -93,7 +106,7 @@ button:disabled{opacity:0.5}
 <div class="header">
 <div class="time" id="timeDisplay">--:--</div>
 <div class="greeting" id="userGreeting">你好</div>
-<div class="sub">今天感觉如何？</div>
+<div class="sub">今天感觉如何？💪</div>
 </div>
 
 <div class="stats">
@@ -559,6 +572,187 @@ button:disabled{opacity:0.5}
 
 <!-- Supabase SDK -->
 <script src="https://unpkg.com/@supabase/supabase-js@2"></script>
+
+<!-- 核心服务 -->
+<script src="/supabase-client.js"></script>
+<script src="/stripe-service.js"></script>
+<script src="/sentry-monitor.js"></script>
+
+<!-- PWA Service Worker 注册 -->
+<script>
+(function() {
+    'use strict';
+    
+    // 注册 Service Worker
+    if ('serviceWorker' in navigator) {
+        window.addEventListener('load', function() {
+            navigator.serviceWorker.register('/sw.js')
+                .then(function(registration) {
+                    console.log('[PWA] Service Worker registered:', registration.scope);
+                })
+                .catch(function(error) {
+                    console.log('[PWA] Service Worker registration failed:', error);
+                });
+        });
+    }
+    
+    // 检测是否可安装
+    let deferredPrompt;
+    window.addEventListener('beforeinstallprompt', function(e) {
+        e.preventDefault();
+        deferredPrompt = e;
+        console.log('[PWA] App can be installed');
+        
+        // 可以在这里显示安装按钮
+        // showInstallButton();
+    });
+    
+    // 安装成功
+    window.addEventListener('appinstalled', function() {
+        console.log('[PWA] App was installed');
+        deferredPrompt = null;
+    });
+    
+    // 检测是否已安装 (standalone 模式)
+    if (window.matchMedia('(display-mode: standalone)').matches) {
+        console.log('[PWA] Running in standalone mode');
+    }
+    
+    // 在线/离线状态
+    function updateOnlineStatus() {
+        const isOnline = navigator.onLine;
+        console.log('[PWA] Network status:', isOnline ? 'online' : 'offline');
+        
+        // 显示离线提示
+        if (!isOnline) {
+            showToast('已切换到离线模式');
+        }
+    }
+    
+    window.addEventListener('online', updateOnlineStatus);
+    window.addEventListener('offline', updateOnlineStatus);
+    
+    // 请求通知权限
+    function requestNotificationPermission() {
+        if ('Notification' in window) {
+            Notification.requestPermission().then(function(permission) {
+                console.log('[PWA] Notification permission:', permission);
+            });
+        }
+    }
+    
+    // 页面加载完成后请求权限
+    document.addEventListener('DOMContentLoaded', function() {
+        setTimeout(requestNotificationPermission, 5000);
+    });
+    
+})();
+</script>
+
+<!-- 全局配置 (从环境变量或配置服务器获取) -->
+<script>
+(function() {
+    'use strict';
+    
+    // 这些配置将通过 Vercel 环境变量注入
+    window.APP_CONFIG = {
+        // Supabase 配置 (需要在 Vercel 环境变量中设置)
+        SUPABASE_URL: 'https://your-project.supabase.co',
+        SUPABASE_ANON_KEY: 'your-anon-key',
+        
+        // Stripe 配置
+        STRIPE_PUBLIC_KEY: 'pk_test_your_key_here',
+        
+        // Sentry 配置
+        SENTRY_DSN: null, // 如果需要监控，填入你的 DSN
+        
+        // App 版本
+        VERSION: '1.1.0',
+        BUILD_DATE: '2026-03-06'
+    };
+    
+    // 从 window 对象读取 (如果后端注入了)
+    if (window.__ENV__) {
+        Object.assign(window.APP_CONFIG, window.__ENV__);
+    }
+    
+})();
+</script>
+
+<!-- 增强功能初始化 -->
+<script>
+(function() {
+    'use strict';
+    
+    document.addEventListener('DOMContentLoaded', async function() {
+        
+        // 1. 初始化 Sentry 监控
+        if (window.sentryMonitor && window.APP_CONFIG.SENTRY_DSN) {
+            window.SENTRY_DSN = window.APP_CONFIG.SENTRY_DSN;
+            await sentryMonitor.init();
+            sentryMonitor.addBreadcrumb('app', 'App initialized');
+        }
+        
+        // 2. 初始化 Supabase (使用 supabase-client.js 中的服务)
+        if (window.supabaseService && window.APP_CONFIG.SUPABASE_URL) {
+            supabaseService.supabaseUrl = window.APP_CONFIG.SUPABASE_URL;
+            supabaseService.supabaseKey = window.APP_CONFIG.SUPABASE_ANON_KEY;
+            
+            // 重新初始化客户端
+            if (typeof supabase !== 'undefined') {
+                supabaseService.client = supabase.createClient(
+                    supabaseService.supabaseUrl, 
+                    supabaseService.supabaseKey
+                );
+                console.log('✅ Supabase 云服务已连接');
+                
+                // 添加到全局
+                window.db = supabaseService.client;
+            }
+        }
+        
+        // 3. 初始化 Stripe
+        if (window.stripeService) {
+            stripeService.publishableKey = window.APP_CONFIG.STRIPE_PUBLIC_KEY;
+            await stripeService.init();
+            console.log('✅ Stripe 支付服务已就绪');
+        }
+        
+        // 4. 检查支付状态 (从 URL 参数)
+        if (window.stripeService) {
+            stripeService.checkPaymentStatus();
+        }
+        
+        // 5. 设置用户信息到 Sentry
+        const user = localStorage.getItem('user');
+        if (user && window.sentryMonitor) {
+            sentryMonitor.setUser({
+                id: user === 'boss' ? 'boss-shao' : 'guest',
+                name: user === 'boss' ? 'BOSS Shao' : 'Guest'
+            });
+        }
+        
+        console.log('🚀 AMBROSE Health v' + window.APP_CONFIG.VERSION + ' 已启动');
+    });
+    
+    // 全局错误捕获
+    window.onerror = function(msg, url, line, col, error) {
+        console.error('[Global Error]', msg, 'at', url + ':' + line);
+        if (window.sentryMonitor) {
+            sentryMonitor.captureError(error || new Error(msg), { url, line, col });
+        }
+        return false;
+    };
+    
+    window.onunhandledrejection = function(event) {
+        console.error('[Unhandled Promise Rejection]', event.reason);
+        if (window.sentryMonitor) {
+            sentryMonitor.captureError(event.reason, { type: 'unhandledrejection' });
+        }
+    };
+    
+})();
+</script>
 
 </body>
 </html>
