@@ -1,120 +1,631 @@
 <!DOCTYPE html>
-<html>
+<html lang="zh-CN">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>AMBROSE Test</title>
-<style>
-body { background: #000; color: #fff; font-family: sans-serif; margin: 0; padding: 20px; }
-.auth { text-align: center; padding: 50px 20px; }
-.logo { width: 80px; height: 80px; background: linear-gradient(135deg, #00D4FF, #FF2D92); border-radius: 20px; margin: 0 auto 20px; line-height: 80px; font-size: 32px; font-weight: bold; color: #000; }
-h1 { margin: 0 0 10px; }
-p { color: rgba(255,255,255,0.5); margin: 0 0 30px; }
-input { display: block; width: 100%; max-width: 280px; margin: 0 auto 10px; padding: 15px; font-size: 17px; background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.2); border-radius: 10px; color: #fff; text-align: center; }
-button { display: block; width: 100%; max-width: 280px; margin: 0 auto; padding: 15px; font-size: 17px; font-weight: bold; background: #00D4FF; color: #000; border: none; border-radius: 10px; cursor: pointer; }
-.hide { display: none; }
-.page { display: none; }
-.page.show { display: block; }
-.stat { background: rgba(255,255,255,0.1); padding: 20px; margin: 10px; border-radius: 10px; display: inline-block; width: calc(50% - 30px); }
-.nav { position: fixed; bottom: 0; left: 0; right: 0; display: flex; justify-content: space-around; padding: 15px; background: rgba(0,0,0,0.95); border-top: 1px solid rgba(255,255,255,0.1); }
-.nav-item { text-align: center; cursor: pointer; opacity: 0.5; }
-.nav-item.active { opacity: 1; }
-</style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>AMBROSE</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { 
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; 
+            background: #000; 
+            color: #fff; 
+            min-height: 100vh;
+            -webkit-font-smoothing: antialiased;
+        }
+        
+        /* 认证界面 */
+        #auth {
+            position: fixed;
+            top: 0; left: 0; right: 0; bottom: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 40px 20px;
+            background: #000;
+            z-index: 100;
+        }
+        
+        .logo {
+            width: 80px;
+            height: 80px;
+            background: linear-gradient(135deg, #00D4FF, #FF2D92);
+            border-radius: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 32px;
+            font-weight: bold;
+            color: #000;
+            margin-bottom: 24px;
+        }
+        
+        h1 { font-size: 28px; margin-bottom: 8px; font-weight: 700; }
+        .subtitle { color: rgba(255,255,255,0.5); margin-bottom: 40px; font-size: 15px; }
+        
+        input[type="text"] {
+            width: 100%;
+            max-width: 280px;
+            padding: 16px 20px;
+            font-size: 17px;
+            background: rgba(255,255,255,0.08);
+            border: 1px solid rgba(255,255,255,0.15);
+            border-radius: 12px;
+            color: #fff;
+            text-align: center;
+            margin-bottom: 12px;
+            outline: none;
+            -webkit-appearance: none;
+        }
+        input[type="text"]:focus {
+            border-color: #00D4FF;
+            background: rgba(255,255,255,0.12);
+        }
+        
+        .btn {
+            width: 100%;
+            max-width: 280px;
+            padding: 16px 24px;
+            font-size: 17px;
+            font-weight: 600;
+            background: #00D4FF;
+            color: #000;
+            border: none;
+            border-radius: 12px;
+            cursor: pointer;
+            -webkit-appearance: none;
+            touch-action: manipulation;
+        }
+        .btn:active {
+            transform: scale(0.98);
+            opacity: 0.9;
+        }
+        .btn-full {
+            max-width: none;
+            width: calc(100% - 40px);
+            margin: 0 20px;
+        }
+        
+        .hidden { display: none !important; }
+        
+        /* 页面 */
+        .screen {
+            display: none;
+            min-height: 100vh;
+            padding-bottom: 100px;
+        }
+        .screen.active {
+            display: block;
+        }
+        
+        /* 首页头部 */
+        .header {
+            padding: 60px 20px 20px;
+        }
+        .time-display {
+            color: #00D4FF;
+            font-size: 14px;
+            margin-bottom: 8px;
+        }
+        .greeting {
+            font-size: 32px;
+            font-weight: 700;
+            margin-bottom: 8px;
+            letter-spacing: -0.5px;
+        }
+        .sub-text {
+            color: rgba(255,255,255,0.5);
+            font-size: 16px;
+        }
+        
+        /* 数据卡片 */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 12px;
+            padding: 20px;
+        }
+        .stat-card {
+            background: rgba(255,255,255,0.06);
+            border: 1px solid rgba(255,255,255,0.08);
+            border-radius: 16px;
+            padding: 20px;
+            cursor: pointer;
+            transition: all 0.2s;
+            -webkit-tap-highlight-color: transparent;
+        }
+        .stat-card:active {
+            background: rgba(255,255,255,0.1);
+            transform: scale(0.98);
+        }
+        .stat-value {
+            font-size: 28px;
+            font-weight: 700;
+            margin-bottom: 4px;
+        }
+        .stat-label {
+            font-size: 13px;
+            color: rgba(255,255,255,0.5);
+        }
+        
+        /* 主按钮 */
+        .action-btn {
+            background: #00D4FF;
+            color: #000;
+            padding: 18px 24px;
+            border-radius: 14px;
+            text-align: center;
+            font-size: 17px;
+            font-weight: 600;
+            margin: 0 20px 20px;
+            cursor: pointer;
+            transition: all 0.2s;
+            -webkit-tap-highlight-color: transparent;
+        }
+        .action-btn:active {
+            transform: scale(0.98);
+            opacity: 0.9;
+        }
+        
+        /* 底部导航 */
+        .bottom-nav {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            display: flex;
+            justify-content: space-around;
+            padding: 12px 0 24px;
+            background: rgba(0,0,0,0.95);
+            backdrop-filter: blur(20px);
+            border-top: 1px solid rgba(255,255,255,0.08);
+            z-index: 50;
+        }
+        .nav-btn {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 4px;
+            padding: 8px 20px;
+            cursor: pointer;
+            opacity: 0.4;
+            transition: all 0.2s;
+            -webkit-tap-highlight-color: transparent;
+        }
+        .nav-btn.active {
+            opacity: 1;
+        }
+        .nav-btn:active {
+            opacity: 0.7;
+        }
+        .nav-icon {
+            font-size: 22px;
+            line-height: 1;
+        }
+        .nav-text {
+            font-size: 11px;
+            font-weight: 500;
+        }
+        
+        /* 聊天页 */
+        .chat-header {
+            display: flex;
+            align-items: center;
+            padding: 16px 20px;
+            border-bottom: 1px solid rgba(255,255,255,0.08);
+            position: sticky;
+            top: 0;
+            background: #000;
+            z-index: 10;
+        }
+        .back-btn {
+            width: 40px;
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 20px;
+            cursor: pointer;
+            border-radius: 50%;
+            margin-right: 12px;
+            -webkit-tap-highlight-color: transparent;
+        }
+        .back-btn:active {
+            background: rgba(255,255,255,0.1);
+        }
+        .chat-title {
+            font-size: 17px;
+            font-weight: 600;
+        }
+        .chat-status {
+            font-size: 13px;
+            color: #30D158;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+        .status-dot {
+            width: 6px;
+            height: 6px;
+            background: #30D158;
+            border-radius: 50%;
+        }
+        
+        .chat-messages {
+            padding: 20px;
+            min-height: calc(100vh - 200px);
+        }
+        .message {
+            margin-bottom: 16px;
+            max-width: 80%;
+        }
+        .message.user {
+            margin-left: auto;
+            text-align: right;
+        }
+        .message-bubble {
+            display: inline-block;
+            padding: 12px 16px;
+            border-radius: 18px;
+            font-size: 15px;
+            line-height: 1.5;
+            word-break: break-word;
+        }
+        .message.ai .message-bubble {
+            background: rgba(255,255,255,0.1);
+            border-bottom-left-radius: 4px;
+        }
+        .message.user .message-bubble {
+            background: #00D4FF;
+            color: #000;
+            border-bottom-right-radius: 4px;
+        }
+        
+        .chat-input-area {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            padding: 12px 16px 24px;
+            background: #000;
+            border-top: 1px solid rgba(255,255,255,0.08);
+            display: flex;
+            gap: 10px;
+            z-index: 20;
+        }
+        .chat-input {
+            flex: 1;
+            padding: 12px 16px !important;
+            margin: 0 !important;
+            text-align: left !important;
+            background: rgba(255,255,255,0.08) !important;
+            border: 1px solid rgba(255,255,255,0.15) !important;
+            border-radius: 24px !important;
+            font-size: 15px !important;
+        }
+        .send-btn {
+            width: 48px !important;
+            height: 48px;
+            padding: 0 !important;
+            border-radius: 50% !important;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 18px;
+            margin: 0 !important;
+        }
+        
+        /* Toast */
+        .toast {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: rgba(40,40,40,0.98);
+            padding: 16px 24px;
+            border-radius: 12px;
+            color: #fff;
+            font-size: 15px;
+            z-index: 200;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.3s;
+        }
+        .toast.show {
+            opacity: 1;
+        }
+    </style>
 </head>
 <body>
+    <!-- Toast -->
+    <div class="toast" id="toast"></div>
 
-<!-- 认证 -->
-<div class="auth" id="auth">
-  <div class="logo">A</div>
-  <h1>AMBROSE</h1>
-  <p>AI Health Coach</p>
-  <input type="text" id="code1" placeholder="邀请码 8888" maxlength="4">
-  <input type="text" id="code2" placeholder="验证码 0812" maxlength="4" class="hide">
-  <button onclick="login()">进入</button>
-</div>
-
-<!-- 首页 -->
-<div class="page" id="home">
-  <h2 id="greet">你好</h2>
-  <div style="padding: 20px;">
-    <div class="stat" onclick="alert('步数')">
-      <div style="font-size: 24px; font-weight: bold;">8,432</div>
-      <div style="color: rgba(255,255,255,0.5);">步数</div>
+    <!-- 认证界面 -->
+    <div id="auth">
+        <div class="logo">A</div>
+        <h1>AMBROSE</h1>
+        <div class="subtitle">AI Health Coach</div>
+        
+        <input type="text" id="inviteCode" placeholder="邀请码" maxlength="4" autocomplete="off">
+        <input type="text" id="verifyCode" placeholder="身份验证码" maxlength="4" autocomplete="off" class="hidden">
+        
+        <button class="btn" id="loginBtn">进入</button>
     </div>
-    <div class="stat" onclick="alert('卡路里')">
-      <div style="font-size: 24px; font-weight: bold;">342</div>
-      <div style="color: rgba(255,255,255,0.5);">千卡</div>
+
+    <!-- 首页 -->
+    <div class="screen" id="homeScreen">
+        <div class="header">
+            <div class="time-display" id="timeDisplay">--:--</div>
+            <div class="greeting" id="greetingText">你好</div>
+            <div class="sub-text">今天感觉如何？</div>
+        </div>
+
+        <div class="stats-grid">
+            <div class="stat-card" data-stat="steps">
+                <div class="stat-value">8,432</div>
+                <div class="stat-label">步数</div>
+            </div>
+            <div class="stat-card" data-stat="calories">
+                <div class="stat-value">342</div>
+                <div class="stat-label">千卡</div>
+            </div>
+            <div class="stat-card" data-stat="sleep">
+                <div class="stat-value">7.5</div>
+                <div class="stat-label">小时</div>
+            </div>
+            <div class="stat-card" data-stat="water">
+                <div class="stat-value">1.2L</div>
+                <div class="stat-label">饮水</div>
+            </div>
+        </div>
+
+        <div class="action-btn" id="chatActionBtn">
+            💬 开始对话
+        </div>
+
+        <div class="bottom-nav">
+            <div class="nav-btn active" data-page="home">
+                <span class="nav-icon">🏠</span>
+                <span class="nav-text">首页</span>
+            </div>
+            <div class="nav-btn" data-page="data">
+                <span class="nav-icon">📊</span>
+                <span class="nav-text">数据</span>
+            </div>
+            <div class="nav-btn" data-page="chat">
+                <span class="nav-icon">💬</span>
+                <span class="nav-text">对话</span>
+            </div>
+            <div class="nav-btn" data-page="profile">
+                <span class="nav-icon">👤</span>
+                <span class="nav-text">我的</span>
+            </div>
+        </div>
     </div>
-  </div>
-  <div style="padding: 20px; text-align: center;">
-    <button onclick="showChat()" style="max-width: none;">开始对话</button>
-  </div>
-  <div class="nav">
-    <div class="nav-item active" onclick="showHome()">🏠<br><small>首页</small></div>
-    <div class="nav-item" onclick="alert('数据')">📊<br><small>数据</small></div>
-    <div class="nav-item" onclick="showChat()">💬<br><small>对话</small></div>
-    <div class="nav-item" onclick="alert('我的')">👤<br><small>我的</small></div>
-  </div>
-</div>
 
-<!-- 聊天 -->
-<div class="page" id="chat" style="padding-bottom: 80px;">
-  <div style="padding: 20px; border-bottom: 1px solid rgba(255,255,255,0.1);">
-    <span onclick="showHome()" style="cursor: pointer;">← 返回</span>
-    <span style="margin-left: 20px; font-weight: bold;">AMBROSE</span>
-  </div>
-  <div id="msgs" style="padding: 20px;">
-    <div style="background: rgba(255,255,255,0.1); padding: 15px; border-radius: 15px; display: inline-block; margin-bottom: 10px;">你好！我是AMBROSE</div>
-  </div>
-  <div style="position: fixed; bottom: 0; left: 0; right: 0; padding: 15px; background: #000; border-top: 1px solid rgba(255,255,255,0.1); display: flex; gap: 10px;">
-    <input type="text" id="msg" placeholder="输入消息..." style="flex: 1; margin: 0; text-align: left;">
-    <button onclick="send()" style="width: auto; padding: 15px 20px; margin: 0;">发送</button>
-  </div>
-</div>
+    <!-- 聊天页 -->
+    <div class="screen" id="chatScreen">
+        <div class="chat-header">
+            <div class="back-btn" id="backBtn">←</div>
+            <div>
+                <div class="chat-title">AMBROSE</div>
+                <div class="chat-status">
+                    <span class="status-dot"></span>
+                    <span>在线</span>
+                </div>
+            </div>
+        </div>
 
-<script>
-function login() {
-  var c1 = document.getElementById('code1').value;
-  var c2 = document.getElementById('code2').value;
-  if (c1 !== '8888') { alert('邀请码错误'); return; }
-  document.getElementById('auth').classList.add('hide');
-  document.getElementById('home').classList.add('show');
-  localStorage.setItem('user', c2 === '0812' ? 'boss' : 'guest');
-  document.getElementById('greet').textContent = (c2 === '0812' ? 'BOSS Shao' : '朋友') + '，你好';
-}
+        <div class="chat-messages" id="messages">
+            <div class="message ai">
+                <div class="message-bubble">你好！我是AMBROSE，你的AI健康教练。今天有什么可以帮助你的吗？</div>
+            </div>
+        </div>
 
-document.getElementById('code1').oninput = function(e) {
-  e.target.value = e.target.value.replace(/[^0-9]/g, '');
-  if (e.target.value === '8888') document.getElementById('code2').classList.remove('hide');
-};
+        <div class="chat-input-area">
+            <input type="text" class="chat-input" id="messageInput" placeholder="输入消息..." autocomplete="off">
+            <button class="btn send-btn" id="sendBtn">➤</button>
+        </div>
+    </div>
 
-if (localStorage.getItem('user')) {
-  document.getElementById('auth').classList.add('hide');
-  document.getElementById('home').classList.add('show');
-  document.getElementById('greet').textContent = (localStorage.getItem('user') === 'boss' ? 'BOSS Shao' : '朋友') + '，你好';
-}
+    <script>
+        // 配置
+        const CONFIG = {
+            INVITE_CODE: '8888',
+            VERIFY_CODE: '0812'
+        };
 
-function showHome() {
-  document.getElementById('home').classList.add('show');
-  document.getElementById('chat').classList.remove('show');
-}
+        // DOM元素
+        const elements = {
+            auth: document.getElementById('auth'),
+            homeScreen: document.getElementById('homeScreen'),
+            chatScreen: document.getElementById('chatScreen'),
+            inviteCode: document.getElementById('inviteCode'),
+            verifyCode: document.getElementById('verifyCode'),
+            loginBtn: document.getElementById('loginBtn'),
+            greetingText: document.getElementById('greetingText'),
+            timeDisplay: document.getElementById('timeDisplay'),
+            toast: document.getElementById('toast'),
+            messageInput: document.getElementById('messageInput'),
+            messages: document.getElementById('messages'),
+            sendBtn: document.getElementById('sendBtn'),
+            backBtn: document.getElementById('backBtn'),
+            chatActionBtn: document.getElementById('chatActionBtn')
+        };
 
-function showChat() {
-  document.getElementById('home').classList.remove('show');
-  document.getElementById('chat').classList.add('show');
-}
+        // 显示Toast
+        function showToast(message) {
+            elements.toast.textContent = message;
+            elements.toast.classList.add('show');
+            setTimeout(() => {
+                elements.toast.classList.remove('show');
+            }, 2000);
+        }
 
-function send() {
-  var input = document.getElementById('msg');
-  var text = input.value.trim();
-  if (!text) return;
-  document.getElementById('msgs').innerHTML += '<div style="text-align: right;"><div style="background: #00D4FF; color: #000; padding: 15px; border-radius: 15px; display: inline-block; margin-bottom: 10px;">' + text + '</div></div>';
-  input.value = '';
-  setTimeout(function() {
-    document.getElementById('msgs').innerHTML += '<div><div style="background: rgba(255,255,255,0.1); padding: 15px; border-radius: 15px; display: inline-block; margin-bottom: 10px;">收到！</div></div>';
-  }, 500);
-}
-</script>
+        // 更新时间
+        function updateTime() {
+            const now = new Date();
+            const utc = now.getTime() + (now.getTimezoneOffset() * 60000);
+            const bj = new Date(utc + (3600000 * 8));
+            const hours = String(bj.getHours()).padStart(2, '0');
+            const minutes = String(bj.getMinutes()).padStart(2, '0');
+            elements.timeDisplay.textContent = hours + ':' + minutes;
+            
+            const hour = bj.getHours();
+            let greet = '晚上好';
+            if (hour < 12) greet = '早上好';
+            else if (hour < 18) greet = '下午好';
+            
+            const savedUser = localStorage.getItem('user');
+            const name = savedUser === 'boss' ? 'BOSS Shao' : (savedUser === 'guest' ? '朋友' : '');
+            if (name && !elements.greetingText.textContent.includes(name)) {
+                elements.greetingText.textContent = greet + (name ? '，' + name : '');
+            }
+        }
 
+        // 登录
+        function handleLogin() {
+            const code1 = elements.inviteCode.value.trim();
+            const code2 = elements.verifyCode.value.trim();
+            
+            if (code1 !== CONFIG.INVITE_CODE) {
+                showToast('邀请码错误');
+                return;
+            }
+            
+            const isBoss = code2 === CONFIG.VERIFY_CODE;
+            localStorage.setItem('user', isBoss ? 'boss' : 'guest');
+            
+            elements.auth.style.display = 'none';
+            elements.homeScreen.classList.add('active');
+            
+            updateTime();
+            showToast('欢迎回来');
+        }
+
+        // 邀请码输入
+        function handleInviteInput() {
+            this.value = this.value.replace(/[^0-9]/g, '');
+            if (this.value === CONFIG.INVITE_CODE) {
+                elements.verifyCode.classList.remove('hidden');
+                elements.verifyCode.focus();
+            }
+        }
+
+        // 显示聊天
+        function showChat() {
+            elements.homeScreen.classList.remove('active');
+            elements.chatScreen.classList.add('active');
+        }
+
+        // 显示首页
+        function showHome() {
+            elements.chatScreen.classList.remove('active');
+            elements.homeScreen.classList.add('active');
+            
+            // 更新导航状态
+            document.querySelectorAll('.nav-btn').forEach(btn => {
+                btn.classList.remove('active');
+            });
+            document.querySelector('[data-page="home"]').classList.add('active');
+        }
+
+        // 发送消息
+        function sendMessage() {
+            const text = elements.messageInput.value.trim();
+            if (!text) return;
+            
+            // 用户消息
+            const userMsg = document.createElement('div');
+            userMsg.className = 'message user';
+            userMsg.innerHTML = '<div class="message-bubble">' + text + '</div>';
+            elements.messages.appendChild(userMsg);
+            
+            elements.messageInput.value = '';
+            elements.messages.scrollTop = elements.messages.scrollHeight;
+            
+            // AI回复
+            setTimeout(() => {
+                const aiMsg = document.createElement('div');
+                aiMsg.className = 'message ai';
+                aiMsg.innerHTML = '<div class="message-bubble">收到！我会帮你记录下来。</div>';
+                elements.messages.appendChild(aiMsg);
+                elements.messages.scrollTop = elements.messages.scrollHeight;
+            }, 800);
+        }
+
+        // 检查登录状态
+        function checkLogin() {
+            const savedUser = localStorage.getItem('user');
+            if (savedUser) {
+                elements.auth.style.display = 'none';
+                elements.homeScreen.classList.add('active');
+                updateTime();
+                setInterval(updateTime, 1000);
+            }
+        }
+
+        // 事件绑定
+        function bindEvents() {
+            // 登录按钮
+            elements.loginBtn.addEventListener('click', handleLogin);
+            
+            // 邀请码输入
+            elements.inviteCode.addEventListener('input', handleInviteInput);
+            elements.inviteCode.addEventListener('keypress', function(e) {
+                if (e.key === 'Enter') handleLogin();
+            });
+            elements.verifyCode.addEventListener('keypress', function(e) {
+                if (e.key === 'Enter') handleLogin();
+            });
+            
+            // 开始对话按钮
+            elements.chatActionBtn.addEventListener('click', showChat);
+            
+            // 底部导航
+            document.querySelectorAll('.nav-btn').forEach(btn => {
+                btn.addEventListener('click', function() {
+                    const page = this.getAttribute('data-page');
+                    if (page === 'chat') {
+                        showChat();
+                    } else if (page === 'home') {
+                        showHome();
+                    } else {
+                        showToast('功能开发中');
+                    }
+                });
+            });
+            
+            // 数据卡片
+            document.querySelectorAll('.stat-card').forEach(card => {
+                card.addEventListener('click', function() {
+                    const stat = this.getAttribute('data-stat');
+                    const labels = {
+                        steps: '今日步数: 8,432步',
+                        calories: '今日消耗: 342千卡',
+                        sleep: '昨晚睡眠: 7.5小时',
+                        water: '今日饮水: 1.2L'
+                    };
+                    showToast(labels[stat] || '数据详情');
+                });
+            });
+            
+            // 返回按钮
+            elements.backBtn.addEventListener('click', showHome);
+            
+            // 发送按钮
+            elements.sendBtn.addEventListener('click', sendMessage);
+            elements.messageInput.addEventListener('keypress', function(e) {
+                if (e.key === 'Enter') sendMessage();
+            });
+        }
+
+        // 初始化
+        document.addEventListener('DOMContentLoaded', function() {
+            checkLogin();
+            bindEvents();
+        });
+    </script>
 </body>
 </html>
