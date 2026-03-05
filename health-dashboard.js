@@ -105,16 +105,16 @@ class HealthDashboard {
         `;
     }
 
-    // 显示健康中心主面板
-    showHealthHub() {
-        const today = new Date().toLocaleDateString('zh-CN', { month: 'long', day: 'numeric', weekday: 'short' });
+        const today = new Date();
+        const dateStr = today.toLocaleDateString('zh-CN', { month: 'long', day: 'numeric' });
+        const weekdayStr = today.toLocaleDateString('zh-CN', { weekday: 'long' });
         const html = `
             <div style="width: 100%; max-width: 600px;">
                 <!-- 健康中心标题 -->
-                <div style="text-align: center; margin-bottom: 24px;">
-                    <div style="font-size: 40px; margin-bottom: 8px; animation: pulse-glow 2s infinite;">🏥</div>
-                    <div style="font-size: 20px; font-weight: 700; color: var(--primary-500);">HEALTH CENTER</div>
-                    <div style="font-size: 12px; color: var(--text-tertiary); margin-top: 4px;">${today} · 你的个人健康数据中心</div>
+                <div style="text-align: center; margin-bottom: 28px;">
+                    <div style="font-size: 44px; margin-bottom: 10px; animation: pulse-glow 2s infinite;">🏥</div>
+                    <div style="font-size: 22px; font-weight: 800; color: var(--primary-500); letter-spacing: 2px;">HEALTH CENTER</div>
+                    <div style="font-size: 13px; color: var(--text-tertiary); margin-top: 6px;">${dateStr} · ${weekdayStr} · 你的个人健康数据中心</div>
                 </div>
 
                 <!-- 今日摘要环形进度 -->
@@ -221,31 +221,35 @@ class HealthDashboard {
     renderStreakAndAchievements() {
         const streakDays = this.calculateStreak();
         const achievements = this.getAchievements();
+        const fireIntensity = streakDays > 7 ? '🔥' : streakDays > 3 ? '🔥' : '✨';
         
         return `
-            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 20px;">
-                <div style="background: linear-gradient(135deg, rgba(255,170,0,0.15), rgba(255,170,0,0.05)); 
-                            border: 1px solid rgba(255,170,0,0.3); border-radius: 16px; padding: 16px;">
-                    <div style="display: flex; align-items: center; gap: 12px;">
-                        <div style="font-size: 36px;">🔥</div>
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin-bottom: 24px;">
+                <!-- 连续打卡 -->
+                <div style="background: linear-gradient(135deg, rgba(255,170,0,0.2), rgba(255,170,0,0.08)); 
+                            border: 1px solid rgba(255,170,0,0.35); border-radius: 18px; padding: 18px;">
+                    <div style="display: flex; align-items: center; gap: 14px;">
+                        <div style="font-size: 40px; animation: ${streakDays > 0 ? 'pulse-glow 1.5s infinite' : 'none'};">${fireIntensity}</div>
                         <div>
-                            <div style="font-size: 24px; font-weight: 800; color: #ffb800; font-family: 'JetBrains Mono', monospace;">
+                            <div style="font-size: 28px; font-weight: 800; color: #ffb800; font-family: 'JetBrains Mono', monospace;"
+003e
                                 ${streakDays}
                             </div>
-                            <div style="font-size: 11px; color: var(--text-tertiary);">连续打卡天数</div>
+                            <div style="font-size: 12px; color: var(--text-tertiary);">连续打卡天数</div>
                         </div>
                     </div>
                 </div>
 
-                <div style="background: linear-gradient(135deg, rgba(0,243,255,0.15), rgba(0,243,255,0.05)); 
-                            border: 1px solid rgba(0,243,255,0.3); border-radius: 16px; padding: 16px;">
-                    <div style="display: flex; align-items: center; gap: 12px;">
-                        <div style="font-size: 36px;">🏆</div>
+                <!-- 成就徽章 -->
+                <div style="background: linear-gradient(135deg, rgba(0,243,255,0.2), rgba(0,243,255,0.08)); 
+                            border: 1px solid rgba(0,243,255,0.35); border-radius: 18px; padding: 18px;">
+                    <div style="display: flex; align-items: center; gap: 14px;">
+                        <div style="font-size: 40px;">🏆</div>
                         <div>
-                            <div style="font-size: 24px; font-weight: 800; color: var(--primary-500); font-family: 'JetBrains Mono', monospace;">
+                            <div style="font-size: 28px; font-weight: 800; color: var(--primary-500); font-family: 'JetBrains Mono', monospace;">
                                 ${achievements.length}
                             </div>
-                            <div style="font-size: 11px; color: var(--text-tertiary);">获得徽章</div>
+                            <div style="font-size: 12px; color: var(--text-tertiary);">获得徽章</div>
                         </div>
                     </div>
                 </div>
