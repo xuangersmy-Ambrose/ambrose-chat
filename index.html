@@ -12,18 +12,23 @@
         :root {
             /* 主色调 */
             --primary-500: #00f3ff;
-            --primary-600: #00c2cc;
+            --primary-600: #00d4e0;
             --secondary-500: #ff00ff;
+            --secondary-600: #e000e0;
             --accent-500: #bd00ff;
-            --success: #00ff88;
-            --warning: #ffaa00;
+            --accent-600: #a000e0;
+            --success: #00ff9d;
+            --warning: #ffcc00;
             --danger: #ff0040;
             
             /* 中性色 */
             --neutral-0: #ffffff;
-            --neutral-100: #e8e8ed;
+            --neutral-100: #f0f0f5;
+            --neutral-200: #d1d1d6;
             --neutral-300: #a1a1aa;
+            --neutral-400: #8e8e93;
             --neutral-500: #636366;
+            --neutral-600: #48484a;
             --neutral-700: #3a3a3c;
             --neutral-800: #2c2c2e;
             --neutral-900: #1c1c1e;
@@ -93,16 +98,16 @@
             right: 0;
             bottom: 0;
             background-image: 
-                linear-gradient(rgba(0, 243, 255, 0.02) 1px, transparent 1px),
-                linear-gradient(90deg, rgba(0, 243, 255, 0.02) 1px, transparent 1px);
-            background-size: 60px 60px;
-            animation: grid-drift 30s linear infinite;
+                linear-gradient(rgba(0, 243, 255, 0.025) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(0, 243, 255, 0.025) 1px, transparent 1px);
+            background-size: 50px 50px;
+            animation: grid-drift 25s linear infinite;
             pointer-events: none;
         }
         
         @keyframes grid-drift {
             0% { transform: perspective(500px) rotateX(60deg) translateY(0); }
-            100% { transform: perspective(500px) rotateX(60deg) translateY(60px); }
+            100% { transform: perspective(500px) rotateX(60deg) translateY(50px); }
         }
         
         .particles-container {
@@ -118,19 +123,19 @@
         
         .particle {
             position: absolute;
-            width: 3px;
-            height: 3px;
+            width: 4px;
+            height: 4px;
             background: var(--primary-500);
             border-radius: 50%;
             opacity: 0;
-            animation: particle-float 15s infinite;
+            animation: particle-float 12s infinite;
             filter: blur(1px);
         }
         
         @keyframes particle-float {
             0% { transform: translateY(100vh) translateX(0) scale(0); opacity: 0; }
-            5% { opacity: 0.6; }
-            95% { opacity: 0.6; }
+            5% { opacity: 0.7; }
+            95% { opacity: 0.7; }
             100% { transform: translateY(-100px) translateX(100px) scale(1); opacity: 0; }
         }
         
@@ -221,6 +226,7 @@
             flex-direction: column;
             align-items: flex-end;
             font-family: 'JetBrains Mono', monospace;
+            gap: 4px;
         }
         
         .clock-time {
@@ -233,9 +239,9 @@
         }
         
         .clock-date {
-            font-size: 10px;
+            font-size: 11px;
             color: var(--text-tertiary);
-            letter-spacing: 1px;
+            letter-spacing: 1.5px;
         }
         
         /* ===== 消息区域 - Telegram/Discord风格 ===== */
@@ -243,7 +249,7 @@
             flex: 1;
             overflow-y: auto;
             overflow-x: hidden;
-            padding: 20px;
+            padding: 24px;
             scroll-behavior: smooth;
         }
         
@@ -269,7 +275,7 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            margin: 24px 0;
+            margin: 28px 0;
             position: relative;
         }
         
@@ -284,8 +290,8 @@
         
         .date-divider span {
             background: var(--bg-base);
-            padding: 0 16px;
-            font-size: 11px;
+            padding: 0 20px;
+            font-size: 12px;
             color: var(--text-tertiary);
             text-transform: uppercase;
             letter-spacing: 2px;
@@ -296,8 +302,8 @@
         /* ===== 消息气泡 - 现代化设计 ===== */
         .message-group {
             display: flex;
-            margin-bottom: 20px;
-            animation: message-appear 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+            margin-bottom: 24px;
+            animation: message-appear 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
         }
         
         @keyframes message-appear {
@@ -310,13 +316,13 @@
         }
         
         .message-avatar {
-            width: 36px;
-            height: 36px;
+            width: 40px;
+            height: 40px;
             border-radius: 50%;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 16px;
+            font-size: 18px;
             flex-shrink: 0;
             position: relative;
         }
@@ -332,8 +338,8 @@
         }
         
         .message-content {
-            max-width: 70%;
-            margin: 0 12px;
+            max-width: 75%;
+            margin: 0 14px;
             display: flex;
             flex-direction: column;
         }
@@ -353,9 +359,9 @@
         }
         
         .message-bubble {
-            padding: 12px 16px;
+            padding: 14px 18px;
             font-size: 15px;
-            line-height: 1.6;
+            line-height: 1.7;
             position: relative;
             word-wrap: break-word;
         }
@@ -384,9 +390,9 @@
         .message-meta {
             display: flex;
             align-items: center;
-            gap: 6px;
-            margin-top: 4px;
-            font-size: 10px;
+            gap: 8px;
+            margin-top: 6px;
+            font-size: 11px;
             color: var(--text-tertiary);
         }
         
@@ -400,22 +406,22 @@
         
         /* ===== 输入区域 - 现代化设计 ===== */
         .input-container {
-            background: rgba(10, 10, 15, 0.9);
+            background: rgba(10, 10, 15, 0.92);
             border-top: 1px solid var(--border-subtle);
-            padding: 16px 20px;
-            padding-bottom: max(16px, env(safe-area-inset-bottom));
-            backdrop-filter: blur(20px);
+            padding: 18px 20px;
+            padding-bottom: max(18px, env(safe-area-inset-bottom));
+            backdrop-filter: blur(24px);
         }
         
         .input-wrapper {
             display: flex;
             align-items: flex-end;
-            gap: 12px;
+            gap: 14px;
             background: var(--bg-card);
             border: 1px solid var(--border-subtle);
-            border-radius: 24px;
-            padding: 8px 8px 8px 20px;
-            transition: all 0.2s ease;
+            border-radius: 26px;
+            padding: 10px 10px 10px 22px;
+            transition: all 0.25s ease;
         }
         
         .input-wrapper:focus-within {
@@ -428,14 +434,14 @@
             flex: 1;
             background: transparent;
             border: none;
-            padding: 10px 0;
-            font-size: 15px;
+            padding: 12px 0;
+            font-size: 16px;
             color: var(--text-primary);
             outline: none;
             resize: none;
-            min-height: 44px;
-            max-height: 120px;
-            line-height: 1.5;
+            min-height: 48px;
+            max-height: 140px;
+            line-height: 1.6;
             font-family: inherit;
         }
         
@@ -451,18 +457,18 @@
         }
         
         .tool-btn {
-            width: 40px;
-            height: 40px;
+            width: 42px;
+            height: 42px;
             background: transparent;
             border: none;
-            border-radius: 12px;
+            border-radius: 14px;
             color: var(--text-tertiary);
             font-size: 20px;
             cursor: pointer;
             display: flex;
             align-items: center;
             justify-content: center;
-            transition: all 0.2s ease;
+            transition: all 0.25s ease;
         }
         
         .tool-btn:hover {
@@ -518,8 +524,8 @@
         .typing-indicator {
             display: flex;
             align-items: center;
-            gap: 4px;
-            padding: 16px 20px;
+            gap: 6px;
+            padding: 18px 22px;
         }
         
         .typing-dot {
@@ -535,8 +541,8 @@
         .typing-dot:nth-child(2) { animation-delay: -0.16s; }
         
         @keyframes typing-bounce {
-            0%, 80%, 100% { transform: scale(0.6); opacity: 0.5; }
-            40% { transform: scale(1); opacity: 1; }
+            0%, 80%, 100% { transform: scale(0.5); opacity: 0.4; }
+            40% { transform: scale(1.1); opacity: 1; }
         }
         
         /* ===== 滚动到底部按钮 ===== */
@@ -565,13 +571,14 @@
         
         .scroll-to-bottom.visible {
             opacity: 1;
-            transform: translateY(0);
+            transform: translateY(0) scale(1);
         }
         
         .scroll-to-bottom:hover {
             background: var(--bg-hover);
             border-color: var(--border-primary);
             color: var(--primary-500);
+            transform: scale(1.1);
         }
         
         /* ===== 响应式设计 ===== */
@@ -610,11 +617,11 @@
         .status-badge {
             display: inline-flex;
             align-items: center;
-            gap: 6px;
-            font-size: 10px;
+            gap: 8px;
+            font-size: 11px;
             color: var(--success);
             text-transform: uppercase;
-            letter-spacing: 1px;
+            letter-spacing: 1.5px;
         }
         
         .status-dot {
