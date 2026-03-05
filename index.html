@@ -2,171 +2,244 @@
 <html>
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 <title>AMBROSE</title>
 <style>
 *{margin:0;padding:0;box-sizing:border-box}
 body{font-family:-apple-system,sans-serif;background:#000;color:#fff}
-#auth{position:fixed;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:20px;background:#000;z-index:100}
+
+/* 认证界面 */
+.auth{position:fixed;top:0;left:0;right:0;bottom:0;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:20px;background:#000;z-index:9999}
+.auth.hide{display:none}
 .logo{width:80px;height:80px;background:linear-gradient(135deg,#00D4FF,#FF2D92);border-radius:20px;margin-bottom:20px;display:flex;align-items:center;justify-content:center;font-size:32px;font-weight:bold;color:#000}
-h1{font-size:28px;margin-bottom:8px}
+h1{font-size:28px;margin-bottom:10px}
 p{color:rgba(255,255,255,0.5);margin-bottom:30px}
-input{width:100%;max-width:280px;padding:15px;font-size:17px;background:rgba(255,255,255,0.1);border:1px solid rgba(255,255,255,0.2);border-radius:10px;color:#fff;text-align:center;margin-bottom:10px}
-button{width:100%;max-width:280px;padding:15px;font-size:17px;font-weight:bold;background:#00D4FF;color:#000;border:none;border-radius:10px;cursor:pointer}
-.hide{display:none!important}
-.screen{display:none;min-height:100vh;padding-bottom:80px}
-.screen.active{display:block}
-.header{padding:60px 20px 20px}
-.time{color:#00D4FF;font-size:14px;margin-bottom:8px}
-.greeting{font-size:32px;font-weight:bold;margin-bottom:8px}
+input{width:280px;padding:15px;font-size:17px;background:rgba(255,255,255,0.1);border:1px solid rgba(255,255,255,0.2);border-radius:10px;color:#fff;text-align:center;margin-bottom:10px;display:block}
+input.hide{display:none}
+button{width:280px;padding:15px;font-size:17px;font-weight:bold;background:#00D4FF;color:#000;border:none;border-radius:10px;cursor:pointer}
+
+/* 页面 */
+.page{display:none}
+.page.show{display:block}
+
+/* 首页 */
+.header{padding:50px 20px 20px}
+.time{color:#00D4FF;font-size:14px;margin-bottom:5px}
+.greeting{font-size:28px;font-weight:bold;margin-bottom:5px}
 .sub{color:rgba(255,255,255,0.5)}
-.stats{display:grid;grid-template-columns:repeat(2,1fr);gap:12px;padding:20px}
-.stat{background:rgba(255,255,255,0.08);padding:20px;border-radius:12px;text-align:center;cursor:pointer}
-.stat-num{font-size:28px;font-weight:bold;margin-bottom:4px}
+
+/* 数据卡片 */
+.stats{display:flex;flex-wrap:wrap;padding:10px}
+.stat{flex:1 1 40%;margin:10px;background:rgba(255,255,255,0.1);padding:20px;border-radius:10px;text-align:center;min-width:140px}
+.stat-num{font-size:24px;font-weight:bold;margin-bottom:5px}
 .stat-label{font-size:13px;color:rgba(255,255,255,0.5)}
-.main-btn{background:#00D4FF;color:#000;padding:18px;margin:0 20px 20px;border-radius:12px;text-align:center;font-size:17px;font-weight:bold;cursor:pointer}
-.nav{position:fixed;bottom:0;left:0;right:0;display:flex;justify-content:space-around;padding:15px;background:rgba(0,0,0,0.95);border-top:1px solid rgba(255,255,255,0.1)}
-.nav-item{text-align:center;cursor:pointer;opacity:0.4;padding:8px 20px}
+
+/* 主按钮 */
+.main-btn{background:#00D4FF;color:#000;padding:15px;margin:20px;border-radius:10px;text-align:center;font-size:17px;font-weight:bold;cursor:pointer}
+
+/* 底部导航 */
+.nav{position:fixed;bottom:0;left:0;right:0;display:flex;justify-content:space-around;padding:10px;background:rgba(0,0,0,0.95);border-top:1px solid rgba(255,255,255,0.1)}
+.nav-item{flex:1;text-align:center;padding:10px;cursor:pointer;opacity:0.5}
 .nav-item.active{opacity:1}
-.chat-header{display:flex;align-items:center;padding:16px;border-bottom:1px solid rgba(255,255,255,0.1)}
-.back{width:40px;height:40px;display:flex;align-items:center;justify-content:center;font-size:20px;cursor:pointer;margin-right:12px}
-.chat-messages{padding:20px;min-height:calc(100vh - 180px)}
-.msg{margin-bottom:16px;max-width:80%}
-.msg.user{margin-left:auto;text-align:right}
-.bubble{display:inline-block;padding:12px 16px;border-radius:18px;font-size:15px}
-.msg.ai .bubble{background:rgba(255,255,255,0.1)}
-.msg.user .bubble{background:#00D4FF;color:#000}
-.chat-input{position:fixed;bottom:0;left:0;right:0;padding:12px 16px 24px;background:#000;border-top:1px solid rgba(255,255,255,0.1);display:flex;gap:10px}
-.chat-input input{flex:1;margin:0;text-align:left}
-.chat-input button{width:auto;padding:15px 20px;margin:0}
-.toast{position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);background:rgba(40,40,40,0.98);padding:16px 24px;border-radius:12px;color:#fff;font-size:15px;z-index:200;display:none}
+
+/* 聊天页 */
+.chat-header{display:flex;align-items:center;padding:15px;border-bottom:1px solid rgba(255,255,255,0.1)}
+.back-btn{padding:10px;font-size:20px;cursor:pointer;margin-right:10px}
+.chat-title{font-weight:bold}
+.chat-status{font-size:12px;color:#30D158}
+
+.chat-messages{padding:20px;padding-bottom:100px}
+.msg{margin-bottom:15px;max-width:80%;clear:both}
+.msg.user{float:right}
+.msg-bubble{display:inline-block;padding:10px 15px;border-radius:15px;font-size:15px;max-width:100%;word-break:break-word}
+.msg.ai .msg-bubble{background:rgba(255,255,255,0.1);float:left}
+.msg.user .msg-bubble{background:#00D4FF;color:#000;float:right}
+
+.chat-input{position:fixed;bottom:0;left:0;right:0;padding:10px;background:#000;border-top:1px solid rgba(255,255,255,0.1);display:flex}
+.chat-input input{flex:1;margin-right:10px;text-align:left}
+.chat-input button{width:auto;padding:10px 20px}
+
+/* Toast */
+.toast{position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);background:rgba(40,40,40,0.98);padding:15px 25px;border-radius:10px;color:#fff;font-size:15px;z-index:10000;display:none}
 .toast.show{display:block}
 </style>
 </head>
 <body>
 
+<!-- Toast -->
 <div class="toast" id="toast"></div>
 
 <!-- 认证 -->
-<div id="auth">
+<div class="auth" id="authPage">
 <div class="logo">A</div>
 <h1>AMBROSE</h1>
 <p>AI Health Coach</p>
-<input type="text" id="code1" placeholder="邀请码 8888" maxlength="4">
-<input type="text" id="code2" placeholder="验证码 0812" maxlength="4" class="hide">
-<button onclick="doLogin()">进入</button>
+<input type="text" id="codeInput" placeholder="邀请码 8888" maxlength="4">
+<input type="text" id="verifyInput" placeholder="验证码 0812" maxlength="4" class="hide">
+<button onclick="login()">进入</button>
 </div>
 
 <!-- 首页 -->
-<div class="screen" id="home">
+<div class="page" id="homePage">
 <div class="header">
-<div class="time" id="time">--:--</div>
-<div class="greeting" id="greet">你好</div>
+<div class="time" id="timeDisplay">00:00</div>
+<div class="greeting" id="userGreeting">你好</div>
 <div class="sub">今天感觉如何？</div>
 </div>
 
 <div class="stats">
-<div class="stat" onclick="showToast('步数: 8,432步')"><div class="stat-num">8,432</div><div class="stat-label">步数</div></div>
-<div class="stat" onclick="showToast('消耗: 342千卡')"><div class="stat-num">342</div><div class="stat-label">千卡</div></div>
-<div class="stat" onclick="showToast('睡眠: 7.5小时')"><div class="stat-num">7.5</div><div class="stat-label">小时</div></div>
-<div class="stat" onclick="showToast('饮水: 1.2L')"><div class="stat-num">1.2L</div><div class="stat-label">饮水</div></div>
+<div class="stat" onclick="showStat('步数: 8,432步')">
+<div class="stat-num">8,432</div>
+<div class="stat-label">步数</div>
+</div>
+<div class="stat" onclick="showStat('消耗: 342千卡')">
+<div class="stat-num">342</div>
+<div class="stat-label">千卡</div>
+</div>
+<div class="stat" onclick="showStat('睡眠: 7.5小时')">
+<div class="stat-num">7.5</div>
+<div class="stat-label">小时</div>
+</div>
+<div class="stat" onclick="showStat('饮水: 1.2L')">
+<div class="stat-num">1.2L</div>
+<div class="stat-label">饮水</div>
+</div>
 </div>
 
-<div class="main-btn" onclick="openChat()">💬 开始对话</div>
+<div class="main-btn" onclick="openChatPage()">💬 开始对话</div>
 
 <div class="nav">
-<div class="nav-item active" onclick="showToast('首页')">🏠<br><small>首页</small></div>
-<div class="nav-item" onclick="showToast('数据页面开发中')">📊<br><small>数据</small></div>
-<div class="nav-item" onclick="openChat()">💬<br><small>对话</small></div>
-<div class="nav-item" onclick="showToast('我的页面开发中')">👤<br><small>我的</small></div>
+<div class="nav-item active" onclick="goHome()">🏠<br><small>首页</small></div>
+<div class="nav-item" onclick="showMessage('数据页面开发中')">📊<br><small>数据</small></div>
+<div class="nav-item" onclick="openChatPage()">💬<br><small>对话</small></div>
+<div class="nav-item" onclick="showMessage('我的页面开发中')">👤<br><small>我的</small></div>
 </div>
 </div>
 
 <!-- 聊天 -->
-<div class="screen" id="chat">
+<div class="page" id="chatPage">
 <div class="chat-header">
-<div class="back" onclick="closeChat()">←</div>
-<div><div style="font-weight:bold">AMBROSE</div><div style="font-size:13px;color:#30D158">● 在线</div></div>
+<div class="back-btn" onclick="goHome()">←</div>
+<div>
+<div class="chat-title">AMBROSE</div>
+<div class="chat-status">● 在线</div>
 </div>
-<div class="chat-messages" id="msgs">
-<div class="msg ai"><div class="bubble">你好！我是AMBROSE。</div></div>
 </div>
+
+<div class="chat-messages" id="chatMessages">
+<div class="msg ai"><div class="msg-bubble">你好！我是AMBROSE，你的AI健康教练。</div></div>
+</div>
+
 <div class="chat-input">
-<input type="text" id="msgIn" placeholder="输入消息...">
-<button onclick="sendMsg()">发送</button>
+<input type="text" id="messageInput" placeholder="输入消息...">
+<button onclick="sendMessage()">发送</button>
 </div>
 </div>
 
 <script>
+// 配置
+var INVITE_CODE = '8888';
+var VERIFY_CODE = '0812';
+
 // 显示提示
-function showToast(msg){
-var t=document.getElementById('toast');
-t.textContent=msg;
-t.classList.add('show');
-setTimeout(function(){t.classList.remove('show');},2000);
+function showMessage(msg) {
+    var t = document.getElementById('toast');
+    t.textContent = msg;
+    t.classList.add('show');
+    setTimeout(function() {
+        t.classList.remove('show');
+    }, 2000);
 }
 
 // 更新时间
-function updateTime(){
-var now=new Date();
-var utc=now.getTime()+now.getTimezoneOffset()*60000;
-var bj=new Date(utc+3600000*8);
-document.getElementById('time').textContent=bj.toTimeString().slice(0,5);
+function updateTime() {
+    var now = new Date();
+    var utc = now.getTime() + now.getTimezoneOffset() * 60000;
+    var bj = new Date(utc + 3600000 * 8);
+    var h = bj.getHours();
+    var m = bj.getMinutes();
+    document.getElementById('timeDisplay').textContent = 
+        (h < 10 ? '0' : '') + h + ':' + (m < 10 ? '0' : '') + m;
 }
-setInterval(updateTime,1000);
+setInterval(updateTime, 1000);
 updateTime();
 
 // 登录
-function doLogin(){
-var c1=document.getElementById('code1').value;
-var c2=document.getElementById('code2').value;
-if(c1!=='8888'){showToast('邀请码错误');return;}
-document.getElementById('auth').style.display='none';
-document.getElementById('home').classList.add('active');
-localStorage.setItem('user',c2==='0812'?'boss':'guest');
-document.getElementById('greet').textContent=(c2==='0812'?'BOSS Shao':'朋友')+'，你好';
+function login() {
+    var c1 = document.getElementById('codeInput').value;
+    var c2 = document.getElementById('verifyInput').value;
+    
+    if (c1 !== INVITE_CODE) {
+        showMessage('邀请码错误');
+        return;
+    }
+    
+    document.getElementById('authPage').classList.add('hide');
+    document.getElementById('homePage').classList.add('show');
+    
+    var isBoss = c2 === VERIFY_CODE;
+    localStorage.setItem('user', isBoss ? 'boss' : 'guest');
+    document.getElementById('userGreeting').textContent = 
+        (isBoss ? 'BOSS Shao' : '朋友') + '，你好';
 }
 
 // 邀请码输入
-document.getElementById('code1').oninput=function(){
-this.value=this.value.replace(/\D/g,'');
-if(this.value==='8888')document.getElementById('code2').classList.remove('hide');
+document.getElementById('codeInput').oninput = function() {
+    this.value = this.value.replace(/\D/g, '');
+    if (this.value === INVITE_CODE) {
+        document.getElementById('verifyInput').classList.remove('hide');
+    }
 };
 
 // 检查已登录
-if(localStorage.getItem('user')){
-document.getElementById('auth').style.display='none';
-document.getElementById('home').classList.add('active');
-document.getElementById('greet').textContent=(localStorage.getItem('user')==='boss'?'BOSS Shao':'朋友')+'，你好';
+var savedUser = localStorage.getItem('user');
+if (savedUser) {
+    document.getElementById('authPage').classList.add('hide');
+    document.getElementById('homePage').classList.add('show');
+    document.getElementById('userGreeting').textContent = 
+        (savedUser === 'boss' ? 'BOSS Shao' : '朋友') + '，你好';
 }
 
-// 显示聊天
-function openChat(){
-document.getElementById('home').classList.remove('active');
-document.getElementById('chat').classList.add('active');
+// 显示数据详情
+function showStat(text) {
+    showMessage(text);
 }
 
-// 关闭聊天
-function closeChat(){
-document.getElementById('chat').classList.remove('active');
-document.getElementById('home').classList.add('active');
+// 打开聊天页
+function openChatPage() {
+    document.getElementById('homePage').classList.remove('show');
+    document.getElementById('chatPage').classList.add('show');
+}
+
+// 回到首页
+function goHome() {
+    document.getElementById('chatPage').classList.remove('show');
+    document.getElementById('homePage').classList.add('show');
+    document.querySelectorAll('.nav-item').forEach(function(item, index) {
+        item.classList.toggle('active', index === 0);
+    });
 }
 
 // 发送消息
-function sendMsg(){
-var input=document.getElementById('msgIn');
-var text=input.value.trim();
-if(!text)return;
-document.getElementById('msgs').innerHTML+='<div class="msg user"><div class="bubble">'+text+'</div></div>';
-input.value='';
-setTimeout(function(){
-document.getElementById('msgs').innerHTML+='<div class="msg ai"><div class="bubble">收到！</div></div>';
-},500);
+function sendMessage() {
+    var input = document.getElementById('messageInput');
+    var text = input.value.trim();
+    if (!text) return;
+    
+    var container = document.getElementById('chatMessages');
+    container.innerHTML += '<div class="msg user"><div class="msg-bubble">' + text + '</div></div>';
+    input.value = '';
+    container.scrollTop = container.scrollHeight;
+    
+    setTimeout(function() {
+        container.innerHTML += '<div class="msg ai"><div class="msg-bubble">收到！我会帮你记录下来。</div></div>';
+        container.scrollTop = container.scrollHeight;
+    }, 600);
 }
 
 // 回车发送
-document.getElementById('msgIn').onkeypress=function(e){
-if(e.key==='Enter')sendMsg();
+document.getElementById('messageInput').onkeypress = function(e) {
+    if (e.key === 'Enter') sendMessage();
 };
 </script>
 
