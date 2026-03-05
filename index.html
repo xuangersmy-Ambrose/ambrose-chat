@@ -135,7 +135,7 @@
     </div>
     
     <!-- 首页 -->
-    <div class="page active" id="page-home">
+    <div class="page" id="page-home">
         <header class="header">
             <div class="brand">
                 <div class="brand-icon">A</div>
@@ -536,6 +536,10 @@
                 var authScreen = document.getElementById('authScreen');
                 if (authScreen) authScreen.classList.add('hidden');
                 
+                // 显示首页
+                var homePage = document.getElementById('page-home');
+                if (homePage) homePage.classList.add('active');
+                
                 // 保存登录状态
                 var isBoss = (verify === CONFIG.VERIFY_CODE);
                 SafeStorage.setItem('ambrose_user_identity', isBoss ? 'boss' : 'guest');
@@ -545,15 +549,31 @@
                 
                 // 启动时间更新
                 TimeManager.start();
+                
+                // 初始化导航
+                NavManager.init();
+                QuickActionManager.init();
             },
             
             checkExistingSession: function() {
                 var identity = SafeStorage.getItem('ambrose_user_identity');
                 if (identity) {
+                    // 已登录，隐藏认证界面，显示首页
                     var authScreen = document.getElementById('authScreen');
                     if (authScreen) authScreen.classList.add('hidden');
+                    
+                    var homePage = document.getElementById('page-home');
+                    if (homePage) homePage.classList.add('active');
+                    
                     this.updateGreeting(identity === 'boss' ? 'BOSS Shao' : '朋友');
                     TimeManager.start();
+                } else {
+                    // 未登录，确保认证界面显示，首页隐藏
+                    var authScreen = document.getElementById('authScreen');
+                    if (authScreen) authScreen.classList.remove('hidden');
+                    
+                    var homePage = document.getElementById('page-home');
+                    if (homePage) homePage.classList.remove('active');
                 }
             },
             
