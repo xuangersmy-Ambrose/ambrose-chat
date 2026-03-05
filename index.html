@@ -41,15 +41,15 @@
             --bg-hover: rgba(255, 255, 255, 0.05);
             
             /* 边框 */
-            --border-subtle: rgba(255, 255, 255, 0.08);
-            --border-default: rgba(255, 255, 255, 0.15);
+            --border-subtle: rgba(255, 255, 255, 0.09);
+            --border-default: rgba(255, 255, 255, 0.16);
             --border-strong: rgba(255, 255, 255, 0.25);
             --border-primary: rgba(0, 243, 255, 0.5);
             
             /* 文字 */
             --text-primary: #ffffff;
             --text-secondary: #a1a1aa;
-            --text-tertiary: #636366;
+            --text-tertiary: #66666a;
             
             /* 渐变色 */
             --gradient-primary: linear-gradient(135deg, #00f3ff 0%, #00ff88 100%);
@@ -230,7 +230,7 @@
         }
         
         .clock-time {
-            font-size: 24px;
+            font-size: 23px;
             font-weight: 700;
             color: var(--primary-500);
             letter-spacing: 2px;
@@ -275,7 +275,7 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            margin: 28px 0;
+            margin: 26px 0;
             position: relative;
         }
         
@@ -290,8 +290,8 @@
         
         .date-divider span {
             background: var(--bg-base);
-            padding: 0 20px;
-            font-size: 12px;
+            padding: 0 18px;
+            font-size: 11px;
             color: var(--text-tertiary);
             text-transform: uppercase;
             letter-spacing: 2px;
@@ -307,7 +307,7 @@
         }
         
         @keyframes message-appear {
-            from { opacity: 0; transform: translateY(10px) scale(0.98); }
+            from { opacity: 0; transform: translateY(12px) scale(0.97); }
             to { opacity: 1; transform: translateY(0) scale(1); }
         }
         
@@ -390,9 +390,9 @@
         .message-meta {
             display: flex;
             align-items: center;
-            gap: 8px;
-            margin-top: 6px;
-            font-size: 11px;
+            gap: 7px;
+            margin-top: 5px;
+            font-size: 10px;
             color: var(--text-tertiary);
         }
         
@@ -457,8 +457,8 @@
         }
         
         .tool-btn {
-            width: 42px;
-            height: 42px;
+            width: 41px;
+            height: 41px;
             background: transparent;
             border: none;
             border-radius: 14px;
@@ -490,8 +490,8 @@
         }
         
         .send-btn {
-            width: 46px;
-            height: 46px;
+            width: 45px;
+            height: 45px;
             background: linear-gradient(135deg, var(--primary-500), var(--accent-500));
             border: none;
             border-radius: 14px;
@@ -524,8 +524,8 @@
         .typing-indicator {
             display: flex;
             align-items: center;
-            gap: 6px;
-            padding: 18px 22px;
+            gap: 5px;
+            padding: 17px 21px;
         }
         
         .typing-dot {
@@ -548,10 +548,10 @@
         /* ===== 滚动到底部按钮 ===== */
         .scroll-to-bottom {
             position: fixed;
-            bottom: 100px;
-            right: 20px;
-            width: 48px;
-            height: 48px;
+            bottom: 102px;
+            right: 22px;
+            width: 47px;
+            height: 47px;
             background: var(--bg-card);
             border: 1px solid var(--border-default);
             border-radius: 50%;
@@ -617,7 +617,7 @@
         .status-badge {
             display: inline-flex;
             align-items: center;
-            gap: 8px;
+            gap: 7px;
             font-size: 11px;
             color: var(--success);
             text-transform: uppercase;
