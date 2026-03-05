@@ -1,0 +1,426 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AMBROSE Health - 配置助手</title>
+<style>
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body {
+    font-family: -apple-system, BlinkMacSystemFont, 'PingFang SC', sans-serif;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    min-height: 100vh;
+    padding: 40px 20px;
+    color: #333;
+}
+.container {
+    max-width: 800px;
+    margin: 0 auto;
+}
+.header {
+    text-align: center;
+    color: white;
+    margin-bottom: 40px;
+}
+.header h1 {
+    font-size: 42px;
+    margin-bottom: 10px;
+    text-shadow: 0 2px 10px rgba(0,0,0,0.2);
+}
+.header p {
+    font-size: 18px;
+    opacity: 0.9;
+}
+.step {
+    background: white;
+    border-radius: 16px;
+    padding: 30px;
+    margin-bottom: 24px;
+    box-shadow: 0 10px 40px rgba(0,0,0,0.1);
+    transition: transform 0.2s, box-shadow 0.2s;
+}
+.step:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 15px 50px rgba(0,0,0,0.15);
+}
+.step-header {
+    display: flex;
+    align-items: center;
+    margin-bottom: 20px;
+}
+.step-number {
+    width: 48px;
+    height: 48px;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 24px;
+    font-weight: bold;
+    margin-right: 16px;
+}
+.step-title {
+    font-size: 24px;
+    font-weight: 600;
+    color: #333;
+}
+.step-desc {
+    color: #666;
+    font-size: 16px;
+    line-height: 1.6;
+    margin-bottom: 20px;
+}
+.btn {
+    display: inline-block;
+    padding: 14px 28px;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    text-decoration: none;
+    border-radius: 10px;
+    font-weight: 600;
+    transition: all 0.2s;
+    border: none;
+    cursor: pointer;
+    font-size: 16px;
+}
+.btn:hover {
+    transform: scale(1.02);
+    box-shadow: 0 5px 20px rgba(102, 126, 234, 0.4);
+}
+.btn-outline {
+    background: transparent;
+    border: 2px solid #667eea;
+    color: #667eea;
+    margin-left: 12px;
+}
+.btn-outline:hover {
+    background: #667eea;
+    color: white;
+}
+.code-block {
+    background: #1a1a2e;
+    border-radius: 12px;
+    padding: 20px;
+    overflow-x: auto;
+    margin: 16px 0;
+}
+.code-block pre {
+    color: #a8d8ea;
+    font-family: 'Monaco', 'Menlo', monospace;
+    font-size: 14px;
+    line-height: 1.6;
+}
+.checklist {
+    list-style: none;
+}
+.checklist li {
+    padding: 12px 0;
+    padding-left: 36px;
+    position: relative;
+    border-bottom: 1px solid #f0f0f0;
+}
+.checklist li:last-child {
+    border-bottom: none;
+}
+.checklist li::before {
+    content: "○";
+    position: absolute;
+    left: 0;
+    color: #667eea;
+    font-size: 20px;
+}
+.checklist li.done::before {
+    content: "✓";
+    color: #10b981;
+}
+.env-input {
+    width: 100%;
+    padding: 14px 18px;
+    border: 2px solid #e0e0e0;
+    border-radius: 10px;
+    font-size: 15px;
+    margin: 8px 0;
+    transition: border-color 0.2s;
+}
+.env-input:focus {
+    outline: none;
+    border-color: #667eea;
+}
+.status {
+    display: inline-flex;
+    align-items: center;
+    padding: 8px 16px;
+    border-radius: 20px;
+    font-size: 14px;
+    font-weight: 500;
+}
+.status.pending {
+    background: #fef3c7;
+    color: #92400e;
+}
+.status.ready {
+    background: #d1fae5;
+    color: #065f46;
+}
+.timer {
+    display: inline-flex;
+    align-items: center;
+    background: #f3f4f6;
+    padding: 6px 14px;
+    border-radius: 20px;
+    font-size: 14px;
+    color: #6b7280;
+    margin-left: 12px;
+}
+.timer::before {
+    content: "⏱️";
+    margin-right: 6px;
+}
+.footer {
+    text-align: center;
+    color: rgba(255,255,255,0.8);
+    margin-top: 40px;
+    padding: 20px;
+}
+@media (max-width: 600px) {
+    .header h1 {
+        font-size: 32px;
+    }
+    .step {
+        padding: 24px;
+    }
+    .step-number {
+        width: 40px;
+        height: 40px;
+        font-size: 20px;
+    }
+}
+</style>
+</head>
+<body>
+<div class="container">
+    <div class="header">
+        <h1>🔧 AMBROSE 配置助手</h1>
+        <p>5分钟完成云端数据库配置</p>
+    </div>
+
+    <!-- Step 1 -->
+    <div class="step">
+        <div class="step-header">
+            <div class="step-number">1</div>
+            <div class="step-title">创建 Supabase 项目</div>
+            <span class="timer">2分钟</span>
+        </div>
+        <p class="step-desc">
+            Supabase 提供免费的 PostgreSQL 数据库，用于存储用户的健康数据。
+        </p>
+        
+        <a href="https://supabase.com" target="_blank" class="btn">打开 Supabase →</a>
+        <a href="#" onclick="document.getElementById('step1-detail').style.display='block';return false;" class="btn btn-outline">查看步骤</a>
+        
+        <div id="step1-detail" style="display:none; margin-top:20px;">
+            <ul class="checklist">
+                <li>点击 "New Project"</li>
+                <li>Organization 选择或创建</li>
+                <li>Project Name 填: <strong>ambrose-health</strong></li>
+                <li>Database Password 设置强密码</li>
+                <li>Region 选择: <strong>Singapore</strong> (离中国最近)</li>
+                <li>等待 1-2 分钟项目创建完成</li>
+            </ul>
+        </div>
+    </div>
+
+    <!-- Step 2 -->
+    <div class="step">
+        <div class="step-header">
+            <div class="step-number">2</div>
+            <div class="step-title">获取 API 凭证</div>
+            <span class="timer">30秒</span>
+        </div>
+        
+        <p class="step-desc">
+            复制 Project URL、Anon Key 和 Service Role Key，稍后会用到。
+        </p>
+        
+        <div class="code-block">
+            <pre>Project URL: https://xxxx.supabase.co
+Anon Key: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
+Service Role Key: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...</pre>
+        </div>
+        
+        <a href="#" onclick="document.getElementById('step2-detail').style.display='block';return false;" class="btn btn-outline">获取位置</a>
+        
+        <div id="step2-detail" style="display:none; margin-top:20px;">
+            <ul class="checklist">
+                <li>点击左侧 <strong>Settings</strong> (⚙️)</li>
+                <li>点击 <strong>API</strong></li>
+                <li>复制 Project URL、anon public、service_role</li>
+            </ul>        
+        </div>
+    </div>
+
+    <!-- Step 3 -->
+    <div class="step">
+        <div class="step-header">
+            <div class="step-number">3</div>
+            <div class="step-title">创建数据库表</div>
+            <span class="timer">1分钟</span>
+        </div>
+        
+        <p class="step-desc">
+            执行 SQL 脚本创建用户档案、健康数据、运动记录等表。
+        </p>
+        
+        <a href="#" onclick="copySQL(); return false;" class="btn">复制 SQL</a>
+        <span id="copy-status" style="margin-left:12px;color:#10b981;"></span>
+        
+        <div class="code-block">
+            <pre id="sql-code">CREATE TABLE profiles (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    email TEXT UNIQUE,
+    name TEXT,
+    created_at TIMESTAMP DEFAULT NOW()
+);
+
+CREATE TABLE daily_health (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    user_id TEXT NOT NULL,
+    date DATE NOT NULL,
+    steps INTEGER DEFAULT 0,
+    calories INTEGER DEFAULT 0,
+    sleep_hours DECIMAL(4,2),
+    water_ml INTEGER DEFAULT 0,
+    UNIQUE(user_id, date)
+);
+
+CREATE TABLE exercises (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    user_id TEXT NOT NULL,
+    type TEXT,
+    duration_minutes INTEGER,
+    calories_burned INTEGER,
+    date DATE,
+    created_at TIMESTAMP DEFAULT NOW()
+);
+
+-- 启用行级安全
+ALTER TABLE profiles ENABLE ROW LEVEL SECURITY;
+ALTER TABLE daily_health ENABLE ROW LEVEL SECURITY;
+ALTER TABLE exercises ENABLE ROW LEVEL SECURITY;
+
+-- 创建简单策略
+CREATE POLICY "public_profiles" ON profiles FOR ALL USING (true);
+CREATE POLICY "public_health" ON daily_health FOR ALL USING (true);
+CREATE POLICY "public_exercises" ON exercises FOR ALL USING (true);</pre>
+        </div>
+        
+        <ul class="checklist" style="margin-top:16px;">
+            <li>点击左侧 <strong>SQL Editor</strong></li>
+            <li>点击 <strong>New query</strong></li>
+            <li>粘贴上面的 SQL</li>
+            <li>点击 <strong>Run</strong></li>
+        </ul>
+    </div>
+
+    <!-- Step 4 -->
+    <div class="step">
+        <div class="step-header">
+            <div class="step-number">4</div>
+            <div class="step-title">配置 Vercel 环境变量</div>
+            <span class="timer">1分钟</span>
+        </div>
+        
+        <p class="step-desc">
+            将 Supabase 凭证填入 Vercel，让 APP 能连接云端数据库。
+        </p>
+        
+        <a href="https://vercel.com/dashboard" target="_blank" class="btn">打开 Vercel →</a>
+        
+        <div style="margin-top:20px;">
+            <input type="text" class="env-input" placeholder="SUPABASE_URL=https://your-project.supabase.co" id="url-input">
+            <input type="text" class="env-input" placeholder="SUPABASE_ANON_KEY=eyJhbGciOi..." id="key-input">
+            <input type="text" class="env-input" placeholder="SUPABASE_SERVICE_KEY=eyJhbGciOi..." id="service-input">
+        </div>
+        
+        <ul class="checklist" style="margin-top:16px;">
+            <li>打开 <strong>ambrose-chat</strong> 项目</li>
+            <li>点击 <strong>Settings</strong> → <strong>Environment Variables</strong></li>
+            <li>添加上面三个环境变量</li>
+            <li>点击 <strong>Save</strong></li>
+            <li>返回 <strong>Deployments</strong> → 点击 <strong>Redeploy</strong></li>
+        </ul>
+    </div>
+
+    <!-- Step 5 -->
+    <div class="step">
+        <div class="step-header">
+            <div class="step-number">5</div>
+            <div class="step-title">验证配置</div>
+            <span class="status pending" id="status-badge">等待配置</span>
+        </div>
+        
+        <p class="step-desc">
+            部署完成后，验证云端数据库是否连接成功。
+        </p>
+        
+        <a href="https://ambrose-chat.vercel.app" target="_blank" class="btn">打开网站</a>
+        <button onclick="checkStatus()" class="btn btn-outline">检查状态</button>
+        
+        <div class="code-block" style="margin-top:20px;">
+            <pre id="status-output">按 F12 打开控制台，应该看到:
+
+🚀 AMBROSE Health v1.1.0 启动中...
+✅ Supabase 云服务已连接
+✅ 启动完成
+
+如果显示 "Supabase 未配置，使用本地模式"，
+请检查环境变量是否正确设置。</pre>
+        </div>
+    </div>
+
+    <div class="footer">
+        <p>🚀 AMBROSE Health v1.1.0 | 全栈实战版</p>
+        <p style="margin-top:8px; font-size:14px;">完成配置后，APP 即拥有云端数据库能力</p>
+    </div>
+
+</div>
+
+<script>
+function copySQL() {
+    const sql = document.getElementById('sql-code').textContent;
+    navigator.clipboard.writeText(sql).then(() => {
+        const status = document.getElementById('copy-status');
+        status.textContent = '✓ 已复制到剪贴板';
+        setTimeout(() => status.textContent = '', 3000);
+    });
+}
+
+function checkStatus() {
+    fetch('https://ambrose-chat.vercel.app')
+        .then(() => {
+            document.getElementById('status-badge').textContent = '网站在线';
+            document.getElementById('status-badge').className = 'status ready';
+            document.getElementById('status-output').textContent = '网站可访问，请打开控制台验证 Supabase 连接状态。';
+        })
+        .catch(() => {
+            document.getElementById('status-output').textContent = '网站暂时无法访问，请检查部署状态。';
+        });
+}
+
+// 从URL参数读取配置
+const params = new URLSearchParams(window.location.search);
+if (params.get('url')) {
+    document.getElementById('url-input').value = 'SUPABASE_URL=' + params.get('url');
+}
+if (params.get('key')) {
+    document.getElementById('key-input').value = 'SUPABASE_ANON_KEY=' + params.get('key');
+}
+if (params.get('service')) {
+    document.getElementById('service-input').value = 'SUPABASE_SERVICE_KEY=' + params.get('service');
+}
+</script>
+
+</body>
+</html>
