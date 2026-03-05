@@ -11,14 +11,14 @@
     <style>
         :root {
             /* 主色调 */
-            --primary-500: #00f0ff;
-            --primary-600: #00d8e6;
+            --primary-500: #00f3ff;
+            --primary-600: #00d0dc;
             --secondary-500: #ff00ff;
             --secondary-600: #e000e0;
             --accent-500: #bd00ff;
             --accent-600: #a000e0;
-            --success: #00ffb0;
-            --warning: #ffd700;
+            --success: #00ffd0;
+            --warning: #ffcc00;
             --danger: #ff0040;
             
             /* 中性色 */
@@ -32,11 +32,11 @@
             --neutral-700: #3a3a3c;
             --neutral-800: #2c2c2e;
             --neutral-900: #1c1c1e;
-            --neutral-950: #08080f;
+            --neutral-950: #090912;
             
             /* 背景 */
-            --bg-base: #040408;
-            --bg-elevated: #08080f;
+            --bg-base: #05050a;
+            --bg-elevated: #090912;
             --bg-card: rgba(15, 18, 30, 0.85);
             --bg-hover: rgba(255, 255, 255, 0.05);
             
@@ -57,7 +57,7 @@
             --gradient-health: linear-gradient(135deg, #00ff88 0%, #00f3ff 50%, #bd00ff 100%);
             --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.4);
             --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.5);
-            --shadow-glow: 0 0 25px rgba(0, 240, 255, 0.35);
+            --shadow-glow: 0 0 20px rgba(0, 243, 255, 0.4);
         }
         
         * {
@@ -150,9 +150,9 @@
         
         /* ===== 顶部导航栏 - Linear风格 ===== */
         .app-header {
-            background: rgba(8, 8, 15, 0.88);
+            background: rgba(9, 9, 18, 0.9);
             border-bottom: 1px solid var(--border-subtle);
-            padding: 16px 22px;
+            padding: 15px 21px;
             padding-top: max(14px, env(safe-area-inset-top));
             display: flex;
             align-items: center;
@@ -205,7 +205,7 @@
         }
         
         .brand-name {
-            font-size: 22px;
+            font-size: 21px;
             font-weight: 800;
             color: var(--text-primary);
             letter-spacing: 3px;
@@ -213,11 +213,11 @@
         }
         
         .brand-tagline {
-            font-size: 10px;
+            font-size: 9px;
             color: var(--primary-500);
             letter-spacing: 2px;
             text-transform: uppercase;
-            margin-top: 3px;
+            margin-top: 2px;
         }
         
         /* 时钟显示 */
@@ -249,7 +249,7 @@
             flex: 1;
             overflow-y: auto;
             overflow-x: hidden;
-            padding: 24px;
+            padding: 22px;
             scroll-behavior: smooth;
         }
         
@@ -302,8 +302,8 @@
         /* ===== 消息气泡 - 现代化设计 ===== */
         .message-group {
             display: flex;
-            margin-bottom: 24px;
-            animation: message-appear 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
+            margin-bottom: 22px;
+            animation: message-appear 0.45s cubic-bezier(0.34, 1.56, 0.64, 1);
         }
         
         @keyframes message-appear {
@@ -316,13 +316,13 @@
         }
         
         .message-avatar {
-            width: 40px;
-            height: 40px;
+            width: 38px;
+            height: 38px;
             border-radius: 50%;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 18px;
+            font-size: 17px;
             flex-shrink: 0;
             position: relative;
         }
@@ -338,8 +338,8 @@
         }
         
         .message-content {
-            max-width: 75%;
-            margin: 0 14px;
+            max-width: 73%;
+            margin: 0 13px;
             display: flex;
             flex-direction: column;
         }
@@ -359,9 +359,9 @@
         }
         
         .message-bubble {
-            padding: 14px 18px;
+            padding: 13px 17px;
             font-size: 15px;
-            line-height: 1.7;
+            line-height: 1.65;
             position: relative;
             word-wrap: break-word;
         }
@@ -406,11 +406,11 @@
         
         /* ===== 输入区域 - 现代化设计 ===== */
         .input-container {
-            background: rgba(10, 10, 15, 0.92);
+            background: rgba(9, 9, 18, 0.94);
             border-top: 1px solid var(--border-subtle);
-            padding: 18px 20px;
-            padding-bottom: max(18px, env(safe-area-inset-bottom));
-            backdrop-filter: blur(24px);
+            padding: 17px 20px;
+            padding-bottom: max(17px, env(safe-area-inset-bottom));
+            backdrop-filter: blur(22px);
         }
         
         .input-wrapper {
