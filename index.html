@@ -8,26 +8,7 @@
     <meta name="theme-color" content="#000000">
     <title>AMBROSE</title>
     
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-    
     <style>
-        :root {
-            --color-bg-primary: #000000;
-            --glass-light: rgba(255, 255, 255, 0.06);
-            --glass-medium: rgba(255, 255, 255, 0.10);
-            --glass-border: rgba(255, 255, 255, 0.08);
-            --neon-cyan: #00D4FF;
-            --neon-magenta: #FF2D92;
-            --neon-violet: #BF5AF2;
-            --text-primary: #FFFFFF;
-            --text-secondary: rgba(255, 255, 255, 0.70);
-            --text-tertiary: rgba(255, 255, 255, 0.50);
-            --radius-md: 12px;
-            --radius-lg: 16px;
-            --radius-xl: 20px;
-        }
-        
         * {
             margin: 0;
             padding: 0;
@@ -36,14 +17,13 @@
         }
         
         html, body {
-            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            font-family: -apple-system, BlinkMacSystemFont, 'Inter', sans-serif;
             background: #000;
-            color: var(--text-primary);
+            color: #fff;
             min-height: 100vh;
             overflow-x: hidden;
         }
         
-        /* 简化背景 - 静态渐变 */
         .bg {
             position: fixed;
             inset: 0;
@@ -65,20 +45,17 @@
             justify-content: center;
             padding: 24px;
             background: rgba(0, 0, 0, 0.95);
-            transition: opacity 0.3s ease;
         }
         
         .auth-screen.hidden {
-            opacity: 0;
-            visibility: hidden;
-            pointer-events: none;
+            display: none !important;
         }
         
         .auth-logo {
             width: 100px;
             height: 100px;
             margin-bottom: 32px;
-            background: linear-gradient(135deg, var(--neon-cyan), var(--neon-violet));
+            background: linear-gradient(135deg, #00D4FF, #BF5AF2);
             border-radius: 24px;
             display: flex;
             align-items: center;
@@ -96,7 +73,7 @@
         
         .auth-subtitle {
             font-size: 15px;
-            color: var(--text-secondary);
+            color: rgba(255,255,255,0.7);
             margin-bottom: 32px;
         }
         
@@ -105,10 +82,10 @@
             max-width: 280px;
             padding: 14px 16px;
             font-size: 17px;
-            background: var(--glass-light);
-            border: 1px solid var(--glass-border);
-            border-radius: var(--radius-md);
-            color: var(--text-primary);
+            background: rgba(255,255,255,0.06);
+            border: 1px solid rgba(255,255,255,0.08);
+            border-radius: 12px;
+            color: #fff;
             text-align: center;
             letter-spacing: 0.1em;
             margin-bottom: 12px;
@@ -116,7 +93,11 @@
         }
         
         .input-field:focus {
-            border-color: var(--neon-cyan);
+            border-color: #00D4FF;
+        }
+        
+        .input-field.hidden {
+            display: none !important;
         }
         
         .btn-primary {
@@ -125,12 +106,11 @@
             padding: 14px;
             font-size: 17px;
             font-weight: 600;
-            background: var(--neon-cyan);
+            background: #00D4FF;
             color: #000;
             border: none;
-            border-radius: var(--radius-md);
+            border-radius: 12px;
             cursor: pointer;
-            margin-top: 8px;
         }
         
         .btn-primary:active {
@@ -167,7 +147,7 @@
         .brand-icon {
             width: 32px;
             height: 32px;
-            background: linear-gradient(135deg, var(--neon-cyan), var(--neon-violet));
+            background: linear-gradient(135deg, #00D4FF, #BF5AF2);
             border-radius: 8px;
             display: flex;
             align-items: center;
@@ -190,15 +170,15 @@
         .icon-btn {
             width: 36px;
             height: 36px;
-            background: var(--glass-light);
-            border: 1px solid var(--glass-border);
+            background: rgba(255,255,255,0.06);
+            border: 1px solid rgba(255,255,255,0.08);
             border-radius: 10px;
             display: flex;
             align-items: center;
             justify-content: center;
             font-size: 16px;
             cursor: pointer;
-            color: var(--text-primary);
+            color: #fff;
         }
         
         /* 状态栏 */
@@ -208,15 +188,15 @@
             justify-content: space-between;
             padding: 8px 16px;
             margin: 0 20px 16px;
-            background: var(--glass-light);
-            border: 1px solid var(--glass-border);
-            border-radius: var(--radius-md);
+            background: rgba(255,255,255,0.06);
+            border: 1px solid rgba(255,255,255,0.08);
+            border-radius: 12px;
         }
         
         .status-time {
-            font-family: 'SF Mono', monospace;
+            font-family: monospace;
             font-size: 14px;
-            color: var(--neon-cyan);
+            color: #00D4FF;
             font-weight: 500;
         }
         
@@ -233,7 +213,6 @@
         .main-content {
             flex: 1;
             padding: 0 20px;
-            overflow-y: auto;
         }
         
         /* 欢迎卡片 */
@@ -241,8 +220,8 @@
             padding: 20px;
             margin-bottom: 20px;
             background: linear-gradient(135deg, rgba(0, 212, 255, 0.12), rgba(191, 90, 242, 0.08));
-            border: 1px solid var(--glass-border);
-            border-radius: var(--radius-xl);
+            border: 1px solid rgba(255,255,255,0.08);
+            border-radius: 20px;
         }
         
         .welcome-greeting {
@@ -250,7 +229,7 @@
             font-weight: 600;
             text-transform: uppercase;
             letter-spacing: 0.05em;
-            color: var(--neon-cyan);
+            color: #00D4FF;
             margin-bottom: 6px;
         }
         
@@ -262,7 +241,7 @@
         
         .welcome-message {
             font-size: 14px;
-            color: var(--text-secondary);
+            color: rgba(255,255,255,0.7);
         }
         
         /* 数据网格 */
@@ -274,11 +253,10 @@
         }
         
         .glass-card {
-            background: var(--glass-light);
-            border: 1px solid var(--glass-border);
-            border-radius: var(--radius-lg);
+            background: rgba(255,255,255,0.06);
+            border: 1px solid rgba(255,255,255,0.08);
+            border-radius: 16px;
             padding: 16px;
-            cursor: pointer;
         }
         
         .glass-card.large {
@@ -288,7 +266,7 @@
         .card-icon {
             width: 36px;
             height: 36px;
-            background: var(--glass-medium);
+            background: rgba(255,255,255,0.1);
             border-radius: 10px;
             display: flex;
             align-items: center;
@@ -299,7 +277,7 @@
         
         .card-label {
             font-size: 12px;
-            color: var(--text-tertiary);
+            color: rgba(255,255,255,0.5);
             margin-bottom: 4px;
         }
         
@@ -315,7 +293,7 @@
         .card-unit {
             font-size: 14px;
             font-weight: 400;
-            color: var(--text-secondary);
+            color: rgba(255,255,255,0.7);
             margin-left: 4px;
         }
         
@@ -340,16 +318,23 @@
             align-items: center;
             gap: 6px;
             padding: 12px 8px;
-            background: var(--glass-light);
-            border: 1px solid var(--glass-border);
-            border-radius: var(--radius-lg);
+            background: rgba(255,255,255,0.06);
+            border: 1px solid rgba(255,255,255,0.08);
+            border-radius: 16px;
             cursor: pointer;
+            -webkit-touch-callout: none;
+            user-select: none;
+        }
+        
+        .action-item:active {
+            transform: scale(0.95);
+            background: rgba(255,255,255,0.1);
         }
         
         .action-icon {
             width: 44px;
             height: 44px;
-            background: var(--glass-medium);
+            background: rgba(255,255,255,0.1);
             border-radius: 12px;
             display: flex;
             align-items: center;
@@ -359,7 +344,7 @@
         
         .action-label {
             font-size: 11px;
-            color: var(--text-secondary);
+            color: rgba(255,255,255,0.7);
         }
         
         /* 底部导航 */
@@ -369,8 +354,8 @@
             left: 0;
             right: 0;
             padding: 8px 0 calc(8px + env(safe-area-inset-bottom));
-            background: rgba(0, 0, 0, 0.9);
-            border-top: 1px solid var(--glass-border);
+            background: rgba(0, 0, 0, 0.95);
+            border-top: 1px solid rgba(255,255,255,0.08);
         }
         
         .nav-items {
@@ -388,7 +373,12 @@
             padding: 6px 20px;
             cursor: pointer;
             opacity: 0.5;
-            transition: opacity 0.2s;
+            -webkit-touch-callout: none;
+            user-select: none;
+        }
+        
+        .nav-item:active {
+            opacity: 0.8;
         }
         
         .nav-item.active {
@@ -396,7 +386,7 @@
         }
         
         .nav-item.active .nav-icon {
-            color: var(--neon-cyan);
+            color: #00D4FF;
         }
         
         .nav-icon {
@@ -407,25 +397,25 @@
             font-size: 10px;
         }
         
-        /* 工具类 */
-        .hidden {
-            display: none !important;
-        }
-        
         /* Toast */
         .toast {
             position: fixed;
             top: 50%;
             left: 50%;
             transform: translate(-50%, -50%);
-            background: rgba(40, 40, 40, 0.95);
-            padding: 14px 24px;
+            background: rgba(40, 40, 40, 0.98);
+            padding: 16px 28px;
             border-radius: 12px;
-            border: 1px solid var(--glass-border);
+            border: 1px solid rgba(255,255,255,0.1);
             color: white;
-            font-size: 14px;
-            z-index: 9999;
-            pointer-events: none;
+            font-size: 15px;
+            z-index: 10000;
+            opacity: 1;
+            transition: opacity 0.3s;
+        }
+        
+        .toast.hiding {
+            opacity: 0;
         }
     </style>
 </head>
@@ -437,13 +427,13 @@
         <div class="auth-logo">A</div>
         <h1 class="auth-title">AMBROSE</h1>
         <p class="auth-subtitle">AI HEALTH COACH</p>
-        <input type="text" class="input-field" id="inviteCode" placeholder="输入邀请码" maxlength="4">
-        <input type="text" class="input-field hidden" id="verifyCode" placeholder="身份验证码" maxlength="4">
+        <input type="text" class="input-field" id="inviteCode" placeholder="输入邀请码" maxlength="4" autocomplete="off">
+        <input type="text" class="input-field hidden" id="verifyCode" placeholder="身份验证码" maxlength="4" autocomplete="off">
         <button class="btn-primary" id="authBtn">进入系统</button>
     </div>
     
     <!-- 主应用 -->
-    <div class="app" id="mainApp">
+    <div class="app" id="mainApp" style="display:none;">
         <header class="header">
             <div class="brand">
                 <div class="brand-icon">A</div>
@@ -458,7 +448,7 @@
         <div class="status-bar">
             <div>
                 <span class="status-dot"></span>
-                <span style="font-size: 13px; color: var(--text-secondary);">系统在线</span>
+                <span style="font-size: 13px; color: rgba(255,255,255,0.7);">系统在线</span>
             </div>
             <div class="status-time" id="beijingTime">--:--:--</div>
         </div>
@@ -503,19 +493,19 @@
             
             <h3 class="section-title">快捷记录</h3>
             <div class="actions-grid">
-                <div class="action-item" onclick="showToast('记录体重')">
+                <div class="action-item" data-action="weight">
                     <div class="action-icon">⚖️</div>
                     <span class="action-label">体重</span>
                 </div>
-                <div class="action-item" onclick="showToast('记录饮食')">
+                <div class="action-item" data-action="food">
                     <div class="action-icon">🍽️</div>
                     <span class="action-label">饮食</span>
                 </div>
-                <div class="action-item" onclick="showToast('记录运动')">
+                <div class="action-item" data-action="exercise">
                     <div class="action-icon">🏃</div>
                     <span class="action-label">运动</span>
                 </div>
-                <div class="action-item" onclick="showToast('记录睡眠')">
+                <div class="action-item" data-action="sleep">
                     <div class="action-icon">🌙</div>
                     <span class="action-label">睡眠</span>
                 </div>
@@ -545,40 +535,89 @@
     </div>
     
     <script>
-        // 北京时间更新
-        function updateBeijingTime() {
-            const timeEl = document.getElementById('beijingTime');
-            if (!timeEl) return;
-            const now = new Date();
-            const beijingTime = new Date(now.toLocaleString('en-US', { timeZone: 'Asia/Shanghai' }));
-            const hours = String(beijingTime.getHours()).padStart(2, '0');
-            const minutes = String(beijingTime.getMinutes()).padStart(2, '0');
-            const seconds = String(beijingTime.getSeconds()).padStart(2, '0');
-            timeEl.textContent = `${hours}:${minutes}:${seconds}`;
+        // 防止重复初始化
+        window.appInitialized = window.appInitialized || false;
+        
+        function showToast(message) {
+            console.log('Toast:', message);
+            
+            // 移除已存在的toast
+            var existing = document.querySelector('.toast');
+            if (existing) {
+                existing.remove();
+            }
+            
+            // 创建新toast
+            var toast = document.createElement('div');
+            toast.className = 'toast';
+            toast.textContent = message;
+            document.body.appendChild(toast);
+            
+            // 1.5秒后消失
+            setTimeout(function() {
+                toast.classList.add('hiding');
+                setTimeout(function() {
+                    if (toast.parentNode) {
+                        toast.remove();
+                    }
+                }, 300);
+            }, 1500);
         }
         
-        // 认证系统
+        function updateBeijingTime() {
+            var timeEl = document.getElementById('beijingTime');
+            if (!timeEl) return;
+            
+            var now = new Date();
+            var options = { 
+                timeZone: 'Asia/Shanghai', 
+                hour12: false,
+                hour: '2-digit',
+                minute: '2-digit',
+                second: '2-digit'
+            };
+            timeEl.textContent = now.toLocaleTimeString('zh-CN', options);
+        }
+        
+        function updateGreeting(name) {
+            var el = document.getElementById('userGreeting');
+            if (el) el.textContent = '你好，' + name;
+        }
+        
+        function showMainApp() {
+            var authScreen = document.getElementById('authScreen');
+            var mainApp = document.getElementById('mainApp');
+            
+            if (authScreen) authScreen.style.display = 'none';
+            if (mainApp) mainApp.style.display = 'flex';
+        }
+        
         function initAuth() {
-            const authScreen = document.getElementById('authScreen');
-            const inviteInput = document.getElementById('inviteCode');
-            const verifyInput = document.getElementById('verifyCode');
-            const authBtn = document.getElementById('authBtn');
+            var inviteInput = document.getElementById('inviteCode');
+            var verifyInput = document.getElementById('verifyCode');
+            var authBtn = document.getElementById('authBtn');
             
-            if (!inviteInput || !authBtn) return;
+            if (!inviteInput || !authBtn) {
+                console.error('Auth elements not found');
+                return;
+            }
             
-            inviteInput.addEventListener('input', (e) => {
+            // 输入邀请码时显示验证码输入框
+            inviteInput.addEventListener('input', function(e) {
                 if (e.target.value === '8888') {
                     verifyInput.classList.remove('hidden');
-                    if (verifyInput) verifyInput.focus();
+                    verifyInput.focus();
                 }
             });
             
-            authBtn.addEventListener('click', () => {
-                const invite = inviteInput.value;
-                const verify = verifyInput ? verifyInput.value : '';
+            // 点击进入按钮
+            authBtn.addEventListener('click', function() {
+                var invite = inviteInput.value;
+                var verify = verifyInput ? verifyInput.value : '';
                 
                 if (invite === '8888') {
-                    authScreen.classList.add('hidden');
+                    showMainApp();
+                    
                     if (verify === '0812') {
                         localStorage.setItem('ambrose_user_identity', 'boss');
                         updateGreeting('BOSS Shao');
@@ -588,70 +627,111 @@
                     }
                 } else {
                     inviteInput.style.borderColor = '#FF2D92';
-                    setTimeout(() => {
+                    setTimeout(function() {
                         inviteInput.style.borderColor = '';
                     }, 1000);
                 }
             });
-        }
-        
-        // 更新问候语
-        function updateGreeting(name) {
-            const el = document.getElementById('userGreeting');
-            if (el) el.textContent = `你好，${name}`;
-        }
-        
-        // Toast提示
-        function showToast(message) {
-            const existing = document.querySelector('.toast');
-            if (existing) existing.remove();
             
-            const toast = document.createElement('div');
-            toast.className = 'toast';
-            toast.textContent = message;
-            document.body.appendChild(toast);
-            
-            setTimeout(() => {
-                toast.style.opacity = '0';
-                toast.style.transition = 'opacity 0.3s';
-                setTimeout(() => toast.remove(), 300);
-            }, 1500);
+            // 回车键支持
+            inviteInput.addEventListener('keypress', function(e) {
+                if (e.key === 'Enter') authBtn.click();
+            });
+            if (verifyInput) {
+                verifyInput.addEventListener('keypress', function(e) {
+                    if (e.key === 'Enter') authBtn.click();
+                });
+            }
         }
         
-        // 底部导航
+        function initActions() {
+            // 快捷操作按钮
+            var actionMap = {
+                'weight': '记录体重',
+                'food': '记录饮食',
+                'exercise': '记录运动',
+                'sleep': '记录睡眠'
+            };
+            
+            document.querySelectorAll('.action-item').forEach(function(item) {
+                item.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    var action = this.getAttribute('data-action');
+                    var message = actionMap[action] || '功能开发中';
+                    showToast(message);
+                });
+            });
+            
+            // 顶部按钮
+            var healthBtn = document.getElementById('healthBtn');
+            var settingsBtn = document.getElementById('settingsBtn');
+            
+            if (healthBtn) {
+                healthBtn.addEventListener('click', function() {
+                    showToast('健康中心');
+                });
+            }
+            
+            if (settingsBtn) {
+                settingsBtn.addEventListener('click', function() {
+                    showToast('设置');
+                });
+            }
+        }
+        
         function initNav() {
-            document.querySelectorAll('.nav-item').forEach(item => {
+            document.querySelectorAll('.nav-item').forEach(function(item) {
                 item.addEventListener('click', function() {
-                    document.querySelectorAll('.nav-item').forEach(i => i.classList.remove('active'));
+                    document.querySelectorAll('.nav-item').forEach(function(i) {
+                        i.classList.remove('active');
+                    });
                     this.classList.add('active');
+                    
+                    var page = this.getAttribute('data-page');
+                    if (page !== 'home') {
+                        showToast('页面开发中: ' + page);
+                    }
                 });
             });
         }
         
-        // 初始化 - 确保DOM加载完成
+        function initApp() {
+            if (window.appInitialized) {
+                console.log('App already initialized');
+                return;
+            }
+            window.appInitialized = true;
+            
+            console.log('Initializing AMBROSE...');
+            
+            try {
+                // 检查登录状态
+                var identity = localStorage.getItem('ambrose_user_identity');
+                if (identity) {
+                    showMainApp();
+                    updateGreeting(identity === 'boss' ? 'BOSS Shao' : '朋友');
+                }
+                
+                // 初始化各模块
+                initAuth();
+                initActions();
+                initNav();
+                
+                // 时间更新
+                updateBeijingTime();
+                setInterval(updateBeijingTime, 1000);
+                
+                console.log('AMBROSE initialized successfully');
+            } catch (e) {
+                console.error('App init error:', e);
+            }
+        }
+        
+        // 启动应用
         if (document.readyState === 'loading') {
             document.addEventListener('DOMContentLoaded', initApp);
         } else {
             initApp();
-        }
-        
-        function initApp() {
-            try {
-                initAuth();
-                initNav();
-                updateBeijingTime();
-                setInterval(updateBeijingTime, 1000);
-                
-                // 检查登录状态
-                const identity = localStorage.getItem('ambrose_user_identity');
-                if (identity) {
-                    const authScreen = document.getElementById('authScreen');
-                    if (authScreen) authScreen.classList.add('hidden');
-                    updateGreeting(identity === 'boss' ? 'BOSS Shao' : '朋友');
-                }
-            } catch (e) {
-                console.error('App init error:', e);
-            }
         }
     </script>
 </body>
