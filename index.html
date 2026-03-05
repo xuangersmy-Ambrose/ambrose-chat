@@ -5,718 +5,1274 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-    <meta name="theme-color" content="#0a0a0f">
-    <title>AMBROSE | AI HEALTH COACH v1.0</title>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300.411111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111100;500;600;700;800&family=JetBrains+Mono:wght@400;500&family=Orbitron:wght@400;500;700;800;900&family=Rajdhani:wght@400;500;600;700&family=Noto+Sans+SC:wght@300.411111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111100;500;700&display=swap" rel="stylesheet">
+    <meta name="theme-color" content="#000000">
+    <title>AMBROSE</title>
+    
+    <!-- Apple Style Font Stack -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=SF+Pro+Display:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    
     <style>
+        /* ============================================
+           JOBS-INSPIRED DESIGN SYSTEM
+           极简主义 · 玻璃拟态 · 深空美学
+           ============================================ */
+        
         :root {
-            /* 主色调 */
-            --primary-500: #00f5ff;
-            --primary-600: #00d5e0;
-            --secondary-500: #ff00ee;
-            --secondary-600: #e000e0;
-            --accent-500: #be00f0;
-            --accent-600: #a000e0;
-            --success: #00ffd5;
-            --warning: #ffcc10;
-            --danger: #ff0.41111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111110;
+            /* Apple-style Color System - 深空赛博朋克 */
+            --color-bg-primary: #000000;
+            --color-bg-secondary: rgba(28, 28, 30, 0.72);
+            --color-bg-tertiary: rgba(44, 44, 46, 0.60);
             
-            /* 中性色 */
-            --neutral-0: #ffffff;
-            --neutral-100: #f2f2f7;
-            --neutral-200: #d2d2d7;
-            --neutral-300: #a2a2a7;
-            --neutral-400: #8e8e93;
-            --neutral-500: #646469;
-            --neutral-600: #48484a;
-            --neutral-700: #3a3a3c;
-            --neutral-800: #2c2c2e;
-            --neutral-900: #1c1c1e;
-            --neutral-950: #090912;
+            /* 玻璃拟态层级 */
+            --glass-light: rgba(255, 255, 255, 0.08);
+            --glass-medium: rgba(255, 255, 255, 0.12);
+            --glass-heavy: rgba(255, 255, 255, 0.18);
+            --glass-border: rgba(255, 255, 255, 0.10);
             
-            /* 背景 */
-            --bg-base: #05050a;
-            --bg-elevated: #090912;
-            --bg-card: rgba(15, 18, 30, 0.85);
-            --bg-hover: rgba(255, 255, 255, 0.05);
+            /* 霓虹赛博色系 - 克制使用 */
+            --neon-cyan: #00D4FF;
+            --neon-magenta: #FF2D92;
+            --neon-violet: #BF5AF2;
+            --neon-green: #30D158;
+            --neon-orange: #FF9F0A;
             
-            /* 边框 */
-            --border-subtle: rgba(255, 255, 255, 0.09);
-            --border-default: rgba(255, 255, 255, 0.16);
-            --border-strong: rgba(255, 255, 255, 0.25);
-            --border-primary: rgba(0, 243, 255, 0.5);
+            /* 文字层级 - Apple风格 */
+            --text-primary: #FFFFFF;
+            --text-secondary: rgba(255, 255, 255, 0.82);
+            --text-tertiary: rgba(255, 255, 255, 0.55);
+            --text-quaternary: rgba(255, 255, 255, 0.32);
             
-            /* 文字 */
-            --text-primary: #ffffff;
-            --text-secondary: #a1a1aa;
-            --text-tertiary: #66666a;
+            /* 圆角系统 - 连续圆角 */
+            --radius-sm: 8px;
+            --radius-md: 12px;
+            --radius-lg: 16px;
+            --radius-xl: 20px;
+            --radius-2xl: 28px;
+            --radius-full: 9999px;
             
-            /* 渐变色 */
-            --gradient-primary: linear-gradient(135deg, #00f3ff 0%, #00ff88 100%);
-            --gradient-secondary: linear-gradient(135deg, #ff00ff 0%, #bd00ff 100%);
-            --gradient-health: linear-gradient(135deg, #00ff88 0%, #00f3ff 50%, #bd00ff 100%);
-            --shadow-md: 0.4111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111px 6px -1px rgba(0, 0, 0, 0.4111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111);
-            --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.5);
-            --shadow-glow: 0 0 20px rgba(0, 243, 255, 0.4111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111);
+            /* 间距系统 - 8pt网格 */
+            --space-1: 4px;
+            --space-2: 8px;
+            --space-3: 12px;
+            --space-4: 16px;
+            --space-5: 20px;
+            --space-6: 24px;
+            --space-8: 32px;
+            --space-10: 40px;
+            --space-12: 48px;
+            
+            /* 字体 */
+            --font-stack: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'Inter', 'Segoe UI', sans-serif;
+            --font-mono: 'SF Mono', SFMono-Regular, ui-monospace, monospace;
+            
+            /* 阴影 - 柔和的层次 */
+            --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.20);
+            --shadow-md: 0 4px 16px rgba(0, 0, 0, 0.24);
+            --shadow-lg: 0 8px 32px rgba(0, 0, 0, 0.40);
+            --shadow-neon-cyan: 0 0 30px rgba(0, 212, 255, 0.30);
+            --shadow-neon-magenta: 0 0 30px rgba(255, 45, 146, 0.25);
+            
+            /* 动画曲线 - Apple Easing */
+            --ease-smooth: cubic-bezier(0.4, 0.0, 0.2, 1);
+            --ease-bounce: cubic-bezier(0.34, 1.56, 0.64, 1);
+            --ease-accelerate: cubic-bezier(0.4, 0.0, 1, 1);
+            --ease-decelerate: cubic-bezier(0.0, 0.0, 0.2, 1);
+            
+            /* 过渡 */
+            --transition-fast: 150ms var(--ease-smooth);
+            --transition-normal: 250ms var(--ease-smooth);
+            --transition-slow: 400ms var(--ease-smooth);
         }
         
-        * {
+        /* ============================================
+           BASE STYLES - 极简基础
+           ============================================ */
+        *, *::before, *::after {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
             -webkit-tap-highlight-color: transparent;
         }
         
-        html, body {
-            height: 100%;
-            font-family: 'Inter', 'Noto Sans SC', sans-serif;
-            background: var(--bg-base);
-            color: var(--text-primary);
-            overflow: hidden;
+        html {
+            font-size: 16px;
             -webkit-font-smoothing: antialiased;
             -moz-osx-font-smoothing: grayscale;
+            text-rendering: optimizeLegibility;
         }
         
-        /* ===== 动态背景系统 ===== */
-        .bg-canvas {
+        body {
+            font-family: var(--font-stack);
+            background: var(--color-bg-primary);
+            color: var(--text-primary);
+            min-height: 100vh;
+            min-height: 100dvh;
+            overflow-x: hidden;
+            line-height: 1.47059;
+            font-weight: 400;
+            letter-spacing: -0.022em;
+        }
+        
+        /* ============================================
+           BACKGROUND - 深空粒子效果
+           ============================================ */
+        .universe {
             position: fixed;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            z-index: 0;
+            inset: 0;
+            z-index: -1;
             background: 
-                radial-gradient(ellipse at 20% 20%, rgba(0, 243, 255, 0.03) 0%, transparent 50%),
-                radial-gradient(ellipse at 80% 80%, rgba(255, 0, 160, 0.02) 0%, transparent 50%),
-                var(--bg-base);
+                radial-gradient(ellipse 80% 50% at 50% -20%, rgba(0, 212, 255, 0.08), transparent),
+                radial-gradient(ellipse 60% 40% at 80% 100%, rgba(255, 45, 146, 0.06), transparent),
+                radial-gradient(ellipse 50% 30% at 20% 100%, rgba(191, 90, 242, 0.05), transparent),
+                #000000;
+            overflow: hidden;
         }
         
-        .bg-grid {
-            position: fixed;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
+        .universe::before {
+            content: '';
+            position: absolute;
+            inset: 0;
             background-image: 
-                linear-gradient(rgba(0, 243, 255, 0.028) 1px, transparent 1px),
-                linear-gradient(90deg, rgba(0, 243, 255, 0.028) 1px, transparent 1px);
-            background-size: 52px 52px;
-            animation: grid-drift 26s linear infinite;
-            pointer-events: none;
+                radial-gradient(circle at 20% 30%, rgba(0, 212, 255, 0.03) 0px, transparent 2px),
+                radial-gradient(circle at 80% 70%, rgba(255, 45, 146, 0.02) 0px, transparent 1.5px),
+                radial-gradient(circle at 40% 80%, rgba(191, 90, 242, 0.02) 0px, transparent 2px);
+            background-size: 200px 200px, 150px 150px, 180px 180px;
+            animation: universe-drift 60s linear infinite;
         }
         
-        @keyframes grid-drift {
-            0% { transform: perspective(500px) rotateX(60deg) translateY(0); }
-            100% { transform: perspective(500px) rotateX(60deg) translateY(52px); }
+        @keyframes universe-drift {
+            0% { transform: translate(0, 0); }
+            100% { transform: translate(-50px, -30px); }
         }
         
-        .particles-container {
+        /* 悬浮粒子 */
+        .particles {
             position: fixed;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
+            inset: 0;
+            z-index: 0;
             pointer-events: none;
             overflow: hidden;
-            z-index: 1;
         }
         
         .particle {
             position: absolute;
-            width: 3.5px;
-            height: 3.5px;
-            background: var(--primary-500);
+            width: 3px;
+            height: 3px;
+            background: var(--neon-cyan);
             border-radius: 50%;
             opacity: 0;
-            animation: particle-float 13s infinite;
-            filter: blur(1px);
+            animation: float-up 15s ease-in-out infinite;
+            filter: blur(0.5px);
         }
         
-        @keyframes particle-float {
-            0% { transform: translateY(100vh) translateX(0) scale(0); opacity: 0; }
-            5% { opacity: 0.65; }
-            95% { opacity: 0.65; }
-            100% { transform: translateY(-100px) translateX(100px) scale(1); opacity: 0; }
+        .particle:nth-child(3n) {
+            background: var(--neon-magenta);
+            animation-delay: -5s;
         }
         
-        /* ===== 应用容器 ===== */
-        .app-container {
+        .particle:nth-child(5n) {
+            background: var(--neon-violet);
+            animation-delay: -10s;
+        }
+        
+        @keyframes float-up {
+            0% {
+                transform: translateY(100vh) scale(0);
+                opacity: 0;
+            }
+            10% {
+                opacity: 0.6;
+            }
+            90% {
+                opacity: 0.6;
+            }
+            100% {
+                transform: translateY(-10vh) scale(1);
+                opacity: 0;
+            }
+        }
+        
+        /* ============================================
+           APP CONTAINER
+           ============================================ */
+        .app {
+            position: relative;
+            z-index: 1;
+            min-height: 100vh;
             display: flex;
             flex-direction: column;
-            height: 100vh;
-            position: relative;
-            z-index: 10;
+            max-width: 430px;
+            margin: 0 auto;
+            background: transparent;
         }
         
-        /* ===== 顶部导航栏 - Linear风格 ===== */
-        .app-header {
-            background: rgba(9, 9, 18, 0.9);
-            border-bottom: 1px solid var(--border-subtle);
-            padding: 15px 21px;
-            padding-top: max(14px, env(safe-area-inset-top));
+        /* ============================================
+           AUTH SCREEN - 极简认证
+           ============================================ */
+        .auth-screen {
+            position: fixed;
+            inset: 0;
+            z-index: 1000;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: var(--space-6);
+            background: rgba(0, 0, 0, 0.85);
+            backdrop-filter: blur(40px) saturate(180%);
+            -webkit-backdrop-filter: blur(40px) saturate(180%);
+            transition: opacity var(--transition-slow), visibility var(--transition-slow);
+        }
+        
+        .auth-screen.hidden {
+            opacity: 0;
+            visibility: hidden;
+            pointer-events: none;
+        }
+        
+        /* Logo动画 */
+        .auth-logo {
+            width: 120px;
+            height: 120px;
+            margin-bottom: var(--space-8);
+            position: relative;
+        }
+        
+        .auth-logo::before {
+            content: '';
+            position: absolute;
+            inset: -20px;
+            background: conic-gradient(from 0deg, var(--neon-cyan), var(--neon-magenta), var(--neon-violet), var(--neon-cyan));
+            border-radius: var(--radius-2xl);
+            opacity: 0.3;
+            filter: blur(20px);
+            animation: logo-glow 3s ease-in-out infinite;
+        }
+        
+        .auth-logo-inner {
+            position: relative;
+            width: 100%;
+            height: 100%;
+            background: var(--glass-heavy);
+            border: 1px solid var(--glass-border);
+            border-radius: var(--radius-2xl);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 48px;
+            font-weight: 300;
+            backdrop-filter: blur(20px);
+        }
+        
+        @keyframes logo-glow {
+            0%, 100% { opacity: 0.2; transform: scale(0.95); }
+            50% { opacity: 0.4; transform: scale(1.05); }
+        }
+        
+        .auth-title {
+            font-size: 28px;
+            font-weight: 700;
+            letter-spacing: -0.021em;
+            margin-bottom: var(--space-2);
+            text-align: center;
+        }
+        
+        .auth-subtitle {
+            font-size: 17px;
+            color: var(--text-secondary);
+            margin-bottom: var(--space-8);
+            text-align: center;
+        }
+        
+        /* 输入框 - Apple风格 */
+        .auth-input-group {
+            width: 100%;
+            max-width: 320px;
+            display: flex;
+            flex-direction: column;
+            gap: var(--space-3);
+        }
+        
+        .input-field {
+            width: 100%;
+            padding: var(--space-4) var(--space-5);
+            font-size: 17px;
+            font-family: var(--font-mono);
+            background: var(--glass-light);
+            border: 1px solid var(--glass-border);
+            border-radius: var(--radius-lg);
+            color: var(--text-primary);
+            text-align: center;
+            letter-spacing: 0.2em;
+            transition: all var(--transition-fast);
+            outline: none;
+        }
+        
+        .input-field::placeholder {
+            color: var(--text-quaternary);
+            letter-spacing: normal;
+        }
+        
+        .input-field:focus {
+            background: var(--glass-medium);
+            border-color: var(--neon-cyan);
+            box-shadow: 0 0 0 3px rgba(0, 212, 255, 0.15);
+        }
+        
+        /* 按钮 - 主按钮 */
+        .btn-primary {
+            width: 100%;
+            max-width: 320px;
+            padding: var(--space-4) var(--space-6);
+            font-size: 17px;
+            font-weight: 600;
+            background: var(--neon-cyan);
+            color: #000;
+            border: none;
+            border-radius: var(--radius-lg);
+            cursor: pointer;
+            transition: all var(--transition-fast);
+            margin-top: var(--space-4);
+        }
+        
+        .btn-primary:hover {
+            transform: scale(1.02);
+            box-shadow: var(--shadow-neon-cyan);
+        }
+        
+        .btn-primary:active {
+            transform: scale(0.98);
+        }
+        
+        /* ============================================
+           HEADER - 玻璃导航栏
+           ============================================ */
+        .header {
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            padding: var(--space-4);
+            padding-top: max(var(--space-4), env(safe-area-inset-top));
+            background: rgba(0, 0, 0, 0.65);
+            backdrop-filter: blur(20px) saturate(180%);
+            -webkit-backdrop-filter: blur(20px) saturate(180%);
+            border-bottom: 1px solid var(--glass-border);
+        }
+        
+        .header-content {
             display: flex;
             align-items: center;
             justify-content: space-between;
-            backdrop-filter: blur(20px) saturate(180%);
-            -webkit-backdrop-filter: blur(20px) saturate(180%);
-            position: relative;
-            z-index: 100;
         }
         
-        .app-header::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            height: 1px;
-            background: linear-gradient(90deg, transparent, rgba(0, 243, 255, 0.3), transparent);
-        }
-        
-        .brand {
+        .header-brand {
             display: flex;
             align-items: center;
-            gap: 12px;
+            gap: var(--space-3);
         }
         
-        .brand-logo {
-            width: 39px;
-            height: 39px;
-            background: linear-gradient(135deg, var(--primary-500), var(--accent-500));
-            border-radius: 11px;
+        .brand-icon {
+            width: 36px;
+            height: 36px;
+            background: linear-gradient(135deg, var(--neon-cyan), var(--neon-violet));
+            border-radius: var(--radius-md);
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 22px;
-            position: relative;
-            overflow: hidden;
-            box-shadow: 0 0 15px rgba(0, 243, 255, 0.3);
-        }
-        
-        .brand-logo::after {
-            content: '';
-            position: absolute;
-            inset: 0;
-            background: linear-gradient(135deg, transparent, rgba(255,255,255,0.2));
+            font-size: 18px;
+            font-weight: 600;
         }
         
         .brand-text {
-            font-family: 'Orbitron', monospace;
-        }
-        
-        .brand-name {
-            font-size: 21px;
-            font-weight: 800;
-            color: var(--text-primary);
-            letter-spacing: 3px;
-            text-transform: uppercase;
-        }
-        
-        .brand-tagline {
-            font-size: 9px;
-            color: var(--primary-500);
-            letter-spacing: 2px;
-            text-transform: uppercase;
-            margin-top: 2px;
-        }
-        
-        /* 时钟显示 */
-        .header-clock {
-            display: flex;
-            flex-direction: column;
-            align-items: flex-end;
-            font-family: 'JetBrains Mono', monospace;
-            gap: 4px;
-        }
-        
-        .clock-time {
-            font-size: 23px;
+            font-size: 20px;
             font-weight: 700;
-            color: var(--primary-500);
-            letter-spacing: 2px;
-            text-shadow: 0 0 20px rgba(0, 243, 255, 0.4111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111);
-            font-family: 'JetBrains Mono', monospace;
+            letter-spacing: -0.021em;
         }
         
-        .clock-date {
-            font-size: 11px;
-            color: var(--text-tertiary);
-            letter-spacing: 1.5px;
+        .header-actions {
+            display: flex;
+            gap: var(--space-2);
         }
         
-        /* ===== 消息区域 - Telegram/Discord风格 ===== */
-        .messages-container {
-            flex: 1;
-            overflow-y: auto;
-            overflow-x: hidden;
-            padding: 22px;
-            scroll-behavior: smooth;
-        }
-        
-        .messages-container::-webkit-scrollbar {
-            width: 6px;
-        }
-        
-        .messages-container::-webkit-scrollbar-track {
-            background: transparent;
-        }
-        
-        .messages-container::-webkit-scrollbar-thumb {
-            background: linear-gradient(180deg, var(--primary-500), var(--accent-500));
-            border-radius: 3px;
-        }
-        
-        .messages-container::-webkit-scrollbar-thumb:hover {
-            background: var(--neutral-500);
-        }
-        
-        /* 日期分隔线 */
-        .date-divider {
+        .icon-btn {
+            width: 36px;
+            height: 36px;
+            background: var(--glass-light);
+            border: 1px solid var(--glass-border);
+            border-radius: var(--radius-md);
             display: flex;
             align-items: center;
             justify-content: center;
-            margin: 26px 0;
-            position: relative;
-        }
-        
-        .date-divider::before {
-            content: '';
-            position: absolute;
-            left: 0;
-            right: 0;
-            height: 1px;
-            background: linear-gradient(90deg, transparent, var(--border-default), transparent);
-        }
-        
-        .date-divider span {
-            background: var(--bg-base);
-            padding: 0 18px;
-            font-size: 11px;
-            color: var(--text-tertiary);
-            text-transform: uppercase;
-            letter-spacing: 2px;
-            position: relative;
-            z-index: 1;
-        }
-        
-        /* ===== 消息气泡 - 现代化设计 ===== */
-        .message-group {
-            display: flex;
-            margin-bottom: 22px;
-            animation: message-appear 0.41111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111115s cubic-bezier(0.34, 1.56, 0.64, 1);
-        }
-        
-        @keyframes message-appear {
-            from { opacity: 0; transform: translateY(12px) scale(0.97); }
-            to { opacity: 1; transform: translateY(0) scale(1); }
-        }
-        
-        .message-group.user {
-            flex-direction: row-reverse;
-        }
-        
-        .message-avatar {
-            width: 38px;
-            height: 38px;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 17px;
-            flex-shrink: 0;
-            position: relative;
-        }
-        
-        .message-group.user .message-avatar {
-            background: linear-gradient(135deg, var(--primary-500), var(--primary-600));
-            box-shadow: 0 0 15px rgba(0, 243, 255, 0.3);
-        }
-        
-        .message-group.bot .message-avatar {
-            background: linear-gradient(135deg, var(--secondary-500), var(--accent-500));
-            box-shadow: 0 0 15px rgba(255, 0, 160, 0.3);
-        }
-        
-        .message-content {
-            max-width: 73%;
-            margin: 0 13px;
-            display: flex;
-            flex-direction: column;
-        }
-        
-        .message-author {
-            font-size: 12px;
-            font-weight: 600;
-            color: var(--text-secondary);
-            margin-bottom: 4px;
-            display: flex;
-            align-items: center;
-            gap: 6px;
-        }
-        
-        .message-group.user .message-author {
-            justify-content: flex-end;
-        }
-        
-        .message-bubble {
-            padding: 13px 17px;
-            font-size: 15px;
-            line-height: 1.65;
-            position: relative;
-            word-wrap: break-word;
-        }
-        
-        .message-group.user .message-bubble {
-            background: linear-gradient(135deg, rgba(0, 243, 255, 0.12), rgba(0, 243, 255, 0.04));
-            border: 1px solid rgba(0, 243, 255, 0.25);
-            border-radius: 18px 18px 4px 18px;
-            color: var(--text-primary);
-        }
-        
-        .message-group.bot .message-bubble {
-            background: var(--bg-card);
-            border: 1px solid var(--border-subtle);
-            border-radius: 18px 18px 18px 4px;
-            color: var(--text-primary);
-            backdrop-filter: blur(10px);
-            transition: all 0.3s ease;
-        }
-        
-        .message-group.bot .message-bubble:hover {
-            border-color: rgba(0, 243, 255, 0.3);
-            box-shadow: 0 0 20px rgba(0, 243, 255, 0.1);
-        }
-        
-        .message-meta {
-            display: flex;
-            align-items: center;
-            gap: 7px;
-            margin-top: 5px;
-            font-size: 10px;
-            color: var(--text-tertiary);
-        }
-        
-        .message-group.user .message-meta {
-            justify-content: flex-end;
-        }
-        
-        .message-status {
-            color: var(--primary-500);
-        }
-        
-        /* ===== 输入区域 - 现代化设计 ===== */
-        .input-container {
-            background: rgba(9, 9, 18, 0.94);
-            border-top: 1px solid var(--border-subtle);
-            padding: 17px 20px;
-            padding-bottom: max(17px, env(safe-area-inset-bottom));
-            backdrop-filter: blur(22px);
-        }
-        
-        .input-wrapper {
-            display: flex;
-            align-items: flex-end;
-            gap: 13px;
-            background: var(--bg-card);
-            border: 1px solid var(--border-subtle);
-            border-radius: 25px;
-            padding: 9px 9px 9px 21px;
-            transition: all 0.25s ease;
-        }
-        
-        .input-wrapper:focus-within {
-            border-color: var(--border-primary);
-            box-shadow: 0 0 0 3px rgba(0, 243, 255, 0.1), 0 0 20px rgba(0, 243, 255, 0.15);
-            transform: translateY(-1px);
-        }
-        
-        .message-input {
-            flex: 1;
-            background: transparent;
-            border: none;
-            padding: 11px 0;
-            font-size: 15px;
-            color: var(--text-primary);
-            outline: none;
-            resize: none;
-            min-height: 46px;
-            max-height: 130px;
-            line-height: 1.6;
-            font-family: inherit;
-        }
-        
-        .message-input::placeholder {
-            color: var(--text-tertiary);
-        }
-        
-        /* 工具按钮 */
-        .input-tools {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-        }
-        
-        .tool-btn {
-            width: 41px;
-            height: 41px;
-            background: transparent;
-            border: none;
-            border-radius: 14px;
-            color: var(--text-tertiary);
-            font-size: 20px;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            transition: all 0.25s ease;
-        }
-        
-        .tool-btn:hover {
-            background: var(--bg-hover);
-            color: var(--text-primary);
-        }
-        
-        .tool-btn.fitness {
-            background: linear-gradient(135deg, rgba(255, 0, 255, 0.15), rgba(189, 0, 255, 0.05));
-            color: #ff00ff;
-            border: 1px solid rgba(255, 0, 255, 0.4111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111);
-            box-shadow: 0 0 15px rgba(255, 0, 255, 0.2);
-        }
-        
-        .tool-btn.fitness:hover {
-            background: linear-gradient(135deg, rgba(255, 0, 255, 0.25), rgba(189, 0, 255, 0.1));
-            box-shadow: 0 0 25px rgba(255, 0, 255, 0.4111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111);
-            transform: scale(1.1);
-        }
-        
-        .send-btn {
-            width: 45px;
-            height: 45px;
-            background: linear-gradient(135deg, var(--primary-500), var(--accent-500));
-            border: none;
-            border-radius: 14px;
-            color: var(--bg-base);
-            font-size: 20px;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            transition: all 0.2s cubic-bezier(0.34, 1.56, 0.64, 1);
-            box-shadow: 0.4111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111px 15px rgba(0, 243, 255, 0.3), 0 0 0 1px rgba(0, 243, 255, 0.2);
-        }
-        
-        .send-btn:hover {
-            transform: scale(1.04);
-            box-shadow: 0 5px 22px rgba(0, 243, 255, 0.41111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111118);
-        }
-        
-        .send-btn:active {
-            transform: scale(0.95);
-        }
-        
-        .send-btn:disabled {
-            opacity: 0.5;
-            cursor: not-allowed;
-            transform: none;
-        }
-        
-        /* ===== 加载动画 ===== */
-        .typing-indicator {
-            display: flex;
-            align-items: center;
-            gap: 5px;
-            padding: 17px 21px;
-        }
-        
-        .typing-dot {
-            width: 8px;
-            height: 8px;
-            background: var(--secondary-500);
-            border-radius: 50%;
-            animation: typing-bounce 1.4s infinite ease-in-out both;
-            box-shadow: 0 0 10px var(--secondary-500);
-        }
-        
-        .typing-dot:nth-child(1) { animation-delay: -0.32s; }
-        .typing-dot:nth-child(2) { animation-delay: -0.16s; }
-        
-        @keyframes typing-bounce {
-            0%, 80%, 100% { transform: scale(0.5); opacity: 0.4111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111; }
-            40% { transform: scale(1.1); opacity: 1; }
-        }
-        
-        /* ===== 滚动到底部按钮 ===== */
-        .scroll-to-bottom {
-            position: fixed;
-            bottom: 102px;
-            right: 22px;
-            width: 47px;
-            height: 47px;
-            background: var(--bg-card);
-            border: 1px solid var(--border-default);
-            border-radius: 50%;
-            color: var(--text-secondary);
             font-size: 18px;
             cursor: pointer;
+            transition: all var(--transition-fast);
+        }
+        
+        .icon-btn:hover {
+            background: var(--glass-medium);
+            transform: scale(1.05);
+        }
+        
+        /* ============================================
+           STATUS BAR - 系统状态
+           ============================================ */
+        .status-bar {
             display: flex;
             align-items: center;
-            justify-content: center;
-            opacity: 0;
-            transform: translateY(20px);
-            transition: all 0.3s ease;
-            backdrop-filter: blur(10px);
-            z-index: 50;
-            box-shadow: 0.4111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111px 15px rgba(0,0,0,0.3);
+            justify-content: space-between;
+            padding: var(--space-2) var(--space-4);
+            margin: 0 var(--space-4);
+            background: var(--glass-light);
+            border: 1px solid var(--glass-border);
+            border-radius: var(--radius-lg);
+            margin-bottom: var(--space-4);
         }
         
-        .scroll-to-bottom.visible {
-            opacity: 1;
-            transform: translateY(0) scale(1);
-        }
-        
-        .scroll-to-bottom:hover {
-            background: var(--bg-hover);
-            border-color: var(--border-primary);
-            color: var(--primary-500);
-            transform: scale(1.1);
-        }
-        
-        /* ===== 响应式设计 ===== */
-        @media (max-width: 768px) {
-            .message-content {
-                max-width: 78%;
-            }
-            
-            .brand-name {
-                font-size: 17px;
-                letter-spacing: 2px;
-            }
-            
-            .clock-time {
-                font-size: 18px;
-            }
-        }
-        
-        /* ===== 全局动画 ===== */
-        @keyframes fade-in {
-            from { opacity: 0; }
-            to { opacity: 1; }
-        }
-        
-        @keyframes slide-up {
-            from { opacity: 0; transform: translateY(20px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-        
-        @keyframes pulse-glow {
-            0%, 100% { box-shadow: 0 0 8px rgba(0, 243, 255, 0.35); }
-            50% { box-shadow: 0 0 22px rgba(0, 243, 255, 0.65); }
-        }
-        
-        /* ===== 状态指示器 ===== */
-        .status-badge {
-            display: inline-flex;
+        .status-item {
+            display: flex;
             align-items: center;
-            gap: 7px;
-            font-size: 11px;
-            color: var(--success);
-            text-transform: uppercase;
-            letter-spacing: 1.5px;
+            gap: var(--space-2);
+            font-size: 13px;
+            color: var(--text-secondary);
         }
         
         .status-dot {
             width: 6px;
             height: 6px;
-            background: var(--success);
+            background: var(--neon-green);
             border-radius: 50%;
-            animation: pulse-glow 2s infinite;
-            box-shadow: 0 0 8px var(--success);
+            animation: pulse 2s ease-in-out infinite;
+        }
+        
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+        
+        .status-time {
+            font-family: var(--font-mono);
+            font-weight: 500;
+            color: var(--neon-cyan);
+        }
+        
+        /* ============================================
+           MAIN CONTENT
+           ============================================ */
+        .main-content {
+            flex: 1;
+            overflow-y: auto;
+            overflow-x: hidden;
+            padding: var(--space-4);
+            padding-bottom: calc(var(--space-24) + env(safe-area-inset-bottom));
+            scroll-behavior: smooth;
+        }
+        
+        .main-content::-webkit-scrollbar {
+            display: none;
+        }
+        
+        /* ============================================
+           SECTION TITLE - 区块标题
+           ============================================ */
+        .section-title {
+            font-size: 22px;
+            font-weight: 700;
+            letter-spacing: -0.021em;
+            margin-bottom: var(--space-4);
+            display: flex;
+            align-items: center;
+            gap: var(--space-2);
+        }
+        
+        .section-subtitle {
+            font-size: 15px;
+            color: var(--text-tertiary);
+            margin-bottom: var(--space-4);
+        }
+        
+        /* ============================================
+           WELCOME CARD - 欢迎卡片
+           ============================================ */
+        .welcome-card {
+            position: relative;
+            padding: var(--space-6);
+            margin-bottom: var(--space-6);
+            background: linear-gradient(135deg, 
+                rgba(0, 212, 255, 0.10) 0%, 
+                rgba(255, 45, 146, 0.08) 50%,
+                rgba(191, 90, 242, 0.10) 100%);
+            border: 1px solid var(--glass-border);
+            border-radius: var(--radius-2xl);
+            overflow: hidden;
+        }
+        
+        .welcome-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 1px;
+            background: linear-gradient(90deg, transparent, var(--neon-cyan), transparent);
+            opacity: 0.5;
+        }
+        
+        .welcome-greeting {
+            font-size: 13px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            color: var(--neon-cyan);
+            margin-bottom: var(--space-2);
+        }
+        
+        .welcome-name {
+            font-size: 28px;
+            font-weight: 700;
+            letter-spacing: -0.021em;
+            margin-bottom: var(--space-2);
+        }
+        
+        .welcome-message {
+            font-size: 15px;
+            color: var(--text-secondary);
+            line-height: 1.5;
+        }
+        
+        /* ============================================
+           DASHBOARD GRID - 数据仪表板
+           ============================================ */
+        .dashboard-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: var(--space-3);
+            margin-bottom: var(--space-6);
+        }
+        
+        /* 玻璃卡片 */
+        .glass-card {
+            background: var(--glass-light);
+            border: 1px solid var(--glass-border);
+            border-radius: var(--radius-xl);
+            padding: var(--space-4);
+            transition: all var(--transition-normal);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .glass-card::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(135deg, rgba(255,255,255,0.05) 0%, transparent 50%);
+            opacity: 0;
+            transition: opacity var(--transition-fast);
+        }
+        
+        .glass-card:hover::before {
+            opacity: 1;
+        }
+        
+        .glass-card:active {
+            transform: scale(0.98);
+        }
+        
+        .glass-card.highlight {
+            background: linear-gradient(135deg, 
+                rgba(0, 212, 255, 0.15) 0%, 
+                rgba(0, 212, 255, 0.05) 100%);
+            border-color: rgba(0, 212, 255, 0.30);
+        }
+        
+        .card-icon {
+            width: 40px;
+            height: 40px;
+            background: var(--glass-medium);
+            border-radius: var(--radius-md);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 20px;
+            margin-bottom: var(--space-3);
+        }
+        
+        .card-label {
+            font-size: 13px;
+            color: var(--text-tertiary);
+            margin-bottom: var(--space-1);
+        }
+        
+        .card-value {
+            font-size: 28px;
+            font-weight: 700;
+            letter-spacing: -0.024em;
+        }
+        
+        .card-value.small {
+            font-size: 22px;
+        }
+        
+        .card-unit {
+            font-size: 15px;
+            font-weight: 400;
+            color: var(--text-secondary);
+            margin-left: var(--space-1);
+        }
+        
+        .card-progress {
+            margin-top: var(--space-3);
+            height: 4px;
+            background: var(--glass-medium);
+            border-radius: var(--radius-full);
+            overflow: hidden;
+        }
+        
+        .card-progress-bar {
+            height: 100%;
+            background: linear-gradient(90deg, var(--neon-cyan), var(--neon-violet));
+            border-radius: var(--radius-full);
+            transition: width 1s var(--ease-smooth);
+        }
+        
+        .card-footer {
+            display: flex;
+            align-items: center;
+            gap: var(--space-1);
+            margin-top: var(--space-2);
+            font-size: 12px;
+            color: var(--text-tertiary);
+        }
+        
+        .trend-up { color: var(--neon-green); }
+        .trend-down { color: var(--neon-orange); }
+        
+        /* 大尺寸卡片 */
+        .glass-card.large {
+            grid-column: span 2;
+            padding: var(--space-5);
+        }
+        
+        .card-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: var(--space-4);
+        }
+        
+        .card-title {
+            font-size: 17px;
+            font-weight: 600;
+        }
+        
+        .card-action {
+            font-size: 13px;
+            color: var(--neon-cyan);
+            cursor: pointer;
+        }
+        
+        /* ============================================
+           CHAT AREA - 对话区域
+           ============================================ */
+        .chat-container {
+            margin-bottom: var(--space-6);
+        }
+        
+        .chat-messages {
+            display: flex;
+            flex-direction: column;
+            gap: var(--space-3);
+            margin-bottom: var(--space-4);
+        }
+        
+        .message {
+            display: flex;
+            gap: var(--space-3);
+            max-width: 85%;
+            animation: message-in 0.3s var(--ease-smooth);
+        }
+        
+        @keyframes message-in {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        .message.user {
+            align-self: flex-end;
+            flex-direction: row-reverse;
+        }
+        
+        .message-avatar {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            flex-shrink: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 14px;
+        }
+        
+        .message.user .message-avatar {
+            background: var(--glass-medium);
+        }
+        
+        .message.ai .message-avatar {
+            background: linear-gradient(135deg, var(--neon-cyan), var(--neon-violet));
+        }
+        
+        .message-content {
+            padding: var(--space-3) var(--space-4);
+            border-radius: var(--radius-xl);
+            font-size: 15px;
+            line-height: 1.4;
+        }
+        
+        .message.user .message-content {
+            background: var(--neon-cyan);
+            color: #000;
+            border-bottom-right-radius: var(--space-1);
+        }
+        
+        .message.ai .message-content {
+            background: var(--glass-light);
+            border: 1px solid var(--glass-border);
+            border-bottom-left-radius: var(--space-1);
+        }
+        
+        /* 输入框 */
+        .chat-input-area {
+            position: relative;
+        }
+        
+        .chat-input-container {
+            display: flex;
+            align-items: center;
+            gap: var(--space-2);
+            padding: var(--space-2);
+            background: var(--glass-light);
+            border: 1px solid var(--glass-border);
+            border-radius: var(--radius-2xl);
+        }
+        
+        .chat-input {
+            flex: 1;
+            padding: var(--space-3) var(--space-4);
+            font-size: 15px;
+            background: transparent;
+            border: none;
+            color: var(--text-primary);
+            outline: none;
+        }
+        
+        .chat-input::placeholder {
+            color: var(--text-quaternary);
+        }
+        
+        .chat-send-btn {
+            width: 40px;
+            height: 40px;
+            background: var(--neon-cyan);
+            border: none;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 18px;
+            cursor: pointer;
+            transition: all var(--transition-fast);
+            flex-shrink: 0;
+        }
+        
+        .chat-send-btn:hover {
+            transform: scale(1.05);
+            box-shadow: var(--shadow-neon-cyan);
+        }
+        
+        /* ============================================
+           QUICK ACTIONS - 快捷操作
+           ============================================ */
+        .quick-actions {
+            margin-bottom: var(--space-6);
+        }
+        
+        .actions-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: var(--space-3);
+        }
+        
+        .action-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: var(--space-2);
+            padding: var(--space-3);
+            background: var(--glass-light);
+            border: 1px solid var(--glass-border);
+            border-radius: var(--radius-xl);
+            cursor: pointer;
+            transition: all var(--transition-fast);
+        }
+        
+        .action-item:hover {
+            background: var(--glass-medium);
+            transform: translateY(-2px);
+        }
+        
+        .action-item:active {
+            transform: scale(0.95);
+        }
+        
+        .action-icon {
+            width: 48px;
+            height: 48px;
+            background: var(--glass-medium);
+            border-radius: var(--radius-lg);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+        }
+        
+        .action-label {
+            font-size: 12px;
+            color: var(--text-secondary);
+            text-align: center;
+        }
+        
+        /* ============================================
+           BOTTOM NAV - 底部导航
+           ============================================ */
+        .bottom-nav {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            z-index: 100;
+            padding: var(--space-2) var(--space-4) max(var(--space-2), env(safe-area-inset-bottom));
+            background: rgba(0, 0, 0, 0.75);
+            backdrop-filter: blur(20px) saturate(180%);
+            -webkit-backdrop-filter: blur(20px) saturate(180%);
+            border-top: 1px solid var(--glass-border);
+        }
+        
+        .nav-items {
+            display: flex;
+            justify-content: space-around;
+            max-width: 430px;
+            margin: 0 auto;
+        }
+        
+        .nav-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: var(--space-1);
+            padding: var(--space-2) var(--space-3);
+            cursor: pointer;
+            transition: all var(--transition-fast);
+            border-radius: var(--radius-md);
+        }
+        
+        .nav-item:hover {
+            background: var(--glass-light);
+        }
+        
+        .nav-item.active .nav-icon {
+            color: var(--neon-cyan);
+        }
+        
+        .nav-item.active .nav-label {
+            color: var(--neon-cyan);
+        }
+        
+        .nav-icon {
+            font-size: 24px;
+            color: var(--text-tertiary);
+            transition: color var(--transition-fast);
+        }
+        
+        .nav-label {
+            font-size: 11px;
+            font-weight: 500;
+            color: var(--text-tertiary);
+            transition: color var(--transition-fast);
+        }
+        
+        /* ============================================
+           UTILITY CLASSES
+           ============================================ */
+        .hidden { display: none !important; }
+        .text-center { text-align: center; }
+        .mb-4 { margin-bottom: var(--space-4); }
+        .mb-6 { margin-bottom: var(--space-6); }
+        
+        /* 霓虹文字效果 */
+        .text-neon-cyan {
+            color: var(--neon-cyan);
+            text-shadow: 0 0 20px rgba(0, 212, 255, 0.5);
+        }
+        
+        .text-neon-magenta {
+            color: var(--neon-magenta);
+            text-shadow: 0 0 20px rgba(255, 45, 146, 0.4);
+        }
+        
+        /* 渐变文字 */
+        .text-gradient {
+            background: linear-gradient(135deg, var(--neon-cyan), var(--neon-magenta));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        
+        /* ============================================
+           ANIMATIONS
+           ============================================ */
+        .fade-in {
+            animation: fade-in 0.4s var(--ease-smooth);
+        }
+        
+        @keyframes fade-in {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+        
+        .slide-up {
+            animation: slide-up 0.4s var(--ease-smooth);
+        }
+        
+        @keyframes slide-up {
+            from { 
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to { 
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        /* ============================================
+           RESPONSIVE
+           ============================================ */
+        @media (min-width: 768px) {
+            .app {
+                max-width: 480px;
+            }
+        }
+        
+        /* 减少动画偏好 */
+        @media (prefers-reduced-motion: reduce) {
+            *, *::before, *::after {
+                animation-duration: 0.01ms !important;
+                animation-iteration-count: 1 !important;
+                transition-duration: 0.01ms !important;
+            }
         }
     </style>
 </head>
 <body>
-    <!-- 背景系统 -->
-    <div class="bg-canvas"></div>
-    <div class="bg-grid"></div>
-    <div class="particles-container" id="particles"></div>
+    <!-- 深空背景 -->
+    <div class="universe"></div>
     
-    <!-- 顶部光晕效果 -->
-    <div style="position: fixed; top: 0; left: 50%; transform: translateX(-50%); width: 80%; height: 300px; 
-                background: radial-gradient(ellipse at center top, rgba(0, 243, 255, 0.06) 0%, transparent 60%); 
-                pointer-events: none; z-index: 2;"></div>
+    <!-- 悬浮粒子 -->
+    <div class="particles" id="particles"></div>
     
-    <!-- 应用容器 -->
-    <div class="app-container">
-        <!-- 顶部导航 -->
-        <header class="app-header">
-            <div class="brand">
-                <div class="brand-logo">🧰</div>
-                <div class="brand-text">
-                    <div class="brand-name">AMBROSE</div>
-                    <div class="brand-tagline">AI HEALTH COACH v1.0</div>
+    <!-- 认证屏幕 -->
+    <div class="auth-screen" id="authScreen">
+        <div class="auth-logo">
+            <div class="auth-logo-inner">A</div>
+        </div>
+        <h1 class="auth-title">AMBROSE</h1>
+        <p class="auth-subtitle">AI HEALTH COACH</p>
+        
+        <div class="auth-input-group">
+            <input type="text" class="input-field" id="inviteCode" placeholder="输入邀请码" maxlength="4">
+            <input type="text" class="input-field hidden" id="verifyCode" placeholder="身份验证码" maxlength="4">
+        </div>
+        
+        <button class="btn-primary" id="authBtn">进入系统</button>
+    </div>
+    
+    <!-- 主应用 -->
+    <div class="app" id="mainApp">
+        <!-- 头部导航 -->
+        <header class="header">
+            <div class="header-content">
+                <div class="header-brand">
+                    <div class="brand-icon">A</div>
+                    <span class="brand-text">AMBROSE</span>
                 </div>
-            </div>
-            
-            <div style="display: flex; align-items: center; gap: 16px;">
-                <div class="status-badge">
-                    <span class="status-dot"></span>
-                    <span>ONLINE</span>
+                <div class="header-actions">
+                    <button class="icon-btn" id="healthBtn" title="健康中心">❤️</button>
+                    <button class="icon-btn" id="settingsBtn" title="设置">⚙️</button>
                 </div>
-                
-                <div class="header-clock">
-                    <div class="clock-time" id="clock">--:--:--</div>
-                    <div class="clock-date" id="date">----/--/--</div>
-                </div>
-                
-                <button onclick="Auth.logout()" style="background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); border-radius: 8px; padding: 6px 12px; color: var(--text-tertiary); font-size: 11px; cursor: pointer; text-transform: uppercase; letter-spacing: 1px; transition: all 0.2s;"
-                    onmouseover="this.style.borderColor='rgba(255,0,160,0.4111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111)'; this.style.color='var(--secondary-500)';"
-                    onmouseout="this.style.borderColor='rgba(255,255,255,0.1)'; this.style.color='var(--text-tertiary)';"
-                >退出</button>
             </div>
         </header>
         
-        <!-- 消息区域 -->
-        <div class="messages-container" id="messages"></div>
-        
-        <!-- 输入区域 -->
-        <div class="input-container">
-            <div class="input-wrapper">
-                <textarea class="message-input" id="messageInput" placeholder="输入消息..." rows="1"></textarea>
-                
-                <div class="input-tools">
-                    <button class="tool-btn fitness" id="fitnessBtn" title="健康中心">❤️</button>
-                    <button class="tool-btn" id="nutritionBtn" title="饮食记录" style="background: linear-gradient(135deg, rgba(0,255,157,0.15), rgba(0,255,157,0.05)); color: #00ff9d; border: 1px solid rgba(0,255,157,0.3);">🍽️</button>
-                    <button class="tool-btn" id="weightBtn" title="体重管理" style="background: linear-gradient(135deg, rgba(0,243,255,0.15), rgba(0,243,255,0.05)); color: var(--primary-500); border: 1px solid rgba(0,243,255,0.3);">⚖️</button>
-                    <button class="send-btn" id="sendBtn">⚡</button>
-                </div>
+        <!-- 状态栏 -->
+        <div class="status-bar">
+            <div class="status-item">
+                <span class="status-dot"></span>
+                <span>系统在线</span>
+            </div>
+            <div class="status-item">
+                <span class="status-time" id="beijingTime">--:--:--</span>
             </div>
         </div>
+        
+        <!-- 主内容区 -->
+        <main class="main-content">
+            <!-- 欢迎卡片 -->
+            <div class="welcome-card slide-up">
+                <div class="welcome-greeting">NEURAL LINK v3.0</div>
+                <h2 class="welcome-name" id="userGreeting">你好</h2>
+                <p class="welcome-message">我是你的AI健康教练。今天有什么可以帮助你的吗？</p>
+            </div>
+            
+            <!-- 数据仪表板 -->
+            <section class="dashboard-section mb-6">
+                <h3 class="section-title">
+                    <span>今日概览</span>
+                </h3>
+                <div class="dashboard-grid">
+                    <div class="glass-card">
+                        <div class="card-icon">👟</div>
+                        <div class="card-label">步数</div>
+                        <div class="card-value">
+                            <span id="todaySteps">0</span>
+                            <span class="card-unit">步</span>
+                        </div>
+                        <div class="card-progress">
+                            <div class="card-progress-bar" style="width: 0%"></div>
+                        </div>
+                    </div>
+                    
+                    <div class="glass-card">
+                        <div class="card-icon">🔥</div>
+                        <div class="card-label">消耗</div>
+                        <div class="card-value small">
+                            <span id="todayCalories">0</span>
+                            <span class="card-unit">kcal</span>
+                        </div>
+                    </div>
+                    
+                    <div class="glass-card">
+                        <div class="card-icon">😴</div>
+                        <div class="card-label">睡眠</div>
+                        <div class="card-value small">
+                            <span id="lastSleep">--</span>
+                            <span class="card-unit">h</span>
+                        </div>
+                    </div>
+                    
+                    <div class="glass-card">
+                        <div class="card-icon">💧</div>
+                        <div class="card-label">饮水</div>
+                        <div class="card-value small">
+                            <span id="todayWater">0</span>
+                            <span class="card-unit">ml</span>
+                        </div>
+                    </div>
+                    
+                    <div class="glass-card large highlight">
+                        <div class="card-header">
+                            <span class="card-title">💬 与AMBROSE对话</span>
+                            <span class="card-action">展开 →</span>
+                        </div>
+                        <p style="color: var(--text-secondary); font-size: 15px;">
+                            询问健康问题、获取运动建议、记录饮食，或只是聊聊天。
+                        </p>
+                    </div>
+                </div>
+            </section>
+            
+            <!-- 快捷操作 -->
+            <section class="quick-actions">
+                <h3 class="section-title">快捷记录</h3>
+                <div class="actions-grid">
+                    <div class="action-item" onclick="showToast('记录体重')">
+                        <div class="action-icon">⚖️</div>
+                        <span class="action-label">体重</span>
+                    </div>
+                    <div class="action-item" onclick="showToast('记录饮食')">
+                        <div class="action-icon">🍽️</div>
+                        <span class="action-label">饮食</span>
+                    </div>
+                    <div class="action-item" onclick="showToast('记录运动')">
+                        <div class="action-icon">🏃</div>
+                        <span class="action-label">运动</span>
+                    </div>
+                    <div class="action-item" onclick="showToast('记录睡眠')">
+                        <div class="action-icon">🌙</div>
+                        <span class="action-label">睡眠</span>
+                    </div>
+                </div>
+            </section>
+            
+            <!-- 对话区域 -->
+            <section class="chat-container">
+                <h3 class="section-title">最近对话</h3>
+                <div class="chat-messages" id="chatPreview">
+                    <div class="message ai">
+                        <div class="message-avatar">A</div>
+                        <div class="message-content">
+                            你好！我是AMBROSE，你的AI健康教练。今天感觉怎么样？
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </main>
+        
+        <!-- 底部导航 -->
+        <nav class="bottom-nav">
+            <div class="nav-items">
+                <div class="nav-item active" data-page="home">
+                    <span class="nav-icon">🏠</span>
+                    <span class="nav-label">首页</span>
+                </div>
+                <div class="nav-item" data-page="health">
+                    <span class="nav-icon">📊</span>
+                    <span class="nav-label">数据</span>
+                </div>
+                <div class="nav-item" data-page="chat">
+                    <span class="nav-icon">💬</span>
+                    <span class="nav-label">对话</span>
+                </div>
+                <div class="nav-item" data-page="profile">
+                    <span class="nav-icon">👤</span>
+                    <span class="nav-label">我的</span>
+                </div>
+            </div>
+        </nav>
     </div>
     
-    <!-- 滚动到底部按钮 -->
-    <button class="scroll-to-bottom" id="scrollToBottom" onclick="UI.scrollToBottom()">↓</button>
-    
     <script>
-        // 初始化粒子系统
-        const particlesContainer = document.getElementById('particles');
-        for (let i = 0; i < 30; i++) {
-            const particle = document.createElement('div');
-            particle.className = 'particle';
-            particle.style.left = Math.random() * 100 + '%';
-            particle.style.animationDelay = Math.random() * 15 + 's';
-            particle.style.animationDuration = (10 + Math.random() * 10) + 's';
-            particlesContainer.appendChild(particle);
+        /* ============================================
+           AMBROSE Core - 极简内核
+           ============================================ */
+        
+        // 粒子系统
+        function initParticles() {
+            const container = document.getElementById('particles');
+            for (let i = 0; i < 20; i++) {
+                const particle = document.createElement('div');
+                particle.className = 'particle';
+                particle.style.left = Math.random() * 100 + '%';
+                particle.style.animationDuration = (15 + Math.random() * 10) + 's';
+                particle.style.animationDelay = Math.random() * 15 + 's';
+                container.appendChild(particle);
+            }
         }
+        
+        // 北京时间更新
+        function updateBeijingTime() {
+            const timeEl = document.getElementById('beijingTime');
+            const now = new Date();
+            const beijingTime = new Date(now.toLocaleString('en-US', { timeZone: 'Asia/Shanghai' }));
+            const hours = String(beijingTime.getHours()).padStart(2, '0');
+            const minutes = String(beijingTime.getMinutes()).padStart(2, '0');
+            const seconds = String(beijingTime.getSeconds()).padStart(2, '0');
+            timeEl.textContent = `${hours}:${minutes}:${seconds}`;
+        }
+        
+        // 认证系统
+        function initAuth() {
+            const authScreen = document.getElementById('authScreen');
+            const mainApp = document.getElementById('mainApp');
+            const inviteInput = document.getElementById('inviteCode');
+            const verifyInput = document.getElementById('verifyCode');
+            const authBtn = document.getElementById('authBtn');
+            
+            inviteInput.addEventListener('input', (e) => {
+                if (e.target.value === '8888') {
+                    verifyInput.classList.remove('hidden');
+                    verifyInput.focus();
+                }
+            });
+            
+            authBtn.addEventListener('click', () => {
+                const invite = inviteInput.value;
+                const verify = verifyInput.value;
+                
+                if (invite === '8888' && verify === '0812') {
+                    authScreen.classList.add('hidden');
+                    localStorage.setItem('ambrose_user_identity', 'boss');
+                    updateGreeting('BOSS Shao');
+                } else if (invite === '8888') {
+                    authScreen.classList.add('hidden');
+                    localStorage.setItem('ambrose_user_identity', 'guest');
+                    updateGreeting('朋友');
+                } else {
+                    inviteInput.style.borderColor = 'var(--neon-magenta)';
+                    setTimeout(() => {
+                        inviteInput.style.borderColor = '';
+                    }, 1000);
+                }
+            });
+        }
+        
+        // 更新问候语
+        function updateGreeting(name) {
+            document.getElementById('userGreeting').textContent = `你好，${name}`;
+        }
+        
+        // Toast提示
+        function showToast(message) {
+            const toast = document.createElement('div');
+            toast.style.cssText = `
+                position: fixed;
+                top: 50%;
+                left: 50%;
+                transform: translate(-50%, -50%);
+                background: var(--glass-heavy);
+                backdrop-filter: blur(20px);
+                padding: 16px 24px;
+                border-radius: 12px;
+                border: 1px solid var(--glass-border);
+                color: white;
+                font-size: 15px;
+                z-index: 9999;
+                animation: fade-in 0.2s ease;
+            `;
+            toast.textContent = message;
+            document.body.appendChild(toast);
+            setTimeout(() => toast.remove(), 1500);
+        }
+        
+        // 底部导航
+        function initNav() {
+            document.querySelectorAll('.nav-item').forEach(item => {
+                item.addEventListener('click', () => {
+                    document.querySelectorAll('.nav-item').forEach(i => i.classList.remove('active'));
+                    item.classList.add('active');
+                });
+            });
+        }
+        
+        // 初始化
+        document.addEventListener('DOMContentLoaded', () => {
+            initParticles();
+            initAuth();
+            initNav();
+            updateBeijingTime();
+            setInterval(updateBeijingTime, 1000);
+            
+            // 检查登录状态
+            const identity = localStorage.getItem('ambrose_user_identity');
+            if (identity) {
+                document.getElementById('authScreen').classList.add('hidden');
+                updateGreeting(identity === 'boss' ? 'BOSS Shao' : '朋友');
+            }
+        });
     </script>
-    
-    <script src="design-system.js"></script>
-    <script src="ui-components.js"></script>
-    <script src="fitness-pro.js"></script>
-    <script src="health-dashboard.js"></script>
-    <script src="nutrition-system.js"></script>
-    <script src="weight-tracker.js"></script>
-    <script src="ai-coach.js"></script>
-    <script src="auth.js?v=5"></script>
-    <script src="chat.js?v=5"></script>
 </body>
 </html>
