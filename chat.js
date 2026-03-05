@@ -32,6 +32,9 @@ const UI = {
         // 初始化营养系统 (薄荷风格)
         this.nutritionSystem = new NutritionSystem(this);
         
+        // 初始化体重追踪器
+        this.weightTracker = new WeightTracker(this);
+        
         // 检查身份
         const userRelation = localStorage.getItem('ambrose_user_relation');
         this.isMaster = userRelation === 'self';
@@ -50,6 +53,12 @@ const UI = {
         const nutritionBtn = document.getElementById('nutritionBtn');
         if (nutritionBtn) {
             nutritionBtn.onclick = () => this.nutritionSystem.showNutritionHub();
+        }
+        
+        // 显示体重管理按钮
+        const weightBtn = document.getElementById('weightBtn');
+        if (weightBtn) {
+            weightBtn.onclick = () => this.weightTracker.showWeightHub();
         }
     },
 
