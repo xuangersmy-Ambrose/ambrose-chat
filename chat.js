@@ -29,6 +29,9 @@ const UI = {
         // 初始化健康数据中心
         this.healthDashboard = new HealthDashboard(this);
         
+        // 初始化营养系统 (薄荷风格)
+        this.nutritionSystem = new NutritionSystem(this);
+        
         // 检查身份
         const userRelation = localStorage.getItem('ambrose_user_relation');
         this.isMaster = userRelation === 'self';
@@ -41,6 +44,12 @@ const UI = {
         const fitnessBtn = document.getElementById('fitnessBtn');
         if (fitnessBtn) {
             fitnessBtn.onclick = () => this.healthDashboard.showHealthHub();
+        }
+        
+        // 显示饮食记录按钮
+        const nutritionBtn = document.getElementById('nutritionBtn');
+        if (nutritionBtn) {
+            nutritionBtn.onclick = () => this.nutritionSystem.showNutritionHub();
         }
     },
 
