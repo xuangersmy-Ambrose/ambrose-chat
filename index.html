@@ -1,515 +1,120 @@
 <!DOCTYPE html>
-<html lang="zh-CN">
+<html>
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>AMBROSE</title>
-    <style>
-        * { margin: 0; padding: 0; box-sizing: border-box; }
-        body { 
-            font-family: -apple-system, BlinkMacSystemFont, sans-serif; 
-            background: #000; 
-            color: #fff; 
-            min-height: 100vh;
-        }
-        
-        /* 认证 */
-        .auth {
-            position: fixed;
-            inset: 0;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            padding: 40px;
-            background: #000;
-            z-index: 100;
-        }
-        .auth.hide { display: none; }
-        
-        .logo {
-            width: 80px;
-            height: 80px;
-            background: linear-gradient(135deg, #00D4FF, #FF2D92);
-            border-radius: 20px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 32px;
-            font-weight: bold;
-            color: #000;
-            margin-bottom: 30px;
-        }
-        
-        h1 { font-size: 28px; margin-bottom: 8px; }
-        p.subtitle { color: rgba(255,255,255,0.5); margin-bottom: 30px; }
-        
-        input {
-            width: 100%;
-            max-width: 280px;
-            padding: 15px;
-            font-size: 17px;
-            background: rgba(255,255,255,0.1);
-            border: 1px solid rgba(255,255,255,0.2);
-            border-radius: 10px;
-            color: #fff;
-            text-align: center;
-            margin-bottom: 10px;
-        }
-        input:focus { outline: none; border-color: #00D4FF; }
-        input.hide { display: none; }
-        
-        button {
-            width: 100%;
-            max-width: 280px;
-            padding: 15px;
-            font-size: 17px;
-            font-weight: 600;
-            background: #00D4FF;
-            color: #000;
-            border: none;
-            border-radius: 10px;
-            cursor: pointer;
-        }
-        button:active { opacity: 0.8; }
-        
-        /* 页面 */
-        .page {
-            display: none;
-            min-height: 100vh;
-            padding-bottom: 80px;
-        }
-        .page.show { display: block; }
-        
-        /* 首页 */
-        .home-header {
-            padding: 60px 20px 20px;
-        }
-        .time {
-            color: #00D4FF;
-            font-size: 14px;
-            margin-bottom: 8px;
-        }
-        .greeting {
-            font-size: 32px;
-            font-weight: bold;
-            margin-bottom: 8px;
-        }
-        .sub {
-            color: rgba(255,255,255,0.5);
-        }
-        
-        /* 数据卡片 */
-        .stats {
-            display: grid;
-            grid-template-columns: repeat(2, 1fr);
-            gap: 12px;
-            padding: 20px;
-        }
-        .stat {
-            background: rgba(255,255,255,0.05);
-            padding: 20px;
-            border-radius: 12px;
-            cursor: pointer;
-        }
-        .stat:active { background: rgba(255,255,255,0.1); }
-        .stat-value {
-            font-size: 24px;
-            font-weight: bold;
-            margin-bottom: 4px;
-        }
-        .stat-label {
-            font-size: 13px;
-            color: rgba(255,255,255,0.5);
-        }
-        
-        /* 主按钮 */
-        .main-btn {
-            margin: 0 20px 20px;
-            padding: 18px;
-            background: #00D4FF;
-            color: #000;
-            border-radius: 12px;
-            text-align: center;
-            font-size: 17px;
-            font-weight: 600;
-            cursor: pointer;
-        }
-        .main-btn:active { opacity: 0.8; }
-        
-        /* 列表 */
-        .list {
-            padding: 0 20px;
-        }
-        .list-item {
-            display: flex;
-            align-items: center;
-            padding: 16px;
-            background: rgba(255,255,255,0.05);
-            margin-bottom: 1px;
-            cursor: pointer;
-        }
-        .list-item:first-child { border-radius: 12px 12px 0 0; }
-        .list-item:last-child { border-radius: 0 0 12px 12px; }
-        .list-item:active { background: rgba(255,255,255,0.1); }
-        .list-icon {
-            width: 36px;
-            height: 36px;
-            background: rgba(255,255,255,0.1);
-            border-radius: 8px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            margin-right: 12px;
-        }
-        .list-content { flex: 1; }
-        .list-title { font-size: 16px; }
-        .list-sub { font-size: 13px; color: rgba(255,255,255,0.5); margin-top: 2px; }
-        .list-arrow { color: rgba(255,255,255,0.3); }
-        
-        /* 底部导航 */
-        .nav {
-            position: fixed;
-            bottom: 0;
-            left: 0;
-            right: 0;
-            display: flex;
-            justify-content: space-around;
-            padding: 12px 0 20px;
-            background: rgba(0,0,0,0.95);
-            border-top: 1px solid rgba(255,255,255,0.1);
-        }
-        .nav-item {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            gap: 4px;
-            padding: 8px 20px;
-            cursor: pointer;
-            opacity: 0.5;
-        }
-        .nav-item.active { opacity: 1; }
-        .nav-item span { font-size: 20px; }
-        .nav-item small { font-size: 11px; }
-        
-        /* 聊天页 */
-        .chat-header {
-            display: flex;
-            align-items: center;
-            padding: 16px;
-            border-bottom: 1px solid rgba(255,255,255,0.1);
-        }
-        .chat-back {
-            width: 40px;
-            height: 40px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 20px;
-            cursor: pointer;
-        }
-        .chat-avatar {
-            width: 40px;
-            height: 40px;
-            background: linear-gradient(135deg, #00D4FF, #FF2D92);
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-weight: bold;
-            color: #000;
-            margin: 0 12px;
-        }
-        .chat-info { flex: 1; }
-        .chat-name { font-weight: 600; }
-        .chat-status { font-size: 13px; color: #30D158; }
-        
-        .chat-messages {
-            padding: 20px;
-            min-height: calc(100vh - 200px);
-        }
-        .msg {
-            display: flex;
-            margin-bottom: 16px;
-            max-width: 80%;
-        }
-        .msg.user { margin-left: auto; flex-direction: row-reverse; }
-        .msg-bubble {
-            padding: 12px 16px;
-            border-radius: 18px;
-            font-size: 15px;
-            line-height: 1.5;
-        }
-        .msg.ai .msg-bubble {
-            background: rgba(255,255,255,0.1);
-            border-bottom-left-radius: 4px;
-        }
-        .msg.user .msg-bubble {
-            background: #00D4FF;
-            color: #000;
-            border-bottom-right-radius: 4px;
-        }
-        
-        .chat-input {
-            position: fixed;
-            bottom: 0;
-            left: 0;
-            right: 0;
-            padding: 12px 16px 20px;
-            background: #000;
-            border-top: 1px solid rgba(255,255,255,0.1);
-            display: flex;
-            gap: 10px;
-        }
-        .chat-input input {
-            flex: 1;
-            padding: 12px 16px;
-            background: rgba(255,255,255,0.1);
-            border: 1px solid rgba(255,255,255,0.2);
-            border-radius: 20px;
-            color: #fff;
-            font-size: 15px;
-            margin: 0;
-            text-align: left;
-        }
-        .chat-input button {
-            width: 44px;
-            height: 44px;
-            padding: 0;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 18px;
-        }
-        
-        /* Toast */
-        .toast {
-            position: fixed;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            background: rgba(40,40,40,0.98);
-            padding: 16px 24px;
-            border-radius: 12px;
-            color: #fff;
-            font-size: 15px;
-            z-index: 1000;
-            display: none;
-        }
-        .toast.show { display: block; }
-    </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AMBROSE Test</title>
+<style>
+body { background: #000; color: #fff; font-family: sans-serif; margin: 0; padding: 20px; }
+.auth { text-align: center; padding: 50px 20px; }
+.logo { width: 80px; height: 80px; background: linear-gradient(135deg, #00D4FF, #FF2D92); border-radius: 20px; margin: 0 auto 20px; line-height: 80px; font-size: 32px; font-weight: bold; color: #000; }
+h1 { margin: 0 0 10px; }
+p { color: rgba(255,255,255,0.5); margin: 0 0 30px; }
+input { display: block; width: 100%; max-width: 280px; margin: 0 auto 10px; padding: 15px; font-size: 17px; background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.2); border-radius: 10px; color: #fff; text-align: center; }
+button { display: block; width: 100%; max-width: 280px; margin: 0 auto; padding: 15px; font-size: 17px; font-weight: bold; background: #00D4FF; color: #000; border: none; border-radius: 10px; cursor: pointer; }
+.hide { display: none; }
+.page { display: none; }
+.page.show { display: block; }
+.stat { background: rgba(255,255,255,0.1); padding: 20px; margin: 10px; border-radius: 10px; display: inline-block; width: calc(50% - 30px); }
+.nav { position: fixed; bottom: 0; left: 0; right: 0; display: flex; justify-content: space-around; padding: 15px; background: rgba(0,0,0,0.95); border-top: 1px solid rgba(255,255,255,0.1); }
+.nav-item { text-align: center; cursor: pointer; opacity: 0.5; }
+.nav-item.active { opacity: 1; }
+</style>
 </head>
 <body>
-    <!-- 认证 -->
-    <div class="auth" id="auth">
-        <div class="logo">A</div>
-        <h1>AMBROSE</h1>
-        <p class="subtitle">AI Health Coach</p>
-        <input type="text" id="code1" placeholder="邀请码" maxlength="4">
-        <input type="text" id="code2" placeholder="身份验证码" maxlength="4" class="hide">
-        <button onclick="login()">进入</button>
+
+<!-- 认证 -->
+<div class="auth" id="auth">
+  <div class="logo">A</div>
+  <h1>AMBROSE</h1>
+  <p>AI Health Coach</p>
+  <input type="text" id="code1" placeholder="邀请码 8888" maxlength="4">
+  <input type="text" id="code2" placeholder="验证码 0812" maxlength="4" class="hide">
+  <button onclick="login()">进入</button>
+</div>
+
+<!-- 首页 -->
+<div class="page" id="home">
+  <h2 id="greet">你好</h2>
+  <div style="padding: 20px;">
+    <div class="stat" onclick="alert('步数')">
+      <div style="font-size: 24px; font-weight: bold;">8,432</div>
+      <div style="color: rgba(255,255,255,0.5);">步数</div>
     </div>
-    
-    <!-- 首页 -->
-    <div class="page" id="home">
-        <div class="home-header">
-            <div class="time" id="time">--:--</div>
-            <div class="greeting" id="greeting">你好</div>
-            <div class="sub">今天感觉如何？</div>
-        </div>
-        
-        <div class="stats">
-            <div class="stat" onclick="toast('步数: 8,432')">
-                <div class="stat-value">8,432</div>
-                <div class="stat-label">步数</div>
-            </div>
-            <div class="stat" onclick="toast('消耗: 342千卡')">
-                <div class="stat-value">342</div>
-                <div class="stat-label">千卡</div>
-            </div>
-            <div class="stat" onclick="toast('睡眠: 7.5小时')">
-                <div class="stat-value">7.5</div>
-                <div class="stat-label">小时</div>
-            </div>
-            <div class="stat" onclick="toast('饮水: 1,200ml')">
-                <div class="stat-value">1.2L</div>
-                <div class="stat-label">饮水</div>
-            </div>
-        </div>
-        
-        <div class="main-btn" onclick="showChat()">💬 开始对话</div>
-        
-        <div style="padding: 0 20px; margin-bottom: 8px; color: rgba(255,255,255,0.5); font-size: 13px;">快捷记录</div>
-        <div class="list">
-            <div class="list-item" onclick="toast('体重记录')">
-                <div class="list-icon">⚖️</div>
-                <div class="list-content">
-                    <div class="list-title">记录体重</div>
-                    <div class="list-sub">上次记录 3天前</div>
-                </div>
-                <div class="list-arrow">›</div>
-            </div>
-            <div class="list-item" onclick="toast('饮食记录')">
-                <div class="list-icon">🍽️</div>
-                <div class="list-content">
-                    <div class="list-title">记录饮食</div>
-                    <div class="list-sub">今日已记录 2 餐</div>
-                </div>
-                <div class="list-arrow">›</div>
-            </div>
-            <div class="list-item" onclick="toast('运动记录')">
-                <div class="list-icon">🏃</div>
-                <div class="list-content">
-                    <div class="list-title">记录运动</div>
-                    <div class="list-sub">今日运动 30 分钟</div>
-                </div>
-                <div class="list-arrow">›</div>
-            </div>
-        </div>
+    <div class="stat" onclick="alert('卡路里')">
+      <div style="font-size: 24px; font-weight: bold;">342</div>
+      <div style="color: rgba(255,255,255,0.5);">千卡</div>
     </div>
-    
-    <!-- 底部导航 -->
-    <div class="nav" id="nav">
-        <div class="nav-item active" onclick="showHome()">
-            <span>🏠</span>
-            <small>首页</small>
-        </div>
-        <div class="nav-item" onclick="toast('数据页面开发中')">
-            <span>📊</span>
-            <small>数据</small>
-        </div>
-        <div class="nav-item" onclick="showChat()">
-            <span>💬</span>
-            <small>对话</small>
-        </div>
-        <div class="nav-item" onclick="toast('我的页面开发中')">
-            <span>👤</span>
-            <small>我的</small>
-        </div>
-    </div>
-    
-    <!-- 聊天页 -->
-    <div class="page" id="chat">
-        <div class="chat-header">
-            <div class="chat-back" onclick="showHome()">←</div>
-            <div class="chat-avatar">A</div>
-            <div class="chat-info">
-                <div class="chat-name">AMBROSE</div>
-                <div class="chat-status">● 在线</div>
-            </div>
-        </div>
-        <div class="chat-messages" id="messages">
-            <div class="msg ai">
-                <div class="msg-bubble">你好！我是AMBROSE，你的AI健康教练。有什么可以帮助你的吗？</div>
-            </div>
-        </div>
-        <div class="chat-input">
-            <input type="text" id="msgInput" placeholder="输入消息..." onkeypress="if(event.key==='Enter')sendMsg()">
-            <button onclick="sendMsg()">➤</button>
-        </div>
-    </div>
-    
-    <!-- Toast -->
-    <div class="toast" id="toast"></div>
-    
-    <script>
-        // 配置
-        const INVITE_CODE = '8888';
-        const VERIFY_CODE = '0812';
-        
-        // 更新时间
-        function updateTime() {
-            const now = new Date();
-            const utc = now.getTime() + (now.getTimezoneOffset() * 60000);
-            const bj = new Date(utc + (3600000 * 8));
-            const h = bj.getHours().toString().padStart(2, '0');
-            const m = bj.getMinutes().toString().padStart(2, '0');
-            document.getElementById('time').textContent = h + ':' + m;
-            
-            const hour = bj.getHours();
-            let greet = '你好';
-            if (hour < 12) greet = '早上好';
-            else if (hour < 18) greet = '下午好';
-            else greet = '晚上好';
-            document.getElementById('greeting').textContent = greet;
-        }
-        setInterval(updateTime, 1000);
-        updateTime();
-        
-        // Toast
-        function toast(msg) {
-            const t = document.getElementById('toast');
-            t.textContent = msg;
-            t.classList.add('show');
-            setTimeout(() => t.classList.remove('show'), 2000);
-        }
-        
-        // 登录
-        function login() {
-            const c1 = document.getElementById('code1').value;
-            const c2 = document.getElementById('code2').value;
-            
-            if (c1 !== INVITE_CODE) {
-                toast('邀请码错误');
-                return;
-            }
-            
-            document.getElementById('auth').classList.add('hide');
-            document.getElementById('home').classList.add('show');
-            
-            const isBoss = c2 === VERIFY_CODE;
-            localStorage.setItem('user', isBoss ? 'boss' : 'guest');
-        }
-        
-        // 邀请码输入
-        document.getElementById('code1').addEventListener('input', function(e) {
-            e.target.value = e.target.value.replace(/[^0-9]/g, '');
-            if (e.target.value === INVITE_CODE) {
-                document.getElementById('code2').classList.remove('hide');
-            }
-        });
-        
-        // 检查已登录
-        const saved = localStorage.getItem('user');
-        if (saved) {
-            document.getElementById('auth').classList.add('hide');
-            document.getElementById('home').classList.add('show');
-        }
-        
-        // 页面切换
-        function showHome() {
-            document.getElementById('home').classList.add('show');
-            document.getElementById('chat').classList.remove('show');
-            document.getElementById('nav').style.display = 'flex';
-            document.querySelectorAll('.nav-item').forEach((item, i) => {
-                item.classList.toggle('active', i === 0);
-            });
-        }
-        
-        function showChat() {
-            document.getElementById('home').classList.remove('show');
-            document.getElementById('chat').classList.add('show');
-            document.getElementById('nav').style.display = 'none';
-        }
-        
-        // 发送消息
-        function sendMsg() {
-            const input = document.getElementById('msgInput');
-            const text = input.value.trim();
-            if (!text) return;
-            
-            const container = document.getElementById('messages');
-            container.innerHTML += '<div class="msg user"><div class="msg-bubble">' + text + '</div></div>';
-            input.value = '';
-            container.scrollTop = container.scrollHeight;
-            
-            // AI回复
-            setTimeout(() => {
-                container.innerHTML += '<div class="msg ai"><div class="msg-bubble">收到！我会帮你记录下来。</div></div>';
-                container.scrollTop = container.scrollHeight;
-            }, 1000);
-        }
-    </script>
+  </div>
+  <div style="padding: 20px; text-align: center;">
+    <button onclick="showChat()" style="max-width: none;">开始对话</button>
+  </div>
+  <div class="nav">
+    <div class="nav-item active" onclick="showHome()">🏠<br><small>首页</small></div>
+    <div class="nav-item" onclick="alert('数据')">📊<br><small>数据</small></div>
+    <div class="nav-item" onclick="showChat()">💬<br><small>对话</small></div>
+    <div class="nav-item" onclick="alert('我的')">👤<br><small>我的</small></div>
+  </div>
+</div>
+
+<!-- 聊天 -->
+<div class="page" id="chat" style="padding-bottom: 80px;">
+  <div style="padding: 20px; border-bottom: 1px solid rgba(255,255,255,0.1);">
+    <span onclick="showHome()" style="cursor: pointer;">← 返回</span>
+    <span style="margin-left: 20px; font-weight: bold;">AMBROSE</span>
+  </div>
+  <div id="msgs" style="padding: 20px;">
+    <div style="background: rgba(255,255,255,0.1); padding: 15px; border-radius: 15px; display: inline-block; margin-bottom: 10px;">你好！我是AMBROSE</div>
+  </div>
+  <div style="position: fixed; bottom: 0; left: 0; right: 0; padding: 15px; background: #000; border-top: 1px solid rgba(255,255,255,0.1); display: flex; gap: 10px;">
+    <input type="text" id="msg" placeholder="输入消息..." style="flex: 1; margin: 0; text-align: left;">
+    <button onclick="send()" style="width: auto; padding: 15px 20px; margin: 0;">发送</button>
+  </div>
+</div>
+
+<script>
+function login() {
+  var c1 = document.getElementById('code1').value;
+  var c2 = document.getElementById('code2').value;
+  if (c1 !== '8888') { alert('邀请码错误'); return; }
+  document.getElementById('auth').classList.add('hide');
+  document.getElementById('home').classList.add('show');
+  localStorage.setItem('user', c2 === '0812' ? 'boss' : 'guest');
+  document.getElementById('greet').textContent = (c2 === '0812' ? 'BOSS Shao' : '朋友') + '，你好';
+}
+
+document.getElementById('code1').oninput = function(e) {
+  e.target.value = e.target.value.replace(/[^0-9]/g, '');
+  if (e.target.value === '8888') document.getElementById('code2').classList.remove('hide');
+};
+
+if (localStorage.getItem('user')) {
+  document.getElementById('auth').classList.add('hide');
+  document.getElementById('home').classList.add('show');
+  document.getElementById('greet').textContent = (localStorage.getItem('user') === 'boss' ? 'BOSS Shao' : '朋友') + '，你好';
+}
+
+function showHome() {
+  document.getElementById('home').classList.add('show');
+  document.getElementById('chat').classList.remove('show');
+}
+
+function showChat() {
+  document.getElementById('home').classList.remove('show');
+  document.getElementById('chat').classList.add('show');
+}
+
+function send() {
+  var input = document.getElementById('msg');
+  var text = input.value.trim();
+  if (!text) return;
+  document.getElementById('msgs').innerHTML += '<div style="text-align: right;"><div style="background: #00D4FF; color: #000; padding: 15px; border-radius: 15px; display: inline-block; margin-bottom: 10px;">' + text + '</div></div>';
+  input.value = '';
+  setTimeout(function() {
+    document.getElementById('msgs').innerHTML += '<div><div style="background: rgba(255,255,255,0.1); padding: 15px; border-radius: 15px; display: inline-block; margin-bottom: 10px;">收到！</div></div>';
+  }, 500);
+}
+</script>
+
 </body>
 </html>
