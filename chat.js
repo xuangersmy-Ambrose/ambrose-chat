@@ -35,6 +35,9 @@ const UI = {
         // 初始化体重追踪器
         this.weightTracker = new WeightTracker(this);
         
+        // 初始化AI教练 (让App变聪明)
+        this.aiCoach = new AICoach(this);
+        
         // 检查身份
         const userRelation = localStorage.getItem('ambrose_user_relation');
         this.isMaster = userRelation === 'self';
@@ -116,13 +119,30 @@ const UI = {
         const loadingEl = this.addLoading();
 
         try {
-            const reply = await this.callAPI(text);
+            let reply;
+            
+            // 优先使用AI教练生成智能回复
+            if (this.aiCoach) {
+                reply = this.aiCoach.generateSmartReply(text);
+            }
+            
+            // 如果AI教练没有返回回复，或者需要更复杂的处理，调用API
+            if (!reply) {
+                reply = await this.callAPI(text);
+            }
+            
             loadingEl.remove();
             this.addMessage(reply, 'bot');
         } catch (err) {
-            console.error('API Error:', err);
+            console.error('Error:', err);
             loadingEl.remove();
-            this.addMessage('抱歉，服务暂时不可用，请稍后重试。', 'bot');
+            // 出错时尝试使用AI教练
+            if (this.aiCoach) {
+                const fallbackReply = this.aiCoach.generateContextualReply(text);
+                this.addMessage(fallbackReply, 'bot');
+            } else {
+                this.addMessage('抱歉，服务暂时不可用，请稍后重试。', 'bot');
+            }
         } finally {
             this.isProcessing = false;
             if (sendBtn) sendBtn.disabled = false;
@@ -324,43 +344,20 @@ const UI = {
     },
 
     addWelcomeMessage() {
-        const hour = new Date().getHours();
-        let greeting = '你好';
-        let healthTip = '';
-        let icon = '👋';
-        
-        if (hour < 6) {
-            greeting = '夜深了';
-            healthTip = '💤 熬夜伤身，记得补充水分';
-            icon = '🌙';
-        } else if (hour < 9) {
-            greeting = '早上好';
-            healthTip = '🌅 新的一天，从一杯温水开始';
-            icon = '☀️';
-        } else if (hour < 12) {
-            greeting = '上午好';
-            healthTip = '💪 上午是运动的最佳时间';
-            icon = '🏃';
-        } else if (hour < 14) {
-            greeting = '中午好';
-            healthTip = '🥗 午餐记得营养均衡';
-            icon = '🍱';
-        } else if (hour < 18) {
-            greeting = '下午好';
-            healthTip = '💧 下午茶时间，记得补水';
-            icon = '☕';
+        // 使用AI教练生成智能欢迎语
+        if (this.aiCoach) {
+            const welcomeMessage = this.aiCoach.generateSmartWelcome();
+            this.addMessage(welcomeMessage, 'bot');
         } else {
-            greeting = '晚上好';
-            healthTip = '🌙 晚上少食，有助于睡眠';
-            icon = '🌆';
-        }
-
-        const userName = localStorage.getItem('ambrose_user_name') || '朋友';
-        
-        if (this.isMaster) {
-            this.addMessage(`${icon} ${greeting}，BOSS Shao。我是 AMBROSE，你的 AI 健康教练。${healthTip ? '\n\n' + healthTip : ''}\n\n今天想聊点什么？\n• 💪 制定今日运动计划\n• 🥗 记录饮食 & 营养分析\n• 😴 昨晚睡眠质量如何\n• 🧘 情绪压力需要疏导\n• 💊 健康症状咨询\n\n点击下方的 ❤️ 按钮可以打开健康中心，或者直接在输入框和我聊聊。`, 'bot');
-        } else {
-            this.addMessage(`${icon} ${greeting}，${userName}。我是 AMBROSE，BOSS Shao 的 AI 健康助手。${healthTip ? '\n\n' + healthTip : ''}\n\n我可以帮你：\n• 解答健康养生问题\n• 提供运动建议\n• 饮食营养指导\n• 情绪陪伴支持\n\n有什么想聊的吗？`, 'bot');
+            // 后备方案
+            const hour = new Date().getHours();
+            let greeting = '你好';
+            if (hour < 6) greeting = '夜深了';
+            else if (hour < 12) greeting = '早上好';
+            else if (hour < 18) greeting = '下午好';
+            else greeting = '晚上好';
+            
+            this.addMessage(`${greeting}，我是 AMBROSE，你的 AI 健康教练。`, 'bot');
         }
     }
 };
