@@ -1563,6 +1563,7 @@ var userData = {
   streak: 3,
   badges: ['first_workout', 'water_master', 'early_bird', 'calorie_tracker', 'step_beginner'],
   signinDays: [true, true, true, false, false, false, false],
+  lastCheckDate: null,
   todayData: { water: 0, steps: 0, calories: 0, sleep: 0, meals: [] },
   tasks: [
     { id: 1, name: '完成一次训练', reward: '+50积分', completed: false, icon: '💪' },
@@ -1921,13 +1922,25 @@ function renderTasks() {
 }
 
 function completeTask(taskId) {
+  // 首先检查是否需要重置每日数据
+  checkAndResetDaily();
+  
   var task = userData.tasks.find(t => t.id === taskId);
-  if (!task || task.completed) return;
+  if (!task) return;
+  
+  // 检查今天是否已完成过此任务
+  if (task.completed) {
+    showToast('⚠️ 今日已完成此任务，明天再来吧！');
+    return;
+  }
+  
   task.completed = true;
   var points = parseInt(task.reward.replace(/\D/g, ''));
   addPoints(points);
   showToast('🎉 任务完成！' + task.reward);
   renderTasks();
+  saveData();
+}
 }
 
 // ==================== 快速记录 ====================
@@ -2085,12 +2098,35 @@ function resetTimer() {
 }
 
 function finishWorkout() {
+  // 检查今天是否已经打卡
+  if (hasCheckedInToday()) {
+    showToast('⚠️ 今日已打卡，明天继续加油！');
+  }
+  
   clearInterval(workoutTimer);
   workoutRunning = false;
   var minutes = Math.floor(workoutSeconds / 60) || 1;
   var calories = Math.round(minutes * (currentWorkout.calories / currentWorkout.duration));
   userData.todayData.calories += calories;
   userData.todayData.steps += Math.round(minutes * 100);
+  
+  // 记录打卡日期
+  var now = new Date();
+  var beijingTime = new Date(now.getTime() + (8 * 60 * 60 * 1000));
+  var today = beijingTime.toISOString().split('T')[0];
+  userData.lastCheckDate = today;
+  
+  // 添加到训练历史
+  if (!userData.workoutHistory) {
+    userData.workoutHistory = [];
+  }
+  userData.workoutHistory.push({
+    date: beijingTime.toISOString(),
+    name: currentWorkout.name,
+    duration: minutes,
+    calories: calories,
+    feeling: '很棒'
+  });
   
   // 完成任务
   var task = userData.tasks.find(t => t.id === 1);
@@ -3120,6 +3156,51 @@ function loadData() {
     var parsed = JSON.parse(saved);
     Object.assign(userData, parsed);
   }
+  // 检查并重置每日数据
+  checkAndResetDaily();
+}
+
+// ==================== 每日重置检查 ====================
+function checkAndResetDaily() {
+  // 获取当前日期（使用北京时间）
+  var now = new Date();
+  var beijingTime = new Date(now.getTime() + (8 * 60 * 60 * 1000)); // 转换为北京时间
+  var today = beijingTime.toISOString().split('T')[0];
+  
+  // 检查是否需要重置
+  if (userData.lastCheckDate !== today) {
+    // 新的一天，重置所有每日数据
+    userData.lastCheckDate = today;
+    userData.todayData = { water: 0, steps: 0, calories: 0, sleep: 0, meals: [] };
+    
+    // 重置任务状态
+    if (userData.tasks) {
+      userData.tasks.forEach(task => {
+        task.completed = false;
+      });
+    }
+    
+    // 保存重置后的数据
+    saveData();
+    console.log('✅ 已重置每日数据:', today);
+  }
+}
+
+// 获取今日是否已打卡
+function hasCheckedInToday() {
+  var now = new Date();
+  var beijingTime = new Date(now.getTime() + (8 * 60 * 60 * 1000));
+  var today = beijingTime.toISOString().split('T')[0];
+  
+  // 检查今日是否有训练记录
+  if (userData.workoutHistory && userData.workoutHistory.length > 0) {
+    var lastWorkout = userData.workoutHistory[userData.workoutHistory.length - 1];
+    if (lastWorkout && lastWorkout.date) {
+      var lastDate = lastWorkout.date.split('T')[0];
+      return lastDate === today;
+    }
+  }
+  return false;
 }
 
 // ==================== 进度条系统 ====================
@@ -3662,7 +3743,7 @@ function showPage(pageId) {
     }
     window.scrollTo(0, 0);
     
-    var navPages = ['homePage', 'workoutPage', 'dietPage', 'chatPage', 'profilePage'];
+    var navPages = ['homePage', 'workoutPage', 'dietPage', 'chatPage', 'profilePage', 'communityPage', 'reportPage'];
     var bottomNav = document.getElementById('bottomNav');
     if (bottomNav) bottomNav.style.display = navPages.includes(pageId) ? 'flex' : 'none';
     
@@ -3671,6 +3752,8 @@ function showPage(pageId) {
     if (pageId === 'dietPage' && typeof updateNav === 'function') updateNav('navDiet');
     if (pageId === 'chatPage' && typeof updateNav === 'function') updateNav('navChat');
     if (pageId === 'profilePage' && typeof updateNav === 'function') updateNav('navProfile');
+    if (pageId === 'communityPage' && typeof updateNav === 'function') updateNav('navHome');
+    if (pageId === 'reportPage' && typeof updateNav === 'function') updateNav('navHome');
     if (pageId === 'achievePage') { 
       if (typeof updateNav === 'function') updateNav('navHome'); 
       if (typeof renderBadges === 'function') renderBadges(); 
