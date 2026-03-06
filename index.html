@@ -2155,6 +2155,241 @@ function exportData() {
   showToast('📥 数据导出成功');
 }
 
+// ==================== 训练打卡详细记录 ====================
+var workoutHistory = [
+  { date: '2026-03-06', name: '全身燃脂训练', duration: 20, calories: 200, feeling: '很棒' },
+  { date: '2026-03-05', name: '腹肌撕裂者', duration: 15, calories: 120, feeling: '有点累' },
+  { date: '2026-03-04', name: '晨间瑜伽', duration: 25, calories: 80, feeling: '放松' },
+  { date: '2026-03-03', name: 'HIIT高强度间歇', duration: 30, calories: 350, feeling: '挑战' },
+  { date: '2026-03-02', name: '哑铃手臂训练', duration: 20, calories: 150, feeling: '良好' }
+];
+
+function showDetailedWorkoutRecords() {
+  var html = '<div class="page" id="detailedRecordsPage"><div class="workout-page">';
+  html += '<div class="page-header"><div class="page-title">📝 训练打卡</div><div class="page-subtitle">详细记录每一次进步</div></div>';
+  
+  // 统计卡片
+  html += '<div style="padding: 0 24px; margin-bottom: 24px;">';
+  html += '<div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px;">';
+  html += '<div style="background: var(--bg-card); border: 1px solid var(--border); border-radius: 16px; padding: 16px; text-align: center;">';
+  html += '<div style="font-size: 24px; font-weight: 700; color: var(--primary);">' + workoutHistory.length + '</div>';
+  html += '<div style="font-size: 12px; color: var(--text-secondary);">总次数</div></div>';
+  html += '<div style="background: var(--bg-card); border: 1px solid var(--border); border-radius: 16px; padding: 16px; text-align: center;">';
+  html += '<div style="font-size: 24px; font-weight: 700; color: var(--secondary);">' + workoutHistory.reduce((sum, r) => sum + r.duration, 0) + '</div>';
+  html += '<div style="font-size: 12px; color: var(--text-secondary);">总分钟</div></div>';
+  html += '<div style="background: var(--bg-card); border: 1px solid var(--border); border-radius: 16px; padding: 16px; text-align: center;">';
+  html += '<div style="font-size: 24px; font-weight: 700; color: #FFD700;">' + workoutHistory.reduce((sum, r) => sum + r.calories, 0) + '</div>';
+  html += '<div style="font-size: 12px; color: var(--text-secondary);">总消耗</div></div>';
+  html += '</div></div>';
+  
+  // 记录列表
+  html += '<div style="padding: 0 24px;">';
+  html += '<div style="font-weight: 600; margin-bottom: 16px;">📅 打卡记录</div>';
+  
+  workoutHistory.forEach((record, idx) => {
+    html += '<div style="background: var(--bg-card); border: 1px solid var(--border); border-radius: 16px; padding: 16px; margin-bottom: 12px;">';
+    html += '<div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">';
+    html += '<div style="font-weight: 600;">' + record.name + '</div>';
+    html += '<div style="font-size: 12px; color: var(--text-secondary);">' + record.date + '</div>';
+    html += '</div>';
+    html += '<div style="display: flex; gap: 16px; font-size: 13px; color: var(--text-secondary);">';
+    html += '<span>⏱️ ' + record.duration + '分钟</span>';
+    html += '<span>🔥 ' + record.calories + '千卡</span>';
+    html += '<span>😊 ' + record.feeling + '</span>';
+    html += '</div></div>';
+  });
+  
+  html += '</div>';
+  html += '<button class="btn-secondary" onclick="showPage(\'profilePage\')" style="margin: 40px 24px;">← 返回我的</button>';
+  html += '</div></div>';
+  
+  document.body.insertAdjacentHTML('beforeend', html);
+  showPage('detailedRecordsPage');
+}
+
+// ==================== 周/月/年度报告增强 ====================
+function showEnhancedReport() {
+  var html = '<div class="page" id="enhancedReportPage"><div class="workout-page">';
+  html += '<div class="page-header"><div class="page-title">📊 运动报告</div><div class="page-subtitle">全面的数据分析</div></div>';
+  
+  // 周期切换
+  html += '<div class="category-tabs">';
+  html += '<div class="tab active" onclick="switchEnhancedReport(\'week\', this)">本周</div>';
+  html += '<div class="tab" onclick="switchEnhancedReport(\'month\', this)">本月</div>';
+  html += '<div class="tab" onclick="switchEnhancedReport(\'year\', this)">全年</div>';
+  html += '</div>';
+  
+  // 核心数据
+  html += '<div style="padding: 0 24px; margin-bottom: 24px;">';
+  html += '<div style="background: linear-gradient(135deg, rgba(0,212,255,0.1), rgba(255,45,146,0.1)); border: 1px solid rgba(0,212,255,0.2); border-radius: 20px; padding: 24px;">';
+  html += '<div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 20px;">';
+  html += '<div style="text-align: center;"><div style="font-size: 32px; font-weight: 800; background: linear-gradient(135deg, #00D4FF, #FF2D92); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">5</div><div style="font-size: 12px; color: var(--text-secondary);">训练次数</div></div>';
+  html += '<div style="text-align: center;"><div style="font-size: 32px; font-weight: 800; background: linear-gradient(135deg, #00D4FF, #FF2D92); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">110</div><div style="font-size: 12px; color: var(--text-secondary);">训练分钟</div></div>';
+  html += '<div style="text-align: center;"><div style="font-size: 32px; font-weight: 800; background: linear-gradient(135deg, #FFD700, #FF8C00); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">900</div><div style="font-size: 12px; color: var(--text-secondary);">消耗千卡</div></div>';
+  html += '<div style="text-align: center;"><div style="font-size: 32px; font-weight: 800; background: linear-gradient(135deg, #30D158, #00D4FF); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">3</div><div style="font-size: 12px; color: var(--text-secondary);">连续天数</div></div>';
+  html += '</div></div></div>';
+  
+  // 趋势图
+  html += '<div style="padding: 0 24px; margin-bottom: 24px;">';
+  html += '<div style="background: var(--bg-card); border: 1px solid var(--border); border-radius: 16px; padding: 20px;">';
+  html += '<div style="font-weight: 600; margin-bottom: 16px;">📈 运动趋势</div>';
+  html += '<div style="display: flex; align-items: flex-end; justify-content: space-around; height: 150px; gap: 8px;">';
+  var data = [20, 35, 45, 30, 60, 40, 50];
+  var labels = ['周一', '周二', '周三', '周四', '周五', '周六', '周日'];
+  data.forEach((val, i) => {
+    html += '<div style="flex: 1; text-align: center;"><div style="height: ' + (val * 2) + 'px; background: linear-gradient(to top, var(--primary), var(--secondary)); border-radius: 4px 4px 0 0; margin-bottom: 8px;"></div><div style="font-size: 11px; color: var(--text-secondary);">' + labels[i] + '</div></div>';
+  });
+  html += '</div></div></div>';
+  
+  // 身体变化
+  html += '<div style="padding: 0 24px; margin-bottom: 40px;">';
+  html += '<div style="background: var(--bg-card); border: 1px solid var(--border); border-radius: 16px; padding: 20px;">';
+  html += '<div style="font-weight: 600; margin-bottom: 16px;">⚖️ 身体变化</div>';
+  html += '<div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px;">';
+  html += '<div style="padding: 16px; background: rgba(48,209,88,0.1); border-radius: 12px; text-align: center;"><div style="font-size: 20px; font-weight: 700; color: #30D158;">70.5→69.8kg</div><div style="font-size: 12px; color: var(--text-secondary);">体重 ↓0.7kg</div></div>';
+  html += '<div style="padding: 16px; background: rgba(48,209,88,0.1); border-radius: 12px; text-align: center;"><div style="font-size: 20px; font-weight: 700; color: #30D158;">23.2→22.8</div><div style="font-size: 12px; color: var(--text-secondary);">BMI ↓0.4</div></div>';
+  html += '</div></div></div>';
+  
+  html += '<button class="btn-secondary" onclick="showPage(\'profilePage\')" style="margin: 0 24px 40px;">← 返回我的</button>';
+  html += '</div></div>';
+  
+  document.body.insertAdjacentHTML('beforeend', html);
+  showPage('enhancedReportPage');
+}
+
+function switchEnhancedReport(period, el) {
+  document.querySelectorAll('#enhancedReportPage .tab').forEach(t => t.classList.remove('active'));
+  el.classList.add('active');
+  showToast('已切换到' + (period === 'week' ? '本周' : period === 'month' ? '本月' : '全年') + '数据');
+}
+
+// ==================== 体脂/围度记录完善 ====================
+var bodyMeasurements = {
+  weight: { current: 69.8, last: 70.5, target: 68 },
+  bodyFat: { current: 18.5, last: 19.2, target: 15 },
+  chest: { current: 95, last: 94, target: 96 },
+  waist: { current: 82, last: 84, target: 78 },
+  hip: { current: 96, last: 96, target: 95 },
+  arm: { current: 32, last: 31, target: 33 },
+  thigh: { current: 55, last: 56, target: 54 }
+};
+
+function showBodyMeasurements() {
+  var html = '<div class="page" id="bodyMeasurementsPage"><div class="workout-page">';
+  html += '<div class="page-header"><div class="page-title">📏 身体数据</div><div class="page-subtitle">记录每一次变化</div></div>';
+  
+  html += '<div style="padding: 0 24px;">';
+  
+  // 体重体脂卡片
+  html += '<div style="background: var(--bg-card); border: 1px solid var(--border); border-radius: 20px; padding: 24px; margin-bottom: 20px;">';
+  html += '<div style="font-weight: 600; margin-bottom: 20px;">⚖️ 基础数据</div>';
+  html += '<div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 16px;">';
+  
+  var weightChange = bodyMeasurements.weight.last - bodyMeasurements.weight.current;
+  var fatChange = bodyMeasurements.bodyFat.last - bodyMeasurements.bodyFat.current;
+  
+  html += '<div style="background: rgba(0,212,255,0.1); border-radius: 16px; padding: 20px; text-align: center;">';
+  html += '<div style="font-size: 32px; font-weight: 800; color: var(--primary);">' + bodyMeasurements.weight.current + '</div>';
+  html += '<div style="font-size: 12px; color: var(--text-secondary); margin-bottom: 4px;">体重(kg)</div>';
+  html += '<div style="font-size: 12px; color: #30D158;">↓' + weightChange.toFixed(1) + 'kg</div>';
+  html += '<div style="font-size: 11px; color: var(--text-secondary); margin-top: 4px;">目标: ' + bodyMeasurements.weight.target + 'kg</div>';
+  html += '</div>';
+  
+  html += '<div style="background: rgba(255,45,146,0.1); border-radius: 16px; padding: 20px; text-align: center;">';
+  html += '<div style="font-size: 32px; font-weight: 800; color: var(--secondary);">' + bodyMeasurements.bodyFat.current + '%</div>';
+  html += '<div style="font-size: 12px; color: var(--text-secondary); margin-bottom: 4px;">体脂率</div>';
+  html += '<div style="font-size: 12px; color: #30D158;">↓' + fatChange.toFixed(1) + '%</div>';
+  html += '<div style="font-size: 11px; color: var(--text-secondary); margin-top: 4px;">目标: ' + bodyMeasurements.bodyFat.target + '%</div>';
+  html += '</div>';
+  
+  html += '</div></div>';
+  
+  // 围度数据
+  html += '<div style="background: var(--bg-card); border: 1px solid var(--border); border-radius: 20px; padding: 24px; margin-bottom: 20px;">';
+  html += '<div style="font-weight: 600; margin-bottom: 20px;">📐 围度数据(cm)</div>';
+  html += '<div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px;">';
+  
+  var parts = [
+    { key: 'chest', name: '胸围' },
+    { key: 'waist', name: '腰围' },
+    { key: 'hip', name: '臀围' },
+    { key: 'arm', name: '臂围' },
+    { key: 'thigh', name: '腿围' }
+  ];
+  
+  parts.forEach(part => {
+    var data = bodyMeasurements[part.key];
+    var change = data.current - data.last;
+    var changeText = change > 0 ? '+' + change : change;
+    var changeColor = part.key === 'waist' ? (change < 0 ? '#30D158' : '#FF6B6B') : (change > 0 ? '#30D158' : '#FF6B6B');
+    
+    html += '<div style="background: rgba(255,255,255,0.05); border-radius: 12px; padding: 16px; text-align: center;">';
+    html += '<div style="font-size: 20px; font-weight: 700;">' + data.current + '</div>';
+    html += '<div style="font-size: 11px; color: var(--text-secondary); margin-bottom: 4px;">' + part.name + '</div>';
+    html += '<div style="font-size: 11px; color: ' + changeColor + ';">' + (change > 0 ? '↑' : '↓') + Math.abs(change) + '</div>';
+    html += '</div>';
+  });
+  
+  html += '</div></div>';
+  
+  // 记录按钮
+  html += '<button class="btn-primary" onclick="showToast(\'✅ 今日数据已记录\')">记录今日数据</button>';
+  html += '<button class="btn-secondary" onclick="showPage(\'profilePage\')" style="margin-top: 12px;">← 返回我的</button>';
+  
+  html += '</div></div></div>';
+  
+  document.body.insertAdjacentHTML('beforeend', html);
+  showPage('bodyMeasurementsPage');
+}
+
+// ==================== 训练提醒推送设置 ====================
+function showReminderSettings() {
+  var html = '<div class="page" id="reminderSettingsPage"><div class="profile-page">';
+  html += '<div class="page-header" style="padding-top: 60px;"><div class="page-title">🔔 提醒设置</div><div class="page-subtitle">定制你的训练提醒</div></div>';
+  
+  html += '<div style="padding: 0 24px;">';
+  
+  // 提醒开关
+  html += '<div style="background: var(--bg-card); border: 1px solid var(--border); border-radius: 16px; padding: 20px; margin-bottom: 20px;">';
+  html += '<div style="font-weight: 600; margin-bottom: 16px;">提醒开关</div>';
+  
+  var reminders = [
+    { icon: '💪', name: '每日训练提醒', time: '19:00', enabled: true },
+    { icon: '💧', name: '喝水提醒', time: '每小时', enabled: true },
+    { icon: '😴', name: '睡眠提醒', time: '22:30', enabled: false },
+    { icon: '🥗', name: '饮食记录提醒', time: '12:00', enabled: true }
+  ];
+  
+  reminders.forEach((r, idx) => {
+    var bg = r.enabled ? 'var(--primary)' : 'var(--border)';
+    var pos = r.enabled ? 'right: 2px;' : 'left: 2px;';
+    html += '<div style="display: flex; align-items: center; justify-content: space-between; padding: 16px 0; border-bottom: 1px solid rgba(255,255,255,0.05);">';
+    html += '<div style="display: flex; align-items: center;"><div style="font-size: 24px; margin-right: 12px;">' + r.icon + '</div><div><div style="font-weight: 500;">' + r.name + '</div><div style="font-size: 12px; color: var(--text-secondary);">' + r.time + '</div></div></div>';
+    html += '<div style="width: 48px; height: 28px; background: ' + bg + '; border-radius: 14px; position: relative; cursor: pointer;" onclick="toggleReminder(' + idx + ')"><div style="width: 24px; height: 24px; background: #fff; border-radius: 50%; position: absolute; top: 2px; ' + pos + ' transition: all 0.3s;"></div></div>';
+    html += '</div>';
+  });
+  
+  html += '</div>';
+  
+  // 提醒方式
+  html += '<div style="background: var(--bg-card); border: 1px solid var(--border); border-radius: 16px; padding: 20px; margin-bottom: 40px;">';
+  html += '<div style="font-weight: 600; margin-bottom: 16px;">提醒方式</div>';
+  html += '<div style="display: flex; gap: 12px;">';
+  html += '<div style="flex: 1; padding: 16px; background: rgba(0,212,255,0.1); border: 1px solid var(--primary); border-radius: 12px; text-align: center;"><div style="font-size: 24px; margin-bottom: 8px;">📱</div><div style="font-size: 13px;">推送通知</div></div>';
+  html += '<div style="flex: 1; padding: 16px; background: rgba(255,255,255,0.05); border-radius: 12px; text-align: center;"><div style="font-size: 24px; margin-bottom: 8px;">📧</div><div style="font-size: 13px;">邮件提醒</div></div>';
+  html += '</div></div>';
+  
+  html += '<button class="btn-secondary" onclick="showPage(\'settingsPage\')">← 返回设置</button>';
+  html += '</div></div></div>';
+  
+  document.body.insertAdjacentHTML('beforeend', html);
+  showPage('reminderSettingsPage');
+}
+
+function toggleReminder(idx) {
+  showToast('✅ 提醒设置已更新');
+}
+
 // ==================== 数据存储 ====================
 function saveData() {
   localStorage.setItem('ambroseData', JSON.stringify(userData));
