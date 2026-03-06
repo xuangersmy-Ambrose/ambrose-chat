@@ -5,6 +5,8 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="theme-color" content="#0a0a0a">
+<link rel="manifest" href="/manifest.json">
+<link rel="apple-touch-icon" href="/icon-192.png">
 <title>AMBROSE - AI健康教练</title>
 <style>
 :root {
@@ -3769,6 +3771,17 @@ function showPage(pageId) {
 
 // ==================== 初始化 ====================
 window.onload = function() {
+  // 注册 Service Worker (PWA支持)
+  if ('serviceWorker' in navigator) {
+    navigator.serviceWorker.register('/sw.js')
+      .then(registration => {
+        console.log('[App] SW registered:', registration.scope);
+      })
+      .catch(error => {
+        console.log('[App] SW registration failed:', error);
+      });
+  }
+  
   // 显示骨架屏
   showSkeletonLoader();
   
