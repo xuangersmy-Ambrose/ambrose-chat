@@ -2,7 +2,7 @@
   "version": 2,
   "builds": [
     {
-      "src": "index.html",
+      "src": "*.html",
       "use": "@vercel/static"
     },
     {
@@ -14,6 +14,14 @@
     {
       "src": "/api/(.*)",
       "dest": "/api/$1"
+    },
+    {
+      "src": "/diagnostic",
+      "dest": "/diagnostic.html"
+    },
+    {
+      "src": "/setup",
+      "dest": "/setup.html"
     },
     {
       "src": "/(.*)",
