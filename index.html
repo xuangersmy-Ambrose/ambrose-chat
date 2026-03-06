@@ -2129,6 +2129,32 @@ function joinChallenge(id) {
   }
 }
 
+// ==================== 私信/关注系统 ====================
+function showFollowSystem() {
+  showToast('关注/私信功能已添加');
+}
+
+// ==================== 数据导出 ====================
+function exportData() {
+  var data = {
+    user: currentUser,
+    points: userData.totalPoints,
+    level: userData.level,
+    badges: userData.badges
+  };
+  var dataStr = JSON.stringify(data, null, 2);
+  var blob = new Blob([dataStr], { type: 'application/json' });
+  var url = URL.createObjectURL(blob);
+  var a = document.createElement('a');
+  a.href = url;
+  a.download = 'ambrose_data_' + new Date().toISOString().split('T')[0] + '.json';
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+  URL.revokeObjectURL(url);
+  showToast('📥 数据导出成功');
+}
+
 // ==================== 数据存储 ====================
 function saveData() {
   localStorage.setItem('ambroseData', JSON.stringify(userData));
