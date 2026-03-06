@@ -1,0 +1,1123 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="theme-color" content="#0a0a0a">
+<title>AMBROSE - AI健康教练</title>
+<style>
+/* ========== 基础重置 ========== */
+* { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+html, body { height: 100%; }
+body { 
+  font-family: -apple-system, BlinkMacSystemFont, 'PingFang SC', 'Hiragino Sans GB', 'Microsoft YaHei', sans-serif; 
+  background: #0a0a0a; 
+  color: #fff; 
+  overflow-x: hidden;
+  -webkit-overflow-scrolling: touch;
+}
+::-webkit-scrollbar { width: 0; height: 0; }
+
+/* ========== 页面容器 ========== */
+.page { 
+  display: none; 
+  min-height: 100vh; 
+  padding-bottom: 100px;
+}
+.page.active { display: block; }
+
+/* ========== 核心配色 ========== */
+:root {
+  --primary: #00D4FF;
+  --primary-dark: #0099CC;
+  --secondary: #FF2D92;
+  --bg-dark: #0a0a0a;
+  --bg-card: rgba(255,255,255,0.03);
+  --border: rgba(255,255,255,0.1);
+  --text-primary: #fff;
+  --text-secondary: rgba(255,255,255,0.5);
+}
+
+/* ========== 按钮样式 ========== */
+.btn-primary {
+  width: 100%;
+  padding: 18px;
+  background: var(--primary);
+  color: #000;
+  border: none;
+  border-radius: 16px;
+  font-size: 17px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s;
+}
+.btn-primary:active {
+  transform: scale(0.98);
+  background: var(--primary-dark);
+}
+
+.btn-secondary {
+  width: 100%;
+  padding: 18px;
+  background: transparent;
+  color: var(--primary);
+  border: 1px solid var(--primary);
+  border-radius: 16px;
+  font-size: 17px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s;
+}
+.btn-secondary:active {
+  background: rgba(0,212,255,0.1);
+}
+
+/* ========== 输入框样式 ========== */
+.input-field {
+  width: 100%;
+  padding: 18px 20px;
+  background: rgba(255,255,255,0.05);
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  color: #fff;
+  font-size: 16px;
+  transition: all 0.3s;
+}
+.input-field:focus {
+  outline: none;
+  border-color: var(--primary);
+  background: rgba(0,212,255,0.05);
+}
+.input-field::placeholder {
+  color: var(--text-secondary);
+}
+
+/* ========== 欢迎页（保持原风格） ========== */
+.welcome-page {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 100vh;
+  padding: 40px;
+  text-align: center;
+  background: var(--bg-dark);
+}
+
+.logo-container {
+  position: relative;
+  margin-bottom: 40px;
+}
+
+.logo {
+  width: 140px;
+  height: 140px;
+  background: linear-gradient(135deg, #00D4FF, #FF2D92);
+  border-radius: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 72px;
+  font-weight: 800;
+  color: #000;
+  position: relative;
+  z-index: 2;
+}
+
+.logo-glow {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 200px;
+  height: 200px;
+  background: linear-gradient(135deg, rgba(0,212,255,0.4), rgba(255,45,146,0.4));
+  border-radius: 50%;
+  filter: blur(40px);
+  z-index: 1;
+  animation: pulse 3s ease-in-out infinite;
+}
+
+@keyframes pulse {
+  0%, 100% { opacity: 0.6; transform: translate(-50%, -50%) scale(1); }
+  50% { opacity: 1; transform: translate(-50%, -50%) scale(1.1); }
+}
+
+.brand-name {
+  font-size: 48px;
+  font-weight: 800;
+  color: var(--primary);
+  margin-bottom: 12px;
+  letter-spacing: 2px;
+}
+
+.brand-tagline {
+  font-size: 16px;
+  color: var(--text-secondary);
+  margin-bottom: 80px;
+}
+
+/* ========== 登录页 ========== */
+.login-page {
+  padding: 60px 24px;
+  background: var(--bg-dark);
+}
+
+.login-header {
+  text-align: center;
+  margin-bottom: 40px;
+}
+
+.login-title {
+  font-size: 28px;
+  font-weight: 700;
+  margin-bottom: 8px;
+}
+
+.login-subtitle {
+  color: var(--text-secondary);
+  font-size: 14px;
+}
+
+.mode-selector {
+  display: flex;
+  gap: 12px;
+  margin-bottom: 32px;
+}
+
+.mode-btn {
+  flex: 1;
+  padding: 14px;
+  background: rgba(255,255,255,0.05);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  color: var(--text-secondary);
+  font-size: 15px;
+  cursor: pointer;
+  transition: all 0.3s;
+}
+
+.mode-btn.active {
+  background: rgba(0,212,255,0.15);
+  border-color: var(--primary);
+  color: var(--primary);
+  font-weight: 600;
+}
+
+.login-form {
+  display: none;
+}
+
+.login-form.active {
+  display: block;
+  animation: fadeIn 0.3s ease;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.form-group {
+  margin-bottom: 20px;
+}
+
+.form-label {
+  display: block;
+  color: var(--text-secondary);
+  font-size: 14px;
+  margin-bottom: 8px;
+}
+
+.phone-input-group {
+  display: flex;
+  gap: 12px;
+}
+
+.phone-input-group .input-field {
+  flex: 1;
+}
+
+.code-btn {
+  padding: 18px 20px;
+  background: rgba(0,212,255,0.1);
+  border: 1px solid rgba(0,212,255,0.3);
+  border-radius: 16px;
+  color: var(--primary);
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: all 0.3s;
+}
+
+.code-btn:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+.gender-selector {
+  display: flex;
+  gap: 16px;
+}
+
+.gender-option {
+  flex: 1;
+  padding: 24px;
+  background: rgba(255,255,255,0.03);
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  text-align: center;
+  cursor: pointer;
+  transition: all 0.3s;
+}
+
+.gender-option.selected {
+  border-color: var(--primary);
+  background: rgba(0,212,255,0.1);
+}
+
+.gender-option .icon {
+  font-size: 32px;
+  margin-bottom: 8px;
+}
+
+.gender-option .text {
+  font-size: 14px;
+  color: var(--text-secondary);
+}
+
+.gender-option.selected .text {
+  color: var(--primary);
+  font-weight: 600;
+}
+
+.hint-text {
+  color: var(--text-secondary);
+  font-size: 12px;
+  margin-top: 8px;
+}
+
+/* ========== 主页 ========== */
+.home-page {
+  background: var(--bg-dark);
+  padding-bottom: 100px;
+}
+
+.home-header {
+  padding: 60px 24px 24px;
+}
+
+.home-date {
+  color: var(--primary);
+  font-size: 13px;
+  font-weight: 500;
+  margin-bottom: 4px;
+}
+
+.home-greeting {
+  font-size: 28px;
+  font-weight: 700;
+  margin-bottom: 4px;
+}
+
+.home-subtitle {
+  color: var(--text-secondary);
+  font-size: 14px;
+}
+
+/* 连续打卡 */
+.streak-card {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin: 0 24px 24px;
+  padding: 16px 20px;
+  background: linear-gradient(135deg, rgba(255,45,146,0.15), rgba(255,107,107,0.1));
+  border: 1px solid rgba(255,45,146,0.3);
+  border-radius: 16px;
+}
+
+.streak-icon {
+  font-size: 28px;
+}
+
+.streak-info {
+  flex: 1;
+}
+
+.streak-count {
+  font-size: 20px;
+  font-weight: 700;
+  color: #FF6B6B;
+}
+
+.streak-label {
+  font-size: 12px;
+  color: var(--text-secondary);
+}
+
+/* 目标卡片 */
+.goals-section {
+  padding: 0 24px;
+  margin-bottom: 32px;
+}
+
+.section-title {
+  font-size: 18px;
+  font-weight: 600;
+  margin-bottom: 16px;
+}
+
+.goals-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 12px;
+}
+
+.goal-card {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: 20px;
+  padding: 20px;
+  position: relative;
+  cursor: pointer;
+  transition: all 0.3s;
+}
+
+.goal-card:active {
+  transform: scale(0.98);
+  border-color: var(--primary);
+}
+
+.goal-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 3px;
+  background: linear-gradient(90deg, var(--primary), var(--secondary));
+  border-radius: 20px 20px 0 0;
+}
+
+.goal-icon {
+  font-size: 24px;
+  margin-bottom: 12px;
+}
+
+.goal-value {
+  font-size: 24px;
+  font-weight: 700;
+  margin-bottom: 4px;
+}
+
+.goal-value .target {
+  font-size: 13px;
+  color: var(--text-secondary);
+  font-weight: 400;
+}
+
+.goal-label {
+  font-size: 12px;
+  color: var(--text-secondary);
+  margin-bottom: 12px;
+}
+
+.goal-progress {
+  height: 4px;
+  background: rgba(255,255,255,0.1);
+  border-radius: 2px;
+  overflow: hidden;
+}
+
+.goal-progress-bar {
+  height: 100%;
+  background: linear-gradient(90deg, var(--primary), var(--secondary));
+  border-radius: 2px;
+  transition: width 0.5s ease;
+}
+
+.goal-add-btn {
+  position: absolute;
+  top: 16px;
+  right: 16px;
+  width: 28px;
+  height: 28px;
+  background: rgba(0,212,255,0.2);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 18px;
+  color: var(--primary);
+}
+
+/* 快捷功能 */
+.quick-actions {
+  padding: 0 24px;
+}
+
+.actions-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 12px;
+}
+
+.action-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 16px 8px;
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  cursor: pointer;
+  transition: all 0.3s;
+}
+
+.action-item:active {
+  transform: scale(0.95);
+  border-color: var(--primary);
+}
+
+.action-icon {
+  width: 48px;
+  height: 48px;
+  border-radius: 14px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 24px;
+  margin-bottom: 8px;
+}
+
+.action-icon.workout { background: linear-gradient(135deg, #FF2D92, #FF6B6B); }
+.action-icon.diet { background: linear-gradient(135deg, #30D158, var(--primary)); }
+.action-icon.weight { background: linear-gradient(135deg, #FFD93D, #FF8C42); }
+.action-icon.sleep { background: linear-gradient(135deg, #9B59B6, #3498DB); }
+
+.action-text {
+  font-size: 12px;
+  color: var(--text-secondary);
+}
+
+/* ========== 训练页 ========== */
+.workout-page {
+  background: var(--bg-dark);
+}
+
+.page-header {
+  padding: 60px 24px 20px;
+}
+
+.page-title {
+  font-size: 28px;
+  font-weight: 700;
+  margin-bottom: 4px;
+}
+
+.page-subtitle {
+  color: var(--text-secondary);
+  font-size: 14px;
+}
+
+.category-tabs {
+  display: flex;
+  gap: 12px;
+  padding: 0 24px 20px;
+  overflow-x: auto;
+}
+
+.tab {
+  padding: 10px 20px;
+  background: rgba(255,255,255,0.05);
+  border: 1px solid var(--border);
+  border-radius: 20px;
+  font-size: 14px;
+  white-space: nowrap;
+  cursor: pointer;
+  transition: all 0.3s;
+}
+
+.tab.active {
+  background: var(--primary);
+  color: #000;
+  border-color: var(--primary);
+  font-weight: 600;
+}
+
+.workout-list {
+  padding: 0 24px;
+}
+
+.workout-item {
+  display: flex;
+  align-items: center;
+  padding: 16px;
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: 20px;
+  margin-bottom: 12px;
+  cursor: pointer;
+  transition: all 0.3s;
+}
+
+.workout-item:active {
+  border-color: var(--primary);
+}
+
+.workout-thumb {
+  width: 80px;
+  height: 80px;
+  background: linear-gradient(135deg, var(--primary), var(--secondary));
+  border-radius: 16px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 36px;
+  margin-right: 16px;
+}
+
+.workout-info {
+  flex: 1;
+}
+
+.workout-name {
+  font-size: 16px;
+  font-weight: 600;
+  margin-bottom: 6px;
+}
+
+.workout-meta {
+  font-size: 13px;
+  color: var(--text-secondary);
+}
+
+.workout-meta span {
+  margin-right: 12px;
+}
+
+.workout-play-btn {
+  width: 44px;
+  height: 44px;
+  background: rgba(0,212,255,0.2);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 20px;
+}
+
+/* ========== 计时器页 ========== */
+.timer-page {
+  background: var(--bg-dark);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 100vh;
+  padding: 40px 24px;
+}
+
+.timer-workout-name {
+  font-size: 24px;
+  font-weight: 600;
+  margin-bottom: 8px;
+  text-align: center;
+}
+
+.timer-hint {
+  color: var(--text-secondary);
+  font-size: 14px;
+  margin-bottom: 60px;
+}
+
+.timer-display {
+  font-size: 80px;
+  font-weight: 200;
+  font-family: 'Courier New', monospace;
+  margin-bottom: 60px;
+  text-shadow: 0 0 30px rgba(0,212,255,0.3);
+}
+
+.timer-controls {
+  display: flex;
+  gap: 24px;
+  margin-bottom: 40px;
+}
+
+.timer-btn {
+  width: 80px;
+  height: 80px;
+  border-radius: 50%;
+  border: none;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  transition: all 0.3s;
+}
+
+.timer-btn .icon {
+  font-size: 24px;
+}
+
+.timer-btn.primary {
+  background: var(--primary);
+  color: #000;
+  width: 100px;
+  height: 100px;
+  font-size: 16px;
+}
+
+.timer-btn.secondary {
+  background: rgba(255,255,255,0.1);
+  color: #fff;
+}
+
+.timer-btn:active {
+  transform: scale(0.95);
+}
+
+/* ========== 饮食页 ========== */
+.diet-page {
+  background: var(--bg-dark);
+}
+
+.calorie-card {
+  margin: 0 24px 24px;
+  padding: 28px;
+  background: linear-gradient(135deg, rgba(0,212,255,0.1), rgba(255,45,146,0.1));
+  border: 1px solid rgba(0,212,255,0.2);
+  border-radius: 24px;
+}
+
+.calorie-main {
+  text-align: center;
+  margin-bottom: 24px;
+}
+
+.calorie-value {
+  font-size: 56px;
+  font-weight: 800;
+  background: linear-gradient(135deg, var(--primary), var(--secondary));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.calorie-label {
+  color: var(--text-secondary);
+  font-size: 14px;
+  margin-top: 4px;
+}
+
+.calorie-stats {
+  display: flex;
+  justify-content: space-around;
+  padding-top: 24px;
+  border-top: 1px solid rgba(255,255,255,0.1);
+}
+
+.cal-stat {
+  text-align: center;
+}
+
+.cal-stat-value {
+  font-size: 20px;
+  font-weight: 700;
+  color: var(--primary);
+  margin-bottom: 4px;
+}
+
+.cal-stat-label {
+  font-size: 12px;
+  color: var(--text-secondary);
+}
+
+.meal-list {
+  padding: 0 24px;
+}
+
+.meal-item {
+  display: flex;
+  align-items: center;
+  padding: 16px;
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  margin-bottom: 12px;
+}
+
+.meal-icon {
+  width: 48px;
+  height: 48px;
+  background: rgba(255,255,255,0.1);
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 24px;
+  margin-right: 16px;
+}
+
+.meal-info {
+  flex: 1;
+}
+
+.meal-name {
+  font-size: 16px;
+  font-weight: 500;
+  margin-bottom: 4px;
+}
+
+.meal-hint {
+  font-size: 13px;
+  color: var(--text-secondary);
+}
+
+.meal-add {
+  width: 36px;
+  height: 36px;
+  background: var(--primary);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 24px;
+  color: #000;
+  cursor: pointer;
+}
+
+/* ========== 我的页 ========== */
+.profile-page {
+  background: var(--bg-dark);
+}
+
+.profile-header {
+  text-align: center;
+  padding: 60px 24px 32px;
+}
+
+.profile-avatar {
+  width: 100px;
+  height: 100px;
+  background: linear-gradient(135deg, var(--primary), var(--secondary));
+  border-radius: 50%;
+  margin: 0 auto 16px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 48px;
+  box-shadow: 0 10px 40px rgba(0,212,255,0.3);
+}
+
+.profile-name {
+  font-size: 24px;
+  font-weight: 700;
+  margin-bottom: 4px;
+}
+
+.profile-info {
+  color: var(--text-secondary);
+  font-size: 14px;
+}
+
+.profile-stats {
+  display: flex;
+  justify-content: space-around;
+  margin: 0 24px 32px;
+  padding: 20px;
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: 20px;
+}
+
+.profile-stat {
+  text-align: center;
+}
+
+.profile-stat-value {
+  font-size: 28px;
+  font-weight: 700;
+  background: linear-gradient(135deg, var(--primary), var(--secondary));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  margin-bottom: 4px;
+}
+
+.profile-stat-label {
+  font-size: 12px;
+  color: var(--text-secondary);
+}
+
+.menu-list {
+  padding: 0 24px;
+}
+
+.menu-item {
+  display: flex;
+  align-items: center;
+  padding: 18px 16px;
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  margin-bottom: 12px;
+  cursor: pointer;
+  transition: all 0.3s;
+}
+
+.menu-item:active {
+  border-color: var(--primary);
+}
+
+.menu-icon {
+  width: 40px;
+  height: 40px;
+  background: rgba(255,255,255,0.1);
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 20px;
+  margin-right: 16px;
+}
+
+.menu-text {
+  flex: 1;
+  font-size: 15px;
+}
+
+.menu-arrow {
+  color: var(--text-secondary);
+  font-size: 20px;
+}
+
+.logout-btn {
+  margin-top: 20px;
+  color: #FF6B6B;
+}
+
+.logout-btn .menu-icon {
+  background: rgba(255,107,107,0.1);
+}
+
+/* ========== 底部导航 ========== */
+.bottom-nav {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  display: flex;
+  justify-content: space-around;
+  padding: 12px 0 30px;
+  background: rgba(10,10,10,0.98);
+  backdrop-filter: blur(20px);
+  border-top: 1px solid rgba(255,255,255,0.05);
+  z-index: 1000;
+}
+
+.nav-item {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 8px;
+  cursor: pointer;
+  opacity: 0.4;
+  transition: all 0.3s;
+}
+
+.nav-item.active {
+  opacity: 1;
+}
+
+.nav-item .icon {
+  font-size: 24px;
+  margin-bottom: 4px;
+}
+
+.nav-item .text {
+  font-size: 11px;
+}
+
+/* ========== Toast ========== */
+.toast {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background: rgba(40,40,40,0.98);
+  padding: 16px 28px;
+  border-radius: 12px;
+  color: #fff;
+  font-size: 15px;
+  z-index: 100000;
+  display: none;
+  border: 1px solid rgba(255,255,255,0.1);
+}
+
+.toast.show {
+  display: block;
+  animation: toastIn 0.3s ease;
+}
+
+@keyframes toastIn {
+  from { opacity: 0; transform: translate(-50%, -40%); }
+  to { opacity: 1; transform: translate(-50%, -50%); }
+}
+</style>
+</head>
+<body>
+
+<!-- Toast -->
+<div class="toast" id="toast"></div>
+
+<!-- ========== 欢迎页 ========== -->
+<div class="page active" id="welcomePage">
+<div class="welcome-page">
+<div class="logo-container">
+<div class="logo-glow"></div>
+<div class="logo">A</div>
+</div>
+<div class="brand-name">AMBROSE</div>
+<div class="brand-tagline">AI智能健康教练</div>
+<button class="btn-primary" onclick="showPage('loginPage')" style="margin-top: 60px;">开始使用</button>
+</div>
+</div>
+
+<!-- ========== 登录页 ========== -->
+<div class="page" id="loginPage">
+<div class="login-page">
+<div class="login-header">
+<div class="login-title">欢迎回来</div>
+<div class="login-subtitle">选择你的身份开始</div>
+</div>
+
+<div class="mode-selector">
+<button class="mode-btn active" onclick="switchMode('boss')" id="bossModeBtn">👑 BOSS</button>
+<button class="mode-btn" onclick="switchMode('user')" id="userModeBtn">👤 用户</button>
+</div>
+
+<!-- BOSS登录 -->
+<div class="login-form active" id="bossForm">
+<div class="form-group">
+<label class="form-label">专属识别码</label>
+<input type="password" class="input-field" id="bossCode" placeholder="请输入4位识别码" maxlength="4">
+<p class="hint-text">💡 提示：BOSS识别码为 0812</p>
+</div>
+<button class="btn-primary" onclick="loginBoss()" style="margin-top: 40px;">进入系统</button>
+</div>
+
+<!-- 用户注册 -->
+<div class="login-form" id="userForm">
+<div class="form-group">
+<label class="form-label">手机号码</label>
+<div class="phone-input-group">
+<input type="tel" class="input-field" id="phoneInput" placeholder="11位手机号" maxlength="11">
+<button class="code-btn" id="sendCodeBtn" onclick="sendVerifyCode()">获取验证码</button>
+</div>
+</div>
+
+<div class="form-group">
+<label class="form-label">验证码</label>
+<input type="text" class="input-field" id="verifyCode" placeholder="6位验证码" maxlength="6">
+<p class="hint-text">💡 测试验证码：123456</p>
+</div>
+
+<div class="form-group">
+<label class="form-label">性别</label>
+<div class="gender-selector">
+<div class="gender-option" onclick="selectGender('male')" id="genderMale">
+<div class="icon">👨</div>
+<div class="text">男士</div>
+</div>
+<div class="gender-option" onclick="selectGender('female')" id="genderFemale">
+<div class="icon">👩</div>
+<div class="text">女士</div>
+</div>
+</div>
+</div>
+
+<div class="form-group">
+<label class="form-label">身体数据</label>
+<input type="text" class="input-field" id="userName" placeholder="姓名">
+<input type="number" class="input-field" id="userAge" placeholder="年龄 (岁)" style="margin-top: 12px;">
+<input type="number" class="input-field" id="userHeight" placeholder="身高 (cm)" style="margin-top: 12px;">
+<input type="number" class="input-field" id="userWeight" placeholder="体重 (kg)" style="margin-top: 12px;">
+</div>
+
+<button class="btn-primary" onclick="registerUser()" style="margin-top: 40px;">创建账户</button>
+</div>
+</div>
+</div>
+
+<script>
+// 页面切换
+function showPage(pageId) {
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  document.getElementById(pageId).classList.add('active');
+  
+  // 控制底部导航
+  var navPages = ['homePage', 'workoutPage', 'dietPage', 'profilePage'];
+  var bottomNav = document.getElementById('bottomNav');
+  if (bottomNav) {
+    bottomNav.style.display = navPages.includes(pageId) ? 'flex' : 'none';
+  }
+}
+
+function showToast(msg) {
+  var t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), 2000);
+}
+
+function switchMode(mode) {
+  document.querySelectorAll('.mode-btn').forEach(b => b.classList.remove('active'));
+  document.querySelectorAll('.login-form').forEach(f => f.classList.remove('active'));
+  
+  if (mode === 'boss') {
+    document.getElementById('bossModeBtn').classList.add('active');
+    document.getElementById('bossForm').classList.add('active');
+  } else {
+    document.getElementById('userModeBtn').classList.add('active');
+    document.getElementById('userForm').classList.add('active');
+  }
+}
+
+function loginBoss() {
+  var code = document.getElementById('bossCode').value;
+  if (code !== '0812') {
+    showToast('识别码错误');
+    return;
+  }
+  showToast('欢迎BOSS');
+}
+
+function selectGender(gender) {
+  document.querySelectorAll('.gender-option').forEach(g => g.classList.remove('selected'));
+  document.getElementById('gender' + (gender === 'male' ? 'Male' : 'Female')).classList.add('selected');
+}
+
+function sendVerifyCode() {
+  var phone = document.getElementById('phoneInput').value;
+  if (phone.length !== 11) {
+    showToast('请输入正确的手机号');
+    return;
+  }
+  showToast('验证码已发送: 123456');
+}
+
+function registerUser() {
+  showToast('注册成功');
+}
+</script>
+
+</body>
+</html>

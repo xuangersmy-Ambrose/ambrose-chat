@@ -1,16 +1,19 @@
-// Vercel Serverless API - 创建 Stripe Checkout Session
-// 路径: /api/create-checkout-session.js
+// AMBROSE Health v6.0 - Stripe支付后端API
+// 部署到Vercel Serverless Functions
 
 const stripe = require('stripe')(process.env.STRIPE_SECRET_KEY);
 
-module.exports = async function handler(req, res) {
-  // CORS 设置
+// 创建Checkout Session
+module.exports = async (req, res) => {
+  // 设置CORS
+  res.setHeader('Access-Control-Allow-Credentials', true);
   res.setHeader('Access-Control-Allow-Origin', '*');
-  res.setHeader('Access-Control-Allow-Methods', 'POST, OPTIONS');
-  res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
+  res.setHeader('Access-Control-Allow-Methods', 'GET,OPTIONS,PATCH,DELETE,POST,PUT');
+  res.setHeader('Access-Control-Allow-Headers', 'X-CSRF-Token, X-Requested-With, Accept, Accept-Version, Content-Length, Content-MD5, Content-Type, Date, X-Api-Version');
 
   if (req.method === 'OPTIONS') {
-    return res.status(200).end();
+    res.status(200).end();
+    return;
   }
 
   if (req.method !== 'POST') {
@@ -18,18 +21,22 @@ module.exports = async function handler(req, res) {
   }
 
   try {
-    const { priceId, plan, successUrl, cancelUrl } = req.body;
-
-    if (!priceId || !successUrl || !cancelUrl) {
-      return res.status(400).json({ 
-        error: 'Missing required parameters',
-        required: ['priceId', 'successUrl', 'cancelUrl']
-      });
+    const { planId, userId } = req.body;
+    
+    // 价格配置
+    const priceMap = {
+      'pro': process.env.STRIPE_PRICE_PRO || 'price_pro_monthly',
+      'premium': process.env.STRIPE_PRICE_PREMIUM || 'price_premium_monthly'
+    };
+    
+    const priceId = priceMap[planId];
+    if (!priceId) {
+      return res.status(400).json({ error: 'Invalid plan' });
     }
 
-    // 创建 checkout session
+    // 创建Checkout Session
     const session = await stripe.checkout.sessions.create({
-      payment_method_types: ['card'],
+      customer_email: userId, // 用户邮箱
       line_items: [
         {
           price: priceId,
@@ -37,41 +44,18 @@ module.exports = async function handler(req, res) {
         },
       ],
       mode: 'subscription',
-      success_url: successUrl,
-      cancel_url: cancelUrl,
+      success_url: `${process.env.DOMAIN}/success?session_id={CHECKOUT_SESSION_ID}`,
+      cancel_url: `${process.env.DOMAIN}/pricing`,
       metadata: {
-        plan: plan || 'unknown',
-        source: 'ambrose-health-app'
-      },
-      // 收集客户邮箱
-      customer_email: req.body.email || undefined,
-      // 允许促销码
-      allow_promotion_codes: true,
-      // 自动扣税
-      automatic_tax: { enabled: true },
-      // 订阅设置
-      subscription_data: {
-        trial_period_days: 7, // 7天免费试用
-        metadata: {
-          plan: plan
-        }
-      },
-      // 发票设置
-      invoice_creation: {
-        enabled: true
+        userId: userId,
+        planId: planId
       }
     });
 
-    return res.status(200).json({
-      sessionId: session.id,
-      url: session.url
-    });
-
+    res.status(200).json({ sessionId: session.id });
+    
   } catch (error) {
     console.error('Stripe error:', error);
-    return res.status(500).json({
-      error: 'Failed to create checkout session',
-      message: error.message
-    });
+    res.status(500).json({ error: 'Internal server error' });
   }
 };

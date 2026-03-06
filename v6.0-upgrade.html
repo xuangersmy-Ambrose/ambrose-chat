@@ -1,0 +1,339 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="theme-color" content="#0a0a0a">
+<meta name="description" content="AMBROSE Health - AI健康教练，您的私人健身专家">
+<title>AMBROSE Health v6.0 - AI健康教练</title>
+
+<!-- PWA -->
+<link rel="manifest" href="manifest.json">
+<link rel="apple-touch-icon" href="icon-192x192.png">
+
+<!-- Stripe -->
+<script src="https://js.stripe.com/v3/"></script>
+
+<style>
+:root {
+  --primary: #00D4FF;
+  --primary-dark: #0099CC;
+  --secondary: #FF2D92;
+  --gold: #FFD700;
+  --bg-dark: #0a0a0a;
+  --bg-card: rgba(255,255,255,0.03);
+  --border: rgba(255,255,255,0.1);
+  --text-primary: #fff;
+  --text-secondary: rgba(255,255,255,0.5);
+}
+
+* { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+html, body { height: 100%; font-family: -apple-system, BlinkMacSystemFont, 'PingFang SC', sans-serif; background: var(--bg-dark); color: #fff; overflow-x: hidden; }
+
+/* 升级提示弹窗 */
+.upgrade-modal {
+  position: fixed; top: 0; left: 0; right: 0; bottom: 0;
+  background: rgba(0,0,0,0.9); backdrop-filter: blur(20px);
+  z-index: 100000; display: none; align-items: center; justify-content: center;
+  padding: 24px;
+}
+.upgrade-modal.active { display: flex; }
+
+.upgrade-card {
+  background: linear-gradient(135deg, rgba(0,212,255,0.1), rgba(255,45,146,0.1));
+  border: 1px solid var(--primary); border-radius: 24px;
+  padding: 32px 24px; max-width: 400px; width: 100%;
+  text-align: center;
+}
+
+.upgrade-card h2 {
+  font-size: 24px; margin-bottom: 8px;
+  background: linear-gradient(135deg, var(--primary), var(--secondary));
+  -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+}
+
+.upgrade-features {
+  text-align: left; margin: 24px 0;
+}
+
+.upgrade-features li {
+  list-style: none; padding: 8px 0; padding-left: 28px;
+  position: relative; font-size: 14px; color: var(--text-secondary);
+}
+
+.upgrade-features li::before {
+  content: '✓'; position: absolute; left: 0;
+  color: var(--primary); font-weight: bold;
+}
+
+.price-tag {
+  font-size: 32px; font-weight: 800; color: var(--primary);
+  margin: 16px 0;
+}
+
+.price-tag span { font-size: 14px; color: var(--text-secondary); }
+
+.btn-upgrade {
+  width: 100%; padding: 18px;
+  background: linear-gradient(135deg, var(--primary), var(--secondary));
+  color: #000; border: none; border-radius: 16px;
+  font-size: 17px; font-weight: 700; cursor: pointer;
+  margin-bottom: 12px;
+}
+
+.btn-later {
+  background: transparent; color: var(--text-secondary);
+  border: none; font-size: 14px; cursor: pointer;
+}
+
+/* 会员标识 */
+.pro-badge {
+  display: inline-flex; align-items: center; gap: 4px;
+  background: linear-gradient(135deg, var(--gold), #FFA500);
+  color: #000; font-size: 11px; font-weight: 700;
+  padding: 4px 10px; border-radius: 20px;
+}
+
+/* 定价页面 */
+.pricing-page { padding: 60px 24px; }
+.pricing-header { text-align: center; margin-bottom: 40px; }
+.pricing-header h1 { font-size: 32px; margin-bottom: 12px; }
+.pricing-header p { color: var(--text-secondary); }
+
+.pricing-cards {
+  display: grid; gap: 20px; max-width: 600px; margin: 0 auto;
+}
+
+.pricing-card {
+  background: var(--bg-card); border: 1px solid var(--border);
+  border-radius: 24px; padding: 28px;
+  position: relative;
+}
+
+.pricing-card.popular {
+  border-color: var(--primary);
+  background: linear-gradient(135deg, rgba(0,212,255,0.05), rgba(255,45,146,0.05));
+}
+
+.popular-tag {
+  position: absolute; top: -12px; left: 50%; transform: translateX(-50%);
+  background: var(--primary); color: #000;
+  padding: 6px 16px; border-radius: 20px;
+  font-size: 12px; font-weight: 700;
+}
+
+.plan-name { font-size: 24px; font-weight: 700; margin-bottom: 8px; }
+.plan-price { font-size: 40px; font-weight: 800; margin-bottom: 24px; }
+.plan-price span { font-size: 16px; color: var(--text-secondary); font-weight: 400; }
+
+.plan-features { margin-bottom: 24px; }
+.plan-features li {
+  list-style: none; padding: 10px 0; padding-left: 28px;
+  position: relative; font-size: 14px;
+}
+.plan-features li::before {
+  content: '✓'; position: absolute; left: 0;
+  color: var(--primary);
+}
+
+.btn-select {
+  width: 100%; padding: 16px;
+  background: var(--primary); color: #000;
+  border: none; border-radius: 12px;
+  font-size: 16px; font-weight: 600; cursor: pointer;
+}
+
+.btn-select.outlined {
+  background: transparent; border: 1px solid var(--primary);
+  color: var(--primary);
+}
+</style>
+</head>
+<body>
+
+<!-- 升级提示弹窗 -->
+<div id="upgradeModal" class="upgrade-modal">
+  <div class="upgrade-card">
+    <div style="font-size: 48px; margin-bottom: 16px;">🔒</div>
+    <h2>升级Pro会员</h2>
+    <p style="color: var(--text-secondary); margin-bottom: 24px;">解锁AI教练与全部功能</p>
+    
+    <ul class="upgrade-features">
+      <li>AI智能教练无限对话</li>
+      <li>100+高级训练课程</li>
+      <li>云端数据同步</li>
+      <li>高级数据分析</li>
+      <li>无广告体验</li>
+    </ul>
+    
+    <div class="price-tag">¥19.9<span>/月</span></div>
+    
+    <button class="btn-upgrade" onclick="startCheckout()">立即升级</button>
+    <button class="btn-later" onclick="closeUpgradeModal()">稍后再说</button>
+  </div>
+</div>
+
+<!-- 定价页面 -->
+<div id="pricingPage" class="page pricing-page">
+  <div class="pricing-header">
+    <h1>选择您的计划</h1>
+    <p>开始您的健康之旅</p>
+  </div>
+  
+  <div class="pricing-cards">
+    <!-- 免费版 -->
+    <div class="pricing-card">
+      <div class="plan-name">免费版</div>
+      <div class="plan-price">¥0<span>/月</span></div>
+      <ul class="plan-features">
+        <li>30节基础训练课程</li>
+        <li>基础健康数据记录</li>
+        <li>社区浏览</li>
+        <li>每日3次AI对话</li>
+      </ul>
+      <button class="btn-select outlined" onclick="selectPlan('free')">当前计划</button>
+    </div>
+    
+    <!-- Pro会员 -->
+    <div class="pricing-card popular">
+      <div class="popular-tag">最受欢迎</div>
+      <div class="plan-name">Pro会员</div>
+      <div class="plan-price">¥19.9<span>/月</span></div>
+      <ul class="plan-features">
+        <li>全部100+训练课程</li>
+        <li>AI智能教练无限对话</li>
+        <li>云端数据同步</li>
+        <li>高级数据分析</li>
+        <li>饮食智能推荐</li>
+        <li>无广告体验</li>
+      </ul>
+      <button class="btn-select" onclick="selectPlan('pro')">选择Pro</button>
+    </div>
+    
+    <!-- Premium -->
+    <div class="pricing-card">
+      <div class="plan-name">Premium</div>
+      <div class="plan-price">¥39.9<span>/月</span></div>
+      <ul class="plan-features">
+        <li>Pro全部功能</li>
+        <li>1对1专家咨询(每月1次)</li>
+        <li>定制化训练计划</li>
+        <li>优先体验新功能</li>
+        <li>专属社群</li>
+      </ul>
+      <button class="btn-select outlined" onclick="selectPlan('premium')">选择Premium</button>
+    </div>
+  </div>
+</div>
+
+<script>
+// 用户计划管理
+const SUBSCRIPTION_PLANS = {
+  free: { name: '免费版', price: 0 },
+  pro: { name: 'Pro会员', price: 19.9, stripePriceId: 'price_pro' },
+  premium: { name: 'Premium', price: 39.9, stripePriceId: 'price_premium' }
+};
+
+function getUserPlan() {
+  return localStorage.getItem('userPlan') || 'free';
+}
+
+function setUserPlan(planId) {
+  localStorage.setItem('userPlan', planId);
+  localStorage.setItem('planUpdatedAt', Date.now().toString());
+  showToast(`已切换到${SUBSCRIPTION_PLANS[planId].name}`);
+}
+
+// 检查功能权限
+function hasFeatureAccess(feature) {
+  const userPlan = getUserPlan();
+  const featureMatrix = {
+    'ai-coach': ['pro', 'premium'],
+    'advanced-courses': ['pro', 'premium'],
+    'cloud-sync': ['pro', 'premium'],
+    'custom-plan': ['premium'],
+    'expert-consult': ['premium']
+  };
+  const allowedPlans = featureMatrix[feature] || ['free', 'pro', 'premium'];
+  return allowedPlans.includes(userPlan);
+}
+
+// 显示升级提示
+function showUpgradeModal(feature) {
+  const modal = document.getElementById('upgradeModal');
+  modal.classList.add('active');
+}
+
+function closeUpgradeModal() {
+  const modal = document.getElementById('upgradeModal');
+  modal.classList.remove('active');
+}
+
+// 选择计划
+function selectPlan(planId) {
+  if (planId === 'free') {
+    setUserPlan('free');
+    return;
+  }
+  
+  // 检查是否已登录
+  const user = localStorage.getItem('currentUser');
+  if (!user) {
+    showToast('请先登录');
+    showPage('loginPage');
+    return;
+  }
+  
+  // 启动Stripe支付
+  startCheckout(planId);
+}
+
+// Stripe支付
+async function startCheckout(planId) {
+  try {
+    showToast('正在连接支付系统...');
+    
+    // 调用后端创建Checkout Session
+    const response = await fetch('/api/create-checkout-session', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        planId: planId,
+        userId: localStorage.getItem('currentUser')
+      })
+    });
+    
+    const { sessionId } = await response.json();
+    
+    // 重定向到Stripe Checkout
+    const stripe = Stripe('pk_test_your_publishable_key');
+    await stripe.redirectToCheckout({ sessionId });
+    
+  } catch (error) {
+    console.error('支付错误:', error);
+    showToast('支付系统暂时不可用，请稍后重试');
+  }
+}
+
+// 显示提示
+function showToast(message) {
+  // 复用原有toast逻辑或简化实现
+  alert(message);
+}
+
+// 页面切换
+function showPage(pageId) {
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  const page = document.getElementById(pageId);
+  if (page) page.classList.add('active');
+}
+
+// 初始化
+console.log('AMBROSE Health v6.0 - 商业化模块已加载');
+console.log('当前计划:', getUserPlan());
+</script>
+
+</body>
+</html>
