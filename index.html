@@ -568,9 +568,17 @@ body {
 <div class="action-icon achieve">🏆</div>
 <div class="action-text">成就徽章</div>
 </div>
-<div class="action-item" onclick="showPage('weightPage')">
-<div class="action-icon weight">⚖️</div>
-<div class="action-text">记体重</div>
+<div class="action-item" onclick="showLeaderboard()">
+<div class="action-icon" style="background: linear-gradient(135deg, #FFD700, #FF8C00);">📊</div>
+<div class="action-text">排行榜</div>
+</div>
+<div class="action-item" onclick="showCommunity()">
+<div class="action-icon" style="background: linear-gradient(135deg, #9B59B6, #3498DB);">👥</div>
+<div class="action-text">社区</div>
+</div>
+<div class="action-item" onclick="showReport()">
+<div class="action-icon" style="background: linear-gradient(135deg, #30D158, #00D4FF);">📈</div>
+<div class="action-text">数据报告</div>
 </div>
 </div>
 </div>
@@ -1873,6 +1881,249 @@ var foodDB = [
 
 function showFoodDB() {
   showToast('食物数据库功能开发中');
+}
+
+// ==================== 排行榜系统 ====================
+var leaderboardData = [
+  { rank: 1, name: '健身达人小李', avatar: '👨', points: 12580, workouts: 156, streak: 45 },
+  { rank: 2, name: '瑜伽女王', avatar: '👩', points: 11230, workouts: 142, streak: 38 },
+  { rank: 3, name: '跑步狂魔', avatar: '👨', points: 10890, workouts: 138, streak: 42 },
+  { rank: 4, name: '力量举铁', avatar: '👨', points: 9560, workouts: 120, streak: 28 },
+  { rank: 5, name: '你', avatar: currentUser && currentUser.gender === 'female' ? '👩' : '👨', points: userData.totalPoints || 0, workouts: 12, streak: userData.streak || 0, isMe: true },
+  { rank: 6, name: '早起鸟', avatar: '👩', points: 8230, workouts: 105, streak: 35 },
+  { rank: 7, name: '腹肌撕裂者', avatar: '👨', points: 7890, workouts: 98, streak: 25 },
+  { rank: 8, name: '拉伸大师', avatar: '👩', points: 7650, workouts: 95, streak: 22 },
+  { rank: 9, name: 'HIIT战士', avatar: '👨', points: 7420, workouts: 92, streak: 30 },
+  { rank: 10, name: '瑜伽小白', avatar: '👩', points: 6980, workouts: 85, streak: 18 }
+];
+
+function showLeaderboard() {
+  var html = '<div class="page" id="leaderboardPage"><div class="workout-page">';
+  html += '<div class="page-header"><div class="page-title">🏆 排行榜</div><div class="page-subtitle">本周运动达人</div></div>';
+  
+  html += '<div class="category-tabs"><div class="tab active" onclick="switchLeaderboard(\'total\', this)">总积分</div><div class="tab" onclick="switchLeaderboard(\'workouts\', this)">训练次数</div><div class="tab" onclick="switchLeaderboard(\'streak\', this)">连续打卡</div></div>';
+  
+  html += '<div style="padding: 0 24px;" id="leaderboardList">';
+  leaderboardData.forEach(user => {
+    var isMe = user.isMe ? 'style="background: rgba(0,212,255,0.1); border-color: var(--primary);"' : '';
+    var rankIcon = user.rank <= 3 ? ['🥇','🥈','🥉'][user.rank-1] : user.rank;
+    html += `<div class="workout-item" ${isMe}>
+      <div style="width: 40px; text-align: center; font-size: 20px; font-weight: 700;">${rankIcon}</div>
+      <div style="width: 48px; height: 48px; background: linear-gradient(135deg, var(--primary), var(--secondary)); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 24px; margin-right: 16px;">${user.avatar}</div>
+      <div class="workout-info">
+        <div class="workout-name">${user.name} ${user.isMe ? '(你)' : ''}</div>
+        <div class="workout-meta"><span>💎 ${user.points}积分</span><span>💪 ${user.workouts}次训练</span><span>🔥 ${user.streak}天连续</span></div>
+      </div>
+    </div>`;
+  });
+  html += '</div>';
+  
+  html += '<button class="btn-secondary" onclick="showPage(\'homePage\')" style="margin: 40px 24px;">← 返回首页</button>';
+  html += '</div></div>';
+  
+  document.body.insertAdjacentHTML('beforeend', html);
+  showPage('leaderboardPage');
+}
+
+function switchLeaderboard(type, el) {
+  document.querySelectorAll('#leaderboardPage .tab').forEach(t => t.classList.remove('active'));
+  el.classList.add('active');
+  var sorted = [...leaderboardData].sort((a, b) => b[type] - a[type]);
+  sorted.forEach((u, i) => u.rank = i + 1);
+  renderLeaderboard(sorted);
+}
+
+function renderLeaderboard(data) {
+  var list = document.getElementById('leaderboardList');
+  var html = '';
+  data.forEach(user => {
+    var isMe = user.isMe ? 'style="background: rgba(0,212,255,0.1); border-color: var(--primary);"' : '';
+    var rankIcon = user.rank <= 3 ? ['🥇','🥈','🥉'][user.rank-1] : user.rank;
+    html += `<div class="workout-item" ${isMe}>
+      <div style="width: 40px; text-align: center; font-size: 20px; font-weight: 700;">${rankIcon}</div>
+      <div style="width: 48px; height: 48px; background: linear-gradient(135deg, var(--primary), var(--secondary)); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 24px; margin-right: 16px;">${user.avatar}</div>
+      <div class="workout-info">
+        <div class="workout-name">${user.name} ${user.isMe ? '(你)' : ''}</div>
+        <div class="workout-meta"><span>💎 ${user.points}积分</span><span>💪 ${user.workouts}次训练</span><span>🔥 ${user.streak}天连续</span></div>
+      </div>
+    </div>`;
+  });
+  list.innerHTML = html;
+}
+
+// ==================== 社区功能 ====================
+var communityPosts = [
+  { id: 1, user: '健身达人小李', avatar: '👨', time: '2小时前', content: '今天完成了30天腹肌挑战！感觉棒极了！💪🔥', image: '💪', likes: 128, comments: 23, liked: false },
+  { id: 2, user: '瑜伽女王', avatar: '👩', time: '3小时前', content: '晨间瑜伽打卡，今天的 sunrise 太美了 🧘🌅', image: '🧘', likes: 256, comments: 45, liked: true },
+  { id: 3, user: '跑步狂魔', avatar: '👨', time: '5小时前', content: '半马PB！1小时45分！感谢坚持的自己 🏃⚡', image: '🏃', likes: 512, comments: 89, liked: false },
+  { id: 4, user: '力量举铁', avatar: '👨', time: '昨天', content: '深蹲突破100kg，继续加油！🏋️💯', image: '🏋️', likes: 189, comments: 34, liked: false },
+  { id: 5, user: '早起鸟', avatar: '👩', time: '昨天', content: '坚持早起的第30天，感觉整个人都精神了 🌅✨', image: '🌅', likes: 345, comments: 56, liked: true }
+];
+
+function showCommunity() {
+  var html = '<div class="page" id="communityPage"><div class="workout-page">';
+  html += '<div class="page-header"><div class="page-title">👥 社区</div><div class="page-subtitle">分享你的运动时刻</div></div>';
+  
+  html += '<div class="category-tabs"><div class="tab active">推荐</div><div class="tab">关注</div><div class="tab">热门</div><div class="tab">附近</div></div>';
+  
+  html += '<div style="padding: 0 24px;" id="postList">';
+  communityPosts.forEach(post => {
+    var likeClass = post.liked ? 'style="color: #FF2D92;"' : '';
+    html += `<div style="background: var(--bg-card); border: 1px solid var(--border); border-radius: 16px; padding: 16px; margin-bottom: 16px;">
+      <div style="display: flex; align-items: center; margin-bottom: 12px;">
+        <div style="width: 40px; height: 40px; background: linear-gradient(135deg, var(--primary), var(--secondary)); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 20px; margin-right: 12px;">${post.avatar}</div>
+        <div>
+          <div style="font-weight: 600;">${post.user}</div>
+          <div style="font-size: 12px; color: var(--text-secondary);">${post.time}</div>
+        </div>
+      </div>
+      <div style="margin-bottom: 12px; line-height: 1.6;">${post.content}</div>
+      <div style="font-size: 48px; margin-bottom: 12px;">${post.image}</div>
+      <div style="display: flex; gap: 24px; color: var(--text-secondary); font-size: 14px;">
+        <span onclick="likePost(${post.id})" ${likeClass}>❤️ ${post.likes}</span>
+        <span>💬 ${post.comments}</span>
+        <span>↗️ 分享</span>
+      </div>
+    </div>`;
+  });
+  html += '</div>';
+  
+  html += '<button class="btn-secondary" onclick="showPage(\'homePage\')" style="margin: 40px 24px;">← 返回首页</button>';
+  html += '</div></div>';
+  
+  document.body.insertAdjacentHTML('beforeend', html);
+  showPage('communityPage');
+}
+
+function likePost(id) {
+  var post = communityPosts.find(p => p.id === id);
+  if (post) {
+    post.liked = !post.liked;
+    post.likes += post.liked ? 1 : -1;
+    showCommunity();
+    if (post.liked) showToast('❤️ 已点赞');
+  }
+}
+
+// ==================== 数据统计周报月报 ====================
+function showReport() {
+  var html = '<div class="page" id="reportPage"><div class="workout-page">';
+  html += '<div class="page-header"><div class="page-title">📊 运动报告</div><div class="page-subtitle">查看你的运动数据分析</div></div>';
+  
+  html += '<div class="category-tabs"><div class="tab active" onclick="switchReport(\'week\', this)">本周</div><div class="tab" onclick="switchReport(\'month\', this)">本月</div><div class="tab" onclick="switchReport(\'year\', this)">全年</div></div>';
+  
+  // 数据概览
+  html += '<div class="points-display" style="margin-bottom: 24px;">';
+  html += '<div class="point-item"><div class="point-value" style="color: var(--primary);">5</div><div class="point-label">训练次数</div></div>';
+  html += '<div class="point-item"><div class="point-value" style="color: var(--secondary);">125</div><div class="point-label">训练分钟</div></div>';
+  html += '<div class="point-item"><div class="point-value" style="color: #FFD700;">680</div><div class="point-label">消耗千卡</div></div>';
+  html += '</div>';
+  
+  // 趋势图表
+  html += '<div style="margin: 0 24px 24px; padding: 20px; background: var(--bg-card); border: 1px solid var(--border); border-radius: 16px;">';
+  html += '<div style="font-weight: 600; margin-bottom: 16px;">📈 本周运动趋势</div>';
+  html += '<div style="display: flex; align-items: flex-end; justify-content: space-around; height: 150px; gap: 8px;">';
+  var data = [30, 45, 60, 40, 80, 55, 70];
+  var days = ['周一', '周二', '周三', '周四', '周五', '周六', '周日'];
+  data.forEach((val, i) => {
+    html += `<div style="flex: 1; text-align: center;">
+      <div style="height: ${val * 1.5}px; background: linear-gradient(to top, var(--primary), var(--secondary)); border-radius: 4px 4px 0 0; margin-bottom: 8px;"></div>
+      <div style="font-size: 11px; color: var(--text-secondary);">${days[i]}</div>
+    </div>`;
+  });
+  html += '</div></div>';
+  
+  // 运动分布
+  html += '<div style="margin: 0 24px 24px; padding: 20px; background: var(--bg-card); border: 1px solid var(--border); border-radius: 16px;">';
+  html += '<div style="font-weight: 600; margin-bottom: 16px;">🎯 运动类型分布</div>';
+  html += '<div style="display: flex; flex-direction: column; gap: 12px;">';
+  var types = [
+    { name: '力量训练', percent: 40, color: '#00D4FF' },
+    { name: '有氧燃脂', percent: 30, color: '#FF2D92' },
+    { name: '瑜伽拉伸', percent: 20, color: '#30D158' },
+    { name: '其他', percent: 10, color: '#FFD93D' }
+  ];
+  types.forEach(t => {
+    html += `<div>
+      <div style="display: flex; justify-content: space-between; margin-bottom: 6px; font-size: 14px;">
+        <span>${t.name}</span><span>${t.percent}%</span>
+      </div>
+      <div style="height: 8px; background: rgba(255,255,255,0.1); border-radius: 4px; overflow: hidden;">
+        <div style="width: ${t.percent}%; height: 100%; background: ${t.color}; border-radius: 4px;"></div>
+      </div>
+    </div>`;
+  });
+  html += '</div></div>';
+  
+  // 成就总结
+  html += '<div style="margin: 0 24px 40px; padding: 20px; background: linear-gradient(135deg, rgba(255,215,0,0.1), rgba(255,140,0,0.1)); border: 1px solid rgba(255,215,0,0.3); border-radius: 16px;">';
+  html += '<div style="font-weight: 600; margin-bottom: 12px; color: #FFD700;">🏆 本周成就</div>';
+  html += '<div style="display: flex; flex-wrap: wrap; gap: 12px;">';
+  html += '<span style="padding: 6px 12px; background: rgba(255,255,255,0.1); border-radius: 12px; font-size: 13px;">🔥 连续3天运动</span>';
+  html += '<span style="padding: 6px 12px; background: rgba(255,255,255,0.1); border-radius: 12px; font-size: 13px;">💪 力量训练达人</span>';
+  html += '<span style="padding: 6px 12px; background: rgba(255,255,255,0.1); border-radius: 12px; font-size: 13px;">⏱️ 单次最长45分钟</span>';
+  html += '</div></div>';
+  
+  html += '<button class="btn-secondary" onclick="showPage(\'homePage\')" style="margin: 0 24px 40px;">← 返回首页</button>';
+  html += '</div></div>';
+  
+  document.body.insertAdjacentHTML('beforeend', html);
+  showPage('reportPage');
+}
+
+function switchReport(type, el) {
+  document.querySelectorAll('#reportPage .tab').forEach(t => t.classList.remove('active'));
+  el.classList.add('active');
+  showToast('已切换到' + (type === 'week' ? '本周' : type === 'month' ? '本月' : '全年') + '数据');
+}
+
+// ==================== 挑战赛功能 ====================
+var challenges = [
+  { id: 1, name: '21天腹肌挑战', participants: 1523, days: 21, reward: '🏅 腹肌徽章', joined: false, image: '💪' },
+  { id: 2, name: '每日万步挑战', participants: 8921, days: 30, reward: '💎 500积分', joined: true, image: '👟' },
+  { id: 3, name: '早起打卡挑战', participants: 3456, days: 7, reward: '🌅 早起鸟徽章', joined: false, image: '🌅' },
+  { id: 4, name: '30天瑜伽挑战', participants: 2134, days: 30, reward: '🧘 瑜伽大师徽章', joined: false, image: '🧘' },
+  { id: 5, name: '减脂大作战', participants: 5678, days: 14, reward: '🔥 1000积分', joined: false, image: '🔥' }
+];
+
+function showChallenges() {
+  var html = '<div class="page" id="challengePage"><div class="workout-page">';
+  html += '<div class="page-header"><div class="page-title">⚔️ 挑战赛</div><div class="page-subtitle">参与挑战，突破自我</div></div>';
+  
+  html += '<div style="padding: 0 24px;">';
+  challenges.forEach(c => {
+    var btnClass = c.joined ? 'btn-secondary' : 'btn-primary';
+    var btnText = c.joined ? '已参加' : '立即参加';
+    html += `<div style="background: var(--bg-card); border: 1px solid var(--border); border-radius: 20px; padding: 20px; margin-bottom: 16px; ${c.joined ? 'border-color: var(--primary);' : ''}">
+      <div style="display: flex; align-items: center; margin-bottom: 16px;">
+        <div style="font-size: 48px; margin-right: 16px;">${c.image}</div>
+        <div style="flex: 1;">
+          <div style="font-weight: 600; font-size: 18px; margin-bottom: 4px;">${c.name}</div>
+          <div style="color: var(--text-secondary); font-size: 13px;">👥 ${c.participants}人参与 · ⏱️ ${c.days}天</div>
+        </div>
+      </div>
+      <div style="background: rgba(255,215,0,0.1); border: 1px solid rgba(255,215,0,0.3); border-radius: 12px; padding: 12px; margin-bottom: 16px;">
+        <div style="font-size: 13px; color: #FFD700;">🎁 完成奖励: ${c.reward}</div>
+      </div>
+      <button class="${btnClass}" onclick="joinChallenge(${c.id})" ${c.joined ? 'disabled' : ''}>${btnText}</button>
+    </div>`;
+  });
+  html += '</div>';
+  
+  html += '<button class="btn-secondary" onclick="showPage(\'homePage\')" style="margin: 40px 24px;">← 返回首页</button>';
+  html += '</div></div>';
+  
+  document.body.insertAdjacentHTML('beforeend', html);
+  showPage('challengePage');
+}
+
+function joinChallenge(id) {
+  var challenge = challenges.find(c => c.id === id);
+  if (challenge && !challenge.joined) {
+    challenge.joined = true;
+    showToast('🎉 成功参加「' + challenge.name + '」');
+    showChallenges();
+  }
 }
 
 // ==================== 数据存储 ====================
