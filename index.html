@@ -315,6 +315,201 @@ body {
 .logout-btn .menu-icon { background: rgba(255,107,107,0.1); }
 .logout-btn .menu-text { color: #FF6B6B; }
 
+/* ========== AI对话页 ========== */
+.chat-page { background: var(--bg-dark); min-height: 100vh; padding-bottom: 200px; }
+
+/* 情感状态栏 */
+.emotion-bar {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  padding: 12px 24px;
+  margin: 0 24px 20px;
+  background: linear-gradient(135deg, rgba(0,212,255,0.1), rgba(255,45,146,0.1));
+  border: 1px solid rgba(0,212,255,0.3);
+  border-radius: 50px;
+  animation: pulse 2s infinite;
+}
+@keyframes pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.7; }
+}
+.emotion-indicator {
+  font-size: 24px;
+  animation: bounce 1s infinite;
+}
+@keyframes bounce {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-3px); }
+}
+.emotion-text {
+  font-size: 14px;
+  color: var(--text-secondary);
+}
+
+/* 对话容器 */
+.chat-container {
+  padding: 0 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+/* 消息样式 */
+.chat-message {
+  display: flex;
+  gap: 12px;
+  max-width: 85%;
+  animation: messageSlide 0.3s ease;
+}
+@keyframes messageSlide {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.chat-message.bot-message { align-self: flex-start; }
+.chat-message.user-message { align-self: flex-end; flex-direction: row-reverse; }
+
+.message-avatar {
+  width: 40px;
+  height: 40px;
+  background: linear-gradient(135deg, var(--primary), var(--secondary));
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 20px;
+  flex-shrink: 0;
+}
+.chat-message.user-message .message-avatar {
+  background: rgba(255,255,255,0.1);
+}
+
+.message-content {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: 20px;
+  padding: 12px 16px;
+  max-width: calc(100% - 52px);
+}
+.chat-message.user-message .message-content {
+  background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+  border-color: transparent;
+}
+
+.message-text {
+  font-size: 15px;
+  line-height: 1.5;
+  word-wrap: break-word;
+}
+.message-time {
+  font-size: 11px;
+  color: var(--text-secondary);
+  margin-top: 6px;
+  text-align: right;
+}
+.chat-message.user-message .message-time {
+  color: rgba(0,0,0,0.5);
+}
+
+/* 快捷建议 */
+.chat-suggestions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  padding: 16px 24px;
+  margin-top: 10px;
+}
+.suggestion-chip {
+  padding: 10px 16px;
+  background: rgba(0,212,255,0.1);
+  border: 1px solid rgba(0,212,255,0.3);
+  border-radius: 20px;
+  font-size: 13px;
+  color: var(--primary);
+  cursor: pointer;
+  transition: all 0.3s;
+}
+.suggestion-chip:active {
+  background: var(--primary);
+  color: #000;
+  transform: scale(0.95);
+}
+
+/* 输入区域 */
+.chat-input-area {
+  position: fixed;
+  bottom: 80px;
+  left: 0;
+  right: 0;
+  padding: 16px 24px;
+  background: linear-gradient(to top, var(--bg-dark), transparent);
+}
+.input-wrapper {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+}
+.chat-input {
+  flex: 1;
+  padding: 16px 20px;
+  background: rgba(255,255,255,0.05);
+  border: 1px solid var(--border);
+  border-radius: 50px;
+  font-size: 15px;
+  color: #fff;
+  outline: none;
+}
+.chat-input:focus {
+  border-color: var(--primary);
+  background: rgba(0,212,255,0.05);
+}
+.send-btn {
+  width: 50px;
+  height: 50px;
+  background: var(--primary);
+  border: none;
+  border-radius: 50%;
+  font-size: 20px;
+  color: #000;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.3s;
+}
+.send-btn:active {
+  transform: scale(0.95);
+  background: var(--primary-dark);
+}
+.input-hint {
+  text-align: center;
+  font-size: 12px;
+  color: var(--text-secondary);
+  margin-top: 10px;
+}
+
+/* 打字指示器 */
+.typing-indicator {
+  display: flex;
+  gap: 4px;
+  padding: 8px 12px;
+}
+.typing-indicator span {
+  width: 8px;
+  height: 8px;
+  background: var(--primary);
+  border-radius: 50%;
+  animation: typing 1.4s infinite;
+}
+.typing-indicator span:nth-child(2) { animation-delay: 0.2s; }
+.typing-indicator span:nth-child(3) { animation-delay: 0.4s; }
+@keyframes typing {
+  0%, 60%, 100% { transform: translateY(0); }
+  30% { transform: translateY(-10px); }
+}
+
 /* ========== 底部导航 ========== */
 .bottom-nav {
   position: fixed; bottom: 0; left: 0; right: 0;
@@ -1166,6 +1361,59 @@ body {
 </div>
 </div>
 
+<!-- ========== AI对话页 ========== -->
+<div class="page" id="chatPage">
+<div class="chat-page">
+<div class="page-header" style="padding-top: 60px;">
+<div class="page-title">💬 智能对话</div>
+<div class="page-subtitle">和AMBROSE聊聊健康</div>
+</div>
+
+<!-- 情感状态显示 -->
+<div class="emotion-bar" id="emotionBar">
+<span class="emotion-indicator" id="currentEmotion">😊</span>
+<span class="emotion-text">AMBROSE正在倾听...</span>
+</div>
+
+<!-- 对话区域 -->
+<div class="chat-container" id="chatContainer">
+<!-- 欢迎消息 -->
+<div class="chat-message bot-message">
+<div class="message-avatar">🦞</div>
+<div class="message-content">
+<div class="message-text">你好！我是AMBROSE，你的AI健康教练 💪</div>
+<div class="message-time">刚刚</div>
+</div>
+</div>
+
+<div class="chat-message bot-message">
+<div class="message-avatar">🦞</div>
+<div class="message-content">
+<div class="message-text">今天感觉怎么样？可以和我聊聊你的健康目标，或者分享你的心情 😊</div>
+<div class="message-time">刚刚</div>
+</div>
+</div>
+</div>
+
+<!-- 快捷建议 -->
+<div class="chat-suggestions" id="chatSuggestions">
+<button class="suggestion-chip" onclick="sendQuickMessage('今天运动量达标了吗？')">📊 今日运动</button>
+<button class="suggestion-chip" onclick="sendQuickMessage('给我一些饮食建议')">🥗 饮食建议</button>
+<button class="suggestion-chip" onclick="sendQuickMessage('我有点累了')">😴 感觉疲劳</button>
+<button class="suggestion-chip" onclick="sendQuickMessage('鼓励我一下！')">💪 需要鼓励</button>
+</div>
+
+<!-- 输入区域 -->
+<div class="chat-input-area">
+<div class="input-wrapper">
+<input type="text" class="chat-input" id="chatInput" placeholder="输入消息..." onkeypress="if(event.key==='Enter')sendChatMessage()">
+<button class="send-btn" onclick="sendChatMessage()">➤</button>
+</div>
+<div class="input-hint">💡 提示: 你可以问我关于运动、饮食、睡眠的任何问题</div>
+</div>
+</div>
+</div>
+
 <!-- ========== 设置页 ========== -->
 <div class="page" id="settingsPage">
 <div class="profile-page">
@@ -1294,6 +1542,10 @@ body {
 <span class="icon">🥗</span>
 <span class="text">饮食</span>
 </div>
+<div class="nav-item" onclick="switchTab('chat')" id="navChat">
+<span class="icon">💬</span>
+<span class="text">对话</span>
+</div>
 <div class="nav-item" onclick="switchTab('profile')" id="navProfile">
 <span class="icon">👤</span>
 <span class="text">我的</span>
@@ -1351,6 +1603,7 @@ function showPage(pageId) {
   if (pageId === 'homePage') updateNav('navHome');
   if (pageId === 'workoutPage') updateNav('navWorkout');
   if (pageId === 'dietPage') updateNav('navDiet');
+  if (pageId === 'chatPage') updateNav('navChat');
   if (pageId === 'profilePage') updateNav('navProfile');
   if (pageId === 'achievePage') { updateNav('navHome'); renderBadges(); }
   if (pageId === 'weightPage') { updateWeightPage(); }
@@ -1366,7 +1619,14 @@ function switchTab(tab) {
   if (tab === 'home') showPage('homePage');
   if (tab === 'workout') showPage('workoutPage');
   if (tab === 'diet') showPage('dietPage');
+  if (tab === 'chat') showPage('chatPage');
   if (tab === 'profile') showPage('profilePage');
+  
+  // 更新导航状态
+  document.querySelectorAll('.nav-item').forEach(el => el.classList.remove('active'));
+  var navMap = { 'home': 'navHome', 'workout': 'navWorkout', 'diet': 'navDiet', 'chat': 'navChat', 'profile': 'navProfile' };
+  var navEl = document.getElementById(navMap[tab]);
+  if (navEl) navEl.classList.add('active');
 }
 
 function selectSleepQuality(quality) {
@@ -3121,6 +3381,307 @@ function safeSaveData() {
   }
 }
 
+// ==================== AI智能对话系统 ====================
+
+// 情感词典
+var emotionKeywords = {
+  happy: ['开心', '高兴', '棒', '好', '喜欢', '爱', '哈哈', '嘻嘻', '优秀', '厉害', '成功', '达标'],
+  sad: ['难过', '伤心', '哭', '痛苦', '失望', '遗憾', '抱歉', '失败', '难受', '不好'],
+  angry: ['生气', '愤怒', '讨厌', '烦', '火大', '气死', '愤怒', '暴躁'],
+  surprised: ['惊讶', '震惊', '哇', '天哪', '真的吗', '不会吧', '居然'],
+  confused: ['疑惑', '不懂', '为什么', '怎么', '什么', '困惑', '迷茫'],
+  loving: ['谢谢', '感谢', '温暖', '贴心', '爱你', '抱抱', '感动'],
+  tired: ['累', '疲劳', '困', ' exhaustion', '疲惫', '辛苦', '乏力'],
+  neutral: []
+};
+
+var emotionEmojis = {
+  happy: '😊',
+  sad: '😢',
+  angry: '😠',
+  surprised: '😲',
+  confused: '🤔',
+  loving: '🥰',
+  tired: '😴',
+  neutral: '😐'
+};
+
+var emotionResponses = {
+  happy: [
+    "看到你的笑容我也好开心！😊",
+    "太棒了！继续保持这种状态！💪",
+    "你开心我就开心！一起加油！",
+    "这种积极的状态太棒了！"
+  ],
+  sad: [
+    "抱抱你... 🫂 不管发生什么，我都在。",
+    "我理解你的感受，想聊聊吗？",
+    "有时候难过是正常的，我会陪着你。",
+    "深呼吸，一切都会好起来的。"
+  ],
+  angry: [
+    "深呼吸...我在听，想说说发生了什么吗？",
+    "我能感受到你的情绪，让我们一起冷静一下。",
+    "生气是正常的，但别让气伤了自己哦。",
+    "来，先喝口水，慢慢说。"
+  ],
+  surprised: [
+    "哇！真的吗？太令人惊讶了！",
+    "这确实让人意想不到！",
+    "生活中总是充满惊喜呢！",
+    "我也有点惊讶了！"
+  ],
+  confused: [
+    "没问题，我来帮你理清思路！🤔",
+    "哪里不清楚？我可以一步步解释。",
+    "疑惑是学习的第一步，我们一起搞清楚！",
+    "慢慢来，我陪你一起理解。"
+  ],
+  loving: [
+    "这是我应该做的！🥰",
+    "能帮到你就好，我很开心！",
+    "你的认可就是我最大的动力！",
+    "我们一起进步！"
+  ],
+  tired: [
+    "辛苦了！要注意休息哦。😴",
+    "累了就歇一歇，别硬撑。",
+    "休息也是为了更好的出发！",
+    "来，深呼吸，放松一下。"
+  ],
+  neutral: [
+    "我在听，请继续说。",
+    "明白了，还有什么我可以帮你的吗？",
+    "收到！我在认真听你说。",
+    "继续说吧，我陪着你。"
+  ]
+};
+
+// 健康建议数据库
+var healthAdvice = {
+  exercise: [
+    "今天已经完成了{steps}步，继续加油！目标是10000步 💪",
+    "运动后的拉伸很重要哦，记得放松肌肉~",
+    "适量的有氧运动对身体很好，你已经很棒了！",
+    "如果感觉累了，可以适当降低强度，循序渐进。"
+  ],
+  diet: [
+    "今天摄入{calories}千卡，注意营养均衡 🥗",
+    "多吃蔬菜水果，补充维生素很重要！",
+    "记得多喝水，保持身体水分充足 💧",
+    "少食多餐比暴饮暴食更健康哦~"
+  ],
+  sleep: [
+    "昨晚睡了{sleep}小时，{quality} 🌙",
+    "充足的睡眠对恢复很重要，尽量保持规律作息。",
+    "睡前少看手机，有助于提高睡眠质量。",
+    "如果失眠，可以试试冥想或深呼吸。"
+  ],
+  water: [
+    "今天已经喝了{water}ml水，继续加油！💧",
+    "多喝水有助于新陈代谢，保持皮肤健康~",
+    "感觉到口渴时，身体已经缺水了，记得定时喝水。"
+  ]
+};
+
+// 分析情感
+function analyzeEmotion(text) {
+  text = text.toLowerCase();
+  var scores = {};
+  
+  for (var emotion in emotionKeywords) {
+    scores[emotion] = 0;
+    var keywords = emotionKeywords[emotion];
+    for (var i = 0; i < keywords.length; i++) {
+      if (text.indexOf(keywords[i]) !== -1) {
+        scores[emotion]++;
+      }
+    }
+  }
+  
+  // 标点符号分析
+  if (text.indexOf('!') !== -1 || text.indexOf('！') !== -1) {
+    scores.happy += 0.5;
+  }
+  if (text.indexOf('?') !== -1 || text.indexOf('？') !== -1) {
+    scores.confused += 0.5;
+  }
+  if (text.indexOf('...') !== -1 || text.indexOf('。。。') !== -1) {
+    scores.sad += 0.3;
+  }
+  
+  // 找到最高分
+  var maxEmotion = 'neutral';
+  var maxScore = 0;
+  for (var emotion in scores) {
+    if (scores[emotion] > maxScore) {
+      maxScore = scores[emotion];
+      maxEmotion = emotion;
+    }
+  }
+  
+  return maxEmotion;
+}
+
+// 生成AI回复
+function generateResponse(userMessage) {
+  var emotion = analyzeEmotion(userMessage);
+  var responses = emotionResponses[emotion];
+  var response = responses[Math.floor(Math.random() * responses.length)];
+  
+  // 个性化建议
+  if (userMessage.indexOf('运动') !== -1 || userMessage.indexOf('步数') !== -1) {
+    var steps = userData.todayData.steps || 0;
+    response += "\n\n" + healthAdvice.exercise[0].replace('{steps}', steps);
+  }
+  else if (userMessage.indexOf('饮食') !== -1 || userMessage.indexOf('吃') !== -1) {
+    var calories = userData.todayData.calories || 0;
+    response += "\n\n" + healthAdvice.diet[0].replace('{calories}', calories);
+  }
+  else if (userMessage.indexOf('睡眠') !== -1 || userMessage.indexOf('睡') !== -1) {
+    var sleep = userData.todayData.sleep || 0;
+    var quality = sleep >= 7 ? '睡眠质量不错' : '建议多休息一下';
+    response += "\n\n" + healthAdvice.sleep[0].replace('{sleep}', sleep).replace('{quality}', quality);
+  }
+  else if (userMessage.indexOf('水') !== -1) {
+    var water = userData.todayData.water || 0;
+    response += "\n\n" + healthAdvice.water[0].replace('{water}', water);
+  }
+  
+  return { text: response, emotion: emotion };
+}
+
+// 更新情感指示器
+function updateEmotionIndicator(emotion) {
+  var indicator = document.getElementById('currentEmotion');
+  var text = document.querySelector('.emotion-text');
+  if (indicator) {
+    indicator.textContent = emotionEmojis[emotion];
+  }
+  if (text) {
+    var texts = {
+      happy: 'AMBROSE和你一起开心！',
+      sad: 'AMBROSE在陪着你...',
+      angry: 'AMBROSE理解你的情绪',
+      surprised: '哇！真的吗？',
+      confused: 'AMBROSE来帮你解答',
+      loving: 'AMBROSE也很感动~',
+      tired: '记得休息哦',
+      neutral: 'AMBROSE正在倾听...'
+    };
+    text.textContent = texts[emotion] || 'AMBROSE正在倾听...';
+  }
+}
+
+// 添加消息到对话
+function addMessage(text, isUser) {
+  var container = document.getElementById('chatContainer');
+  if (!container) return;
+  
+  var messageDiv = document.createElement('div');
+  messageDiv.className = 'chat-message ' + (isUser ? 'user-message' : 'bot-message');
+  
+  var avatar = isUser ? (currentUser ? (currentUser.gender === 'female' ? '👩' : '👨') : '👤') : '🦞';
+  var time = new Date().toLocaleTimeString('zh-CN', { hour: '2-digit', minute: '2-digit' });
+  
+  messageDiv.innerHTML = `
+    <div class="message-avatar">${avatar}</div>
+    <div class="message-content">
+      <div class="message-text">${text.replace(/\n/g, '<br>')}</div>
+      <div class="message-time">${time}</div>
+    </div>
+  `;
+  
+  container.appendChild(messageDiv);
+  container.scrollTop = container.scrollHeight;
+}
+
+// 添加打字指示器
+function addTypingIndicator() {
+  var container = document.getElementById('chatContainer');
+  if (!container) return null;
+  
+  var indicatorDiv = document.createElement('div');
+  indicatorDiv.className = 'chat-message bot-message typing-message';
+  indicatorDiv.innerHTML = `
+    <div class="message-avatar">🦞</div>
+    <div class="message-content">
+      <div class="typing-indicator">
+        <span></span><span></span><span></span>
+      </div>
+    </div>
+  `;
+  
+  container.appendChild(indicatorDiv);
+  container.scrollTop = container.scrollHeight;
+  return indicatorDiv;
+}
+
+// 移除打字指示器
+function removeTypingIndicator() {
+  var indicator = document.querySelector('.typing-message');
+  if (indicator) {
+    indicator.remove();
+  }
+}
+
+// 发送消息
+function sendChatMessage() {
+  var input = document.getElementById('chatInput');
+  if (!input) return;
+  
+  var message = input.value.trim();
+  if (!message) return;
+  
+  // 添加用户消息
+  addMessage(message, true);
+  input.value = '';
+  
+  // 分析情感并更新指示器
+  var emotion = analyzeEmotion(message);
+  updateEmotionIndicator(emotion);
+  
+  // 显示打字指示器
+  var typingIndicator = addTypingIndicator();
+  
+  // 延迟回复（模拟思考）
+  setTimeout(function() {
+    removeTypingIndicator();
+    var response = generateResponse(message);
+    addMessage(response.text, false);
+    updateEmotionIndicator(response.emotion);
+    
+    // 保存对话历史
+    saveChatHistory(message, response.text);
+  }, 1000 + Math.random() * 1000);
+}
+
+// 快捷消息
+function sendQuickMessage(message) {
+  var input = document.getElementById('chatInput');
+  if (input) {
+    input.value = message;
+    sendChatMessage();
+  }
+}
+
+// 保存对话历史
+function saveChatHistory(userMsg, botMsg) {
+  if (!userData.chatHistory) {
+    userData.chatHistory = [];
+  }
+  userData.chatHistory.push({
+    time: new Date().toISOString(),
+    user: userMsg,
+    bot: botMsg
+  });
+  // 只保留最近50条
+  if (userData.chatHistory.length > 50) {
+    userData.chatHistory.shift();
+  }
+  saveData();
+}
+
 // ==================== 页面切换（带清理） ====================
 function showPage(pageId) {
   try {
@@ -3132,13 +3693,14 @@ function showPage(pageId) {
     }
     window.scrollTo(0, 0);
     
-    var navPages = ['homePage', 'workoutPage', 'dietPage', 'profilePage', 'achievePage'];
+    var navPages = ['homePage', 'workoutPage', 'dietPage', 'chatPage', 'profilePage'];
     var bottomNav = document.getElementById('bottomNav');
     if (bottomNav) bottomNav.style.display = navPages.includes(pageId) ? 'flex' : 'none';
     
     if (pageId === 'homePage' && typeof updateNav === 'function') updateNav('navHome');
     if (pageId === 'workoutPage' && typeof updateNav === 'function') updateNav('navWorkout');
     if (pageId === 'dietPage' && typeof updateNav === 'function') updateNav('navDiet');
+    if (pageId === 'chatPage' && typeof updateNav === 'function') updateNav('navChat');
     if (pageId === 'profilePage' && typeof updateNav === 'function') updateNav('navProfile');
     if (pageId === 'achievePage') { 
       if (typeof updateNav === 'function') updateNav('navHome'); 
