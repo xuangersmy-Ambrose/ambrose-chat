@@ -568,7 +568,7 @@ body {
 <div class="action-icon achieve">🏆</div>
 <div class="action-text">成就徽章</div>
 </div>
-<div class="action-item" onclick="showToast('体重记录功能开发中')">
+<div class="action-item" onclick="showPage('weightPage')">
 <div class="action-icon weight">⚖️</div>
 <div class="action-text">记体重</div>
 </div>
@@ -774,6 +774,249 @@ body {
 </div>
 </div>
 
+<!-- ========== 体重记录页 ========== -->
+<div class="page" id="weightPage">
+<div class="diet-page">
+<div class="page-header">
+<div class="page-title">体重记录</div>
+<div class="page-subtitle">记录体重变化，追踪健身成果</div>
+</div>
+
+<div class="calorie-card" style="margin-bottom: 20px;">
+<div class="calorie-main">
+<div class="calorie-value" id="currentWeight">--</div>
+<div class="calorie-label">当前体重 (kg)</div>
+</div>
+<div class="calorie-stats">
+<div class="cal-stat">
+<div class="cal-stat-value" id="startWeight">--</div>
+<div class="cal-stat-label">初始体重</div>
+</div>
+<div class="cal-stat">
+<div class="cal-stat-value" id="weightChange" style="color: #30D158;">--</div>
+<div class="cal-stat-label">变化</div>
+</div>
+<div class="cal-stat">
+<div class="cal-stat-value" id="targetWeight">--</div>
+<div class="cal-stat-label">目标体重</div>
+</div>
+</div>
+</div>
+
+<div class="section-title" style="padding: 0 24px; margin-bottom: 16px;">📊 体重趋势</div>
+<div style="margin: 0 24px 20px; padding: 20px; background: var(--bg-card); border: 1px solid var(--border); border-radius: 16px;">
+<div id="weightChart" style="height: 200px; display: flex; align-items: flex-end; justify-content: space-around; gap: 8px;">
+<!-- JS生成图表 -->
+</div>
+<div style="display: flex; justify-content: space-between; margin-top: 12px; color: var(--text-secondary); font-size: 12px;">
+<span>7天前</span>
+<span>今天</span>
+</div>
+</div>
+
+<div style="padding: 0 24px;">
+<div class="section-title" style="margin-bottom: 16px;">📝 记录体重</div>
+<input type="number" class="input-field" id="newWeightInput" placeholder="输入今日体重 (kg)" step="0.1">
+<button class="btn-primary" onclick="recordWeight()" style="margin-top: 16px;">保存记录</button>
+</div>
+
+<button class="btn-secondary" onclick="showPage('homePage')" style="margin: 40px 24px;">← 返回首页</button>
+</div>
+</div>
+
+<!-- ========== 睡眠记录页 ========== -->
+<div class="page" id="sleepPage">
+<div class="diet-page">
+<div class="page-header">
+<div class="page-title">睡眠记录</div>
+<div class="page-subtitle">优质睡眠是健康的基础</div>
+</div>
+
+<div class="calorie-card" style="margin-bottom: 20px; background: linear-gradient(135deg, rgba(155,89,182,0.1), rgba(52,152,219,0.1)); border-color: rgba(155,89,182,0.3);">
+<div class="calorie-main">
+<div class="calorie-value" id="avgSleep" style="background: linear-gradient(135deg, #9B59B6, #3498DB); -webkit-background-clip: text;">7.2</div>
+<div class="calorie-label">平均睡眠时长 (小时)</div>
+</div>
+<div class="calorie-stats">
+<div class="cal-stat">
+<div class="cal-stat-value" id="deepSleep" style="color: #9B59B6;">2.1h</div>
+<div class="cal-stat-label">深睡</div>
+</div>
+<div class="cal-stat">
+<div class="cal-stat-value" id="lightSleep" style="color: #3498DB;">4.5h</div>
+<div class="cal-stat-label">浅睡</div>
+</div>
+<div class="cal-stat">
+<div class="cal-stat-value" id="sleepScore" style="color: #FFD700;">85</div>
+<div class="cal-stat-label">睡眠评分</div>
+</div>
+</div>
+</div>
+
+<div style="padding: 0 24px;">
+<div class="section-title" style="margin-bottom: 16px;">📝 记录昨晚睡眠</div>
+<div class="form-group">
+<label class="form-label">睡眠时长</label>
+<input type="number" class="input-field" id="sleepHours" placeholder="例如: 7.5" step="0.5">
+</div>
+<div class="form-group">
+<label class="form-label">睡眠质量</label>
+<div class="gender-selector">
+<div class="gender-option" onclick="selectSleepQuality('good')" id="qualityGood">
+<div class="icon">😴</div>
+<div class="text">很好</div>
+</div>
+<div class="gender-option" onclick="selectSleepQuality('normal')" id="qualityNormal">
+<div class="icon">😐</div>
+<div class="text">一般</div>
+</div>
+<div class="gender-option" onclick="selectSleepQuality('bad')" id="qualityBad">
+<div class="icon">😫</div>
+<div class="text">不好</div>
+</div>
+</div>
+</div>
+<button class="btn-primary" onclick="recordSleep()" style="margin-top: 24px;">保存记录</button>
+</div>
+
+<div class="meal-list" style="margin-top: 32px;">
+<div class="section-title">📅 最近记录</div>
+<div id="sleepHistory">
+<div class="meal-item">
+<div class="meal-icon">🌙</div>
+<div class="meal-info">
+<div class="meal-name">昨晚</div>
+<div class="meal-hint">7.5小时 · 质量很好</div>
+</div>
+<div style="color: #30D158; font-weight: 600;">85分</div>
+</div>
+<div class="meal-item">
+<div class="meal-icon">🌙</div>
+<div class="meal-info">
+<div class="meal-name">前天</div>
+<div class="meal-hint">6.5小时 · 质量一般</div>
+</div>
+<div style="color: #FFD93D; font-weight: 600;">72分</div>
+</div>
+</div>
+</div>
+
+<button class="btn-secondary" onclick="showPage('homePage')" style="margin: 40px 24px;">← 返回首页</button>
+</div>
+</div>
+
+<!-- ========== 训练历史页 ========== -->
+<div class="page" id="historyPage">
+<div class="workout-page">
+<div class="page-header">
+<div class="page-title">训练历史</div>
+<div class="page-subtitle">回顾你的每一次进步</div>
+</div>
+
+<div class="points-display" style="margin-bottom: 24px;">
+<div class="point-item">
+<div class="point-value" id="totalWorkouts" style="color: var(--primary);">12</div>
+<div class="point-label">总训练次数</div>
+</div>
+<div class="point-item">
+<div class="point-value" id="totalMinutes" style="color: var(--secondary);">280</div>
+<div class="point-label">总时长(分钟)</div>
+</div>
+<div class="point-item">
+<div class="point-value" id="totalBurned" style="color: #FFD700;">3200</div>
+<div class="point-label">总消耗(千卡)</div>
+</div>
+</div>
+
+<div class="workout-list" id="historyList">
+<div class="section-title" style="margin-bottom: 16px;">📅 最近训练</div>
+<div class="workout-item">
+<div class="workout-thumb">🔥</div>
+<div class="workout-info">
+<div class="workout-name">全身燃脂训练</div>
+<div class="workout-meta"><span>📅 今天</span><span>⏱️ 20分钟</span><span>🔥 200千卡</span></div>
+</div>
+</div>
+<div class="workout-item">
+<div class="workout-thumb">💪</div>
+<div class="workout-info">
+<div class="workout-name">腹肌撕裂者</div>
+<div class="workout-meta"><span>📅 昨天</span><span>⏱️ 15分钟</span><span>🔥 120千卡</span></div>
+</div>
+</div>
+<div class="workout-item">
+<div class="workout-thumb">🧘</div>
+<div class="workout-info">
+<div class="workout-name">晨间瑜伽</div>
+<div class="workout-meta"><span>📅 3天前</span><span>⏱️ 25分钟</span><span>🔥 80千卡</span></div>
+</div>
+</div>
+</div>
+
+<button class="btn-secondary" onclick="showPage('profilePage')" style="margin: 40px 24px;">← 返回我的</button>
+</div>
+</div>
+
+<!-- ========== 设置页 ========== -->
+<div class="page" id="settingsPage">
+<div class="profile-page">
+<div class="page-header" style="padding-top: 60px;">
+<div class="page-title">设置</div>
+<div class="page-subtitle">个性化你的应用体验</div>
+</div>
+
+<div class="menu-list">
+<div class="section-title" style="padding: 0 24px; margin-bottom: 16px;">🔔 提醒设置</div>
+<div class="menu-item" onclick="toggleSetting(this, 'workoutReminder')">
+<div class="menu-icon">💪</div>
+<div class="menu-text">训练提醒</div>
+<div style="width: 48px; height: 28px; background: var(--primary); border-radius: 14px; position: relative;" id="workoutReminder"><div style="width: 24px; height: 24px; background: #fff; border-radius: 50%; position: absolute; top: 2px; right: 2px;"></div></div>
+</div>
+<div class="menu-item" onclick="toggleSetting(this, 'waterReminder')">
+<div class="menu-icon">💧</div>
+<div class="menu-text">喝水提醒</div>
+<div style="width: 48px; height: 28px; background: var(--primary); border-radius: 14px; position: relative;" id="waterReminder"><div style="width: 24px; height: 24px; background: #fff; border-radius: 50%; position: absolute; top: 2px; right: 2px;"></div></div>
+</div>
+<div class="menu-item" onclick="toggleSetting(this, 'sleepReminder')">
+<div class="menu-icon">😴</div>
+<div class="menu-text">睡眠提醒</div>
+<div style="width: 48px; height: 28px; background: var(--border); border-radius: 14px; position: relative;" id="sleepReminder"><div style="width: 24px; height: 24px; background: #fff; border-radius: 50%; position: absolute; top: 2px; left: 2px;"></div></div>
+</div>
+
+<div class="section-title" style="padding: 0 24px; margin: 32px 0 16px;">📊 数据管理</div>
+<div class="menu-item" onclick="showToast('数据导出功能开发中')">
+<div class="menu-icon">📤</div>
+<div class="menu-text">导出数据</div>
+<div class="menu-arrow">›</div>
+</div>
+<div class="menu-item" onclick="showToast('数据同步功能开发中')">
+<div class="menu-icon">🔄</div>
+<div class="menu-text">同步数据</div>
+<div class="menu-arrow">›</div>
+</div>
+<div class="menu-item" onclick="if(confirm('确定要清空所有数据吗？')) { localStorage.clear(); showToast('数据已清空'); location.reload(); }">
+<div class="menu-icon">🗑️</div>
+<div class="menu-text" style="color: #FF6B6B;">清空所有数据</div>
+<div class="menu-arrow">›</div>
+</div>
+
+<div class="section-title" style="padding: 0 24px; margin: 32px 0 16px;">ℹ️ 关于</div>
+<div class="menu-item">
+<div class="menu-icon">📱</div>
+<div class="menu-text">版本</div>
+<div style="color: var(--text-secondary);">v4.2.0</div>
+</div>
+<div class="menu-item" onclick="showToast('AMBROSE - AI智能健康教练')">
+<div class="menu-icon">❤️</div>
+<div class="menu-text">关于我们</div>
+<div class="menu-arrow">›</div>
+</div>
+</div>
+
+<button class="btn-secondary" onclick="showPage('profilePage')" style="margin: 40px 24px;">← 返回我的</button>
+</div>
+</div>
+
 <!-- ========== 我的页 ========== -->
 <div class="page" id="profilePage">
 <div class="profile-page">
@@ -799,22 +1042,22 @@ body {
 </div>
 
 <div class="menu-list">
-<div class="menu-item" onclick="showToast('我的数据 - 功能开发中')">
-<div class="menu-icon">📊</div>
-<div class="menu-text">我的数据</div>
+<div class="menu-item" onclick="showPage('weightPage')">
+<div class="menu-icon">⚖️</div>
+<div class="menu-text">体重记录</div>
 <div class="menu-arrow">›</div>
 </div>
-<div class="menu-item" onclick="showPage('achievePage')">
-<div class="menu-icon">🏆</div>
-<div class="menu-text">成就徽章</div>
+<div class="menu-item" onclick="showPage('sleepPage')">
+<div class="menu-icon">😴</div>
+<div class="menu-text">睡眠记录</div>
 <div class="menu-arrow">›</div>
 </div>
-<div class="menu-item" onclick="showToast('训练历史 - 功能开发中')">
+<div class="menu-item" onclick="showPage('historyPage')">
 <div class="menu-icon">📅</div>
 <div class="menu-text">训练历史</div>
 <div class="menu-arrow">›</div>
 </div>
-<div class="menu-item" onclick="showToast('设置 - 功能开发中')">
+<div class="menu-item" onclick="showPage('settingsPage')">
 <div class="menu-icon">⚙️</div>
 <div class="menu-text">设置</div>
 <div class="menu-arrow">›</div>
@@ -901,6 +1144,7 @@ function showPage(pageId) {
   if (pageId === 'dietPage') updateNav('navDiet');
   if (pageId === 'profilePage') updateNav('navProfile');
   if (pageId === 'achievePage') { updateNav('navHome'); renderBadges(); }
+  if (pageId === 'weightPage') { updateWeightPage(); }
 }
 
 function updateNav(activeId) {
@@ -914,6 +1158,83 @@ function switchTab(tab) {
   if (tab === 'workout') showPage('workoutPage');
   if (tab === 'diet') showPage('dietPage');
   if (tab === 'profile') showPage('profilePage');
+}
+
+function selectSleepQuality(quality) {
+  document.querySelectorAll('#qualityGood, #qualityNormal, #qualityBad').forEach(el => el.classList.remove('selected'));
+  document.getElementById('quality' + quality.charAt(0).toUpperCase() + quality.slice(1)).classList.add('selected');
+}
+
+var selectedQuality = '';
+function selectSleepQuality(quality) {
+  selectedQuality = quality;
+  ['qualityGood', 'qualityNormal', 'qualityBad'].forEach(id => {
+    var el = document.getElementById(id);
+    if (el) el.classList.remove('selected');
+  });
+  var el = document.getElementById('quality' + quality.charAt(0).toUpperCase() + quality.slice(1));
+  if (el) el.classList.add('selected');
+}
+
+function recordSleep() {
+  var hours = parseFloat(document.getElementById('sleepHours').value);
+  if (!hours || hours <= 0) { showToast('请输入睡眠时长'); return; }
+  if (!selectedQuality) { showToast('请选择睡眠质量'); return; }
+  userData.todayData.sleep = hours;
+  var score = selectedQuality === 'good' ? 85 + Math.random() * 10 : selectedQuality === 'normal' ? 70 + Math.random() * 10 : 50 + Math.random() * 15;
+  addPoints(15);
+  saveData();
+  showToast('😴 睡眠记录已保存 +15积分');
+  showPage('homePage');
+  updateHomePage();
+}
+
+function recordWeight() {
+  var weight = parseFloat(document.getElementById('newWeightInput').value);
+  if (!weight || weight <= 0) { showToast('请输入体重'); return; }
+  if (!currentUser.weightHistory) currentUser.weightHistory = [];
+  currentUser.weightHistory.push({ date: new Date().toISOString(), weight: weight });
+  currentUser.weight = weight;
+  addPoints(10);
+  saveData();
+  updateWeightPage();
+  showToast('⚖️ 体重记录已保存 +10积分');
+}
+
+function updateWeightPage() {
+  if (!currentUser) return;
+  document.getElementById('currentWeight').textContent = currentUser.weight || '--';
+  var history = currentUser.weightHistory || [];
+  var start = history.length > 0 ? history[0].weight : currentUser.weight;
+  document.getElementById('startWeight').textContent = start || '--';
+  var change = history.length > 1 ? (currentUser.weight - history[0].weight).toFixed(1) : '0';
+  var changeEl = document.getElementById('weightChange');
+  changeEl.textContent = (change > 0 ? '+' : '') + change;
+  changeEl.style.color = change <= 0 ? '#30D158' : '#FF6B6B';
+  document.getElementById('targetWeight').textContent = (currentUser.weight ? (currentUser.weight - 5) : '--');
+  renderWeightChart();
+}
+
+function renderWeightChart() {
+  var chart = document.getElementById('weightChart');
+  var history = currentUser.weightHistory || [{weight: currentUser.weight}, {weight: currentUser.weight * 0.99}, {weight: currentUser.weight * 0.98}, {weight: currentUser.weight * 0.98}, {weight: currentUser.weight * 0.97}, {weight: currentUser.weight * 0.97}, {weight: currentUser.weight * 0.96}];
+  var weights = history.slice(-7).map(h => h.weight || currentUser.weight);
+  var min = Math.min(...weights), max = Math.max(...weights);
+  var range = max - min || 1;
+  chart.innerHTML = weights.map(w => {
+    var height = ((w - min) / range * 60 + 20);
+    return `<div style="width: 30px; height: ${height}%; background: linear-gradient(to top, var(--primary), var(--secondary)); border-radius: 4px 4px 0 0; position: relative;"><span style="position: absolute; top: -20px; left: 50%; transform: translateX(-50%); font-size: 10px; color: var(--text-secondary);">${w.toFixed(1)}</span></div>`;
+  }).join('');
+}
+
+function toggleSetting(el, id) {
+  var toggle = document.getElementById(id);
+  var isOn = toggle.style.background === 'var(--primary)' || getComputedStyle(toggle).backgroundColor === 'rgb(0, 212, 255)';
+  toggle.style.background = isOn ? 'var(--border)' : 'var(--primary)';
+  var knob = toggle.querySelector('div');
+  knob.style.left = isOn ? '2px' : 'auto';
+  knob.style.right = isOn ? 'auto' : '2px';
+  showToast((isOn ? '已关闭' : '已开启') + '提醒');
 }
 
 // ==================== Toast ====================
