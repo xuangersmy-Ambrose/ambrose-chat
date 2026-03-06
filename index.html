@@ -90,9 +90,25 @@ button:disabled{opacity:0.5}
 <div class="logo">A</div>
 <h1>AMBROSE</h1>
 <p>AI Health Coach</p>
-<input type="text" id="codeInput" placeholder="邀请码 8888" maxlength="4" autocomplete="off">
-<input type="text" id="verifyInput" placeholder="验证码 0812" maxlength="4" class="hide" autocomplete="off">
-<button onclick="doLogin()">进入</button>
+
+<!-- 模式切换 -->
+<div style="margin-bottom:20px">
+<button id="bossBtn" onclick="switchMode('boss')" style="width:136px;margin-right:8px;background:#FF2D92">我是 BOSS</button>
+<button id="guestBtn" onclick="switchMode('guest')" style="width:136px;background:rgba(255,255,255,0.2)">我是访客</button>
+</div>
+
+<!-- BOSS模式：只显示识别码 -->
+<div id="bossMode">
+<input type="text" id="bossCode" placeholder="识别码" maxlength="4" autocomplete="off">
+<button onclick="doBossLogin()">进入</button>
+</div>
+
+<!-- 访客模式：显示名称和邀请码 -->
+<div id="guestMode" style="display:none">
+<input type="text" id="guestName" placeholder="怎么称呼你？" maxlength="10" autocomplete="off">
+<input type="text" id="guestCode" placeholder="邀请码" maxlength="4" autocomplete="off">
+<button onclick="doGuestLogin()">进入</button>
+</div>
 </div>
 
 <!-- 首页 -->
@@ -179,36 +195,63 @@ document.getElementById('timeDisplay').textContent =
 // 更新问候语
 var greet = h < 12 ? '早上好' : (h < 18 ? '下午好' : '晚上好');
 var saved = localStorage.getItem('user');
+var userName = localStorage.getItem('userName') || '朋友';
 if (saved) {
-document.getElementById('userGreeting').textContent = 
-greet + '，' + (saved === 'boss' ? 'BOSS Shao' : '朋友');
+document.getElementById('userGreeting').textContent = greet + '，' + userName;
 }
 }
 setInterval(updateTime, 1000);
 updateTime();
 
-// 登录
-doLogin = function() {
-var c1 = document.getElementById('codeInput').value;
-var c2 = document.getElementById('verifyInput').value;
-if (c1 !== '8888') { showToast('邀请码错误'); return; }
+// 模式切换
+var currentMode = 'boss';
+function switchMode(mode) {
+currentMode = mode;
+var bossBtn = document.getElementById('bossBtn');
+var guestBtn = document.getElementById('guestBtn');
+var bossMode = document.getElementById('bossMode');
+var guestMode = document.getElementById('guestMode');
+
+if (mode === 'boss') {
+bossBtn.style.background = '#FF2D92';
+guestBtn.style.background = 'rgba(255,255,255,0.2)';
+bossMode.style.display = 'block';
+guestMode.style.display = 'none';
+} else {
+bossBtn.style.background = 'rgba(255,255,255,0.2)';
+guestBtn.style.background = '#00D4FF';
+bossMode.style.display = 'none';
+guestMode.style.display = 'block';
+}
+}
+
+// BOSS登录
+doBossLogin = function() {
+var code = document.getElementById('bossCode').value;
+if (code !== '0812') { showToast('识别码错误'); return; }
 
 document.getElementById('authPage').classList.add('hide');
 document.getElementById('homePage').classList.add('show');
-
-var isBoss = c2 === '0812';
-localStorage.setItem('user', isBoss ? 'boss' : 'guest');
+localStorage.setItem('user', 'boss');
+localStorage.setItem('userName', 'BOSS Shao');
 updateTime();
-showToast('欢迎回来');
+showToast('欢迎回来，BOSS');
 };
 
-// 邀请码输入
-document.getElementById('codeInput').oninput = function() {
-this.value = this.value.replace(/\D/g, '');
-if (this.value === '8888') {
-document.getElementById('verifyInput').classList.remove('hide');
-document.getElementById('verifyInput').focus();
-}
+// 访客登录
+doGuestLogin = function() {
+var name = document.getElementById('guestName').value.trim();
+var code = document.getElementById('guestCode').value;
+
+if (!name) { showToast('请输入称呼'); return; }
+if (code !== '8888') { showToast('邀请码错误'); return; }
+
+document.getElementById('authPage').classList.add('hide');
+document.getElementById('homePage').classList.add('show');
+localStorage.setItem('user', 'guest');
+localStorage.setItem('userName', name);
+updateTime();
+showToast('欢迎，' + name);
 };
 
 // 检查已登录
@@ -216,6 +259,9 @@ if (localStorage.getItem('user')) {
 document.getElementById('authPage').classList.add('hide');
 document.getElementById('homePage').classList.add('show');
 updateTime();
+} else {
+// 默认显示BOSS模式
+switchMode('boss');
 }
 
 // 页面切换
@@ -245,10 +291,11 @@ msgs.scrollTop = msgs.scrollHeight;
 
 // AI回复
 setTimeout(function() {
+var userName = localStorage.getItem('userName') || '朋友';
 var isBoss = localStorage.getItem('user') === 'boss';
 var reply = isBoss 
 ? 'BOSS，我记录下来了。作为你的健康教练，我会持续关注你的数据变化。'
-: '收到！我会帮你记录下来。';
+: userName + '，收到！我会帮你记录下来，一起加油！';
 msgs.innerHTML += '<div class="msg ai"><div class="msg-bubble">' + reply + '</div></div>';
 msgs.scrollTop = msgs.scrollHeight;
 }, 800);
