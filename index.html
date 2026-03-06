@@ -7,27 +7,6 @@
 <meta name="theme-color" content="#0a0a0a">
 <title>AMBROSE - AI健康教练</title>
 <style>
-/* ========== 基础重置 ========== */
-* { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
-html, body { height: 100%; }
-body { 
-  font-family: -apple-system, BlinkMacSystemFont, 'PingFang SC', 'Hiragino Sans GB', 'Microsoft YaHei', sans-serif; 
-  background: #0a0a0a; 
-  color: #fff; 
-  overflow-x: hidden;
-  -webkit-overflow-scrolling: touch;
-}
-::-webkit-scrollbar { width: 0; height: 0; }
-
-/* ========== 页面容器 ========== */
-.page { 
-  display: none; 
-  min-height: 100vh; 
-  padding-bottom: 100px;
-}
-.page.active { display: block; }
-
-/* ========== 核心配色 ========== */
 :root {
   --primary: #00D4FF;
   --primary-dark: #0099CC;
@@ -39,944 +18,368 @@ body {
   --text-secondary: rgba(255,255,255,0.5);
 }
 
-/* ========== 按钮样式 ========== */
+* { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+html, body { height: 100%; }
+body { 
+  font-family: -apple-system, BlinkMacSystemFont, 'PingFang SC', 'Hiragino Sans GB', 'Microsoft YaHei', sans-serif; 
+  background: var(--bg-dark); 
+  color: #fff; 
+  overflow-x: hidden;
+  -webkit-overflow-scrolling: touch;
+}
+::-webkit-scrollbar { width: 0; height: 0; }
+
+.page { display: none; min-height: 100vh; padding-bottom: 100px; }
+.page.active { display: block; animation: fadeIn 0.3s ease; }
+@keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+
+/* ========== 通用组件 ========== */
 .btn-primary {
-  width: 100%;
-  padding: 18px;
-  background: var(--primary);
-  color: #000;
-  border: none;
-  border-radius: 16px;
-  font-size: 17px;
-  font-weight: 600;
-  cursor: pointer;
-  transition: all 0.3s;
+  width: 100%; padding: 18px;
+  background: var(--primary); color: #000;
+  border: none; border-radius: 16px;
+  font-size: 17px; font-weight: 600;
+  cursor: pointer; transition: all 0.3s;
 }
-.btn-primary:active {
-  transform: scale(0.98);
-  background: var(--primary-dark);
-}
+.btn-primary:active { transform: scale(0.98); background: var(--primary-dark); }
 
 .btn-secondary {
-  width: 100%;
-  padding: 18px;
-  background: transparent;
-  color: var(--primary);
-  border: 1px solid var(--primary);
-  border-radius: 16px;
-  font-size: 17px;
-  font-weight: 600;
-  cursor: pointer;
-  transition: all 0.3s;
+  width: 100%; padding: 18px;
+  background: transparent; color: var(--primary);
+  border: 1px solid var(--primary); border-radius: 16px;
+  font-size: 17px; font-weight: 600; cursor: pointer;
 }
-.btn-secondary:active {
-  background: rgba(0,212,255,0.1);
-}
+.btn-secondary:active { background: rgba(0,212,255,0.1); }
 
-/* ========== 输入框样式 ========== */
 .input-field {
-  width: 100%;
-  padding: 18px 20px;
+  width: 100%; padding: 18px 20px;
   background: rgba(255,255,255,0.05);
-  border: 1px solid var(--border);
-  border-radius: 16px;
-  color: #fff;
-  font-size: 16px;
-  transition: all 0.3s;
+  border: 1px solid var(--border); border-radius: 16px;
+  color: #fff; font-size: 16px; transition: all 0.3s;
 }
-.input-field:focus {
-  outline: none;
-  border-color: var(--primary);
-  background: rgba(0,212,255,0.05);
-}
-.input-field::placeholder {
-  color: var(--text-secondary);
-}
+.input-field:focus { outline: none; border-color: var(--primary); background: rgba(0,212,255,0.05); }
+.input-field::placeholder { color: var(--text-secondary); }
 
-/* ========== 欢迎页（保持原风格） ========== */
+/* ========== 欢迎页 ========== */
 .welcome-page {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  min-height: 100vh;
-  padding: 40px;
-  text-align: center;
+  display: flex; flex-direction: column;
+  align-items: center; justify-content: center;
+  min-height: 100vh; padding: 40px; text-align: center;
   background: var(--bg-dark);
 }
-
-.logo-container {
-  position: relative;
-  margin-bottom: 40px;
-}
-
+.logo-container { position: relative; margin-bottom: 40px; }
 .logo {
-  width: 140px;
-  height: 140px;
+  width: 140px; height: 140px;
   background: linear-gradient(135deg, #00D4FF, #FF2D92);
   border-radius: 32px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 72px;
-  font-weight: 800;
-  color: #000;
-  position: relative;
-  z-index: 2;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 72px; font-weight: 800; color: #000;
+  position: relative; z-index: 2;
 }
-
 .logo-glow {
-  position: absolute;
-  top: 50%;
-  left: 50%;
+  position: absolute; top: 50%; left: 50%;
   transform: translate(-50%, -50%);
-  width: 200px;
-  height: 200px;
+  width: 200px; height: 200px;
   background: linear-gradient(135deg, rgba(0,212,255,0.4), rgba(255,45,146,0.4));
-  border-radius: 50%;
-  filter: blur(40px);
-  z-index: 1;
+  border-radius: 50%; filter: blur(40px); z-index: 1;
   animation: pulse 3s ease-in-out infinite;
 }
-
 @keyframes pulse {
   0%, 100% { opacity: 0.6; transform: translate(-50%, -50%) scale(1); }
   50% { opacity: 1; transform: translate(-50%, -50%) scale(1.1); }
 }
-
-.brand-name {
-  font-size: 48px;
-  font-weight: 800;
-  color: var(--primary);
-  margin-bottom: 12px;
-  letter-spacing: 2px;
-}
-
-.brand-tagline {
-  font-size: 16px;
-  color: var(--text-secondary);
-  margin-bottom: 80px;
-}
+.brand-name { font-size: 48px; font-weight: 800; color: var(--primary); margin-bottom: 12px; letter-spacing: 2px; }
+.brand-tagline { font-size: 16px; color: var(--text-secondary); margin-bottom: 80px; }
 
 /* ========== 登录页 ========== */
-.login-page {
-  padding: 60px 24px;
-  background: var(--bg-dark);
-}
+.login-page { padding: 60px 24px; }
+.login-header { text-align: center; margin-bottom: 40px; }
+.login-title { font-size: 28px; font-weight: 700; margin-bottom: 8px; }
+.login-subtitle { color: var(--text-secondary); font-size: 14px; }
 
-.login-header {
-  text-align: center;
-  margin-bottom: 40px;
-}
+.mode-selector { display: flex; gap: 12px; margin-bottom: 32px; }
+.mode-btn { flex: 1; padding: 14px; background: rgba(255,255,255,0.05); border: 1px solid var(--border); border-radius: 12px; color: var(--text-secondary); font-size: 15px; cursor: pointer; transition: all 0.3s; }
+.mode-btn.active { background: rgba(0,212,255,0.15); border-color: var(--primary); color: var(--primary); font-weight: 600; }
 
-.login-title {
-  font-size: 28px;
-  font-weight: 700;
-  margin-bottom: 8px;
-}
+.login-form { display: none; }
+.login-form.active { display: block; animation: fadeIn 0.3s ease; }
 
-.login-subtitle {
-  color: var(--text-secondary);
-  font-size: 14px;
-}
+.form-group { margin-bottom: 20px; }
+.form-label { display: block; color: var(--text-secondary); font-size: 14px; margin-bottom: 8px; }
 
-.mode-selector {
-  display: flex;
-  gap: 12px;
-  margin-bottom: 32px;
-}
+.phone-input-group { display: flex; gap: 12px; }
+.phone-input-group .input-field { flex: 1; }
+.code-btn { padding: 18px 20px; background: rgba(0,212,255,0.1); border: 1px solid rgba(0,212,255,0.3); border-radius: 16px; color: var(--primary); font-size: 14px; font-weight: 500; cursor: pointer; white-space: nowrap; }
+.code-btn:disabled { opacity: 0.4; cursor: not-allowed; }
 
-.mode-btn {
-  flex: 1;
-  padding: 14px;
-  background: rgba(255,255,255,0.05);
-  border: 1px solid var(--border);
-  border-radius: 12px;
-  color: var(--text-secondary);
-  font-size: 15px;
-  cursor: pointer;
-  transition: all 0.3s;
-}
+.gender-selector { display: flex; gap: 16px; }
+.gender-option { flex: 1; padding: 24px; background: rgba(255,255,255,0.03); border: 1px solid var(--border); border-radius: 16px; text-align: center; cursor: pointer; transition: all 0.3s; }
+.gender-option.selected { border-color: var(--primary); background: rgba(0,212,255,0.1); }
+.gender-option .icon { font-size: 32px; margin-bottom: 8px; }
+.gender-option .text { font-size: 14px; color: var(--text-secondary); }
+.gender-option.selected .text { color: var(--primary); font-weight: 600; }
 
-.mode-btn.active {
-  background: rgba(0,212,255,0.15);
-  border-color: var(--primary);
-  color: var(--primary);
-  font-weight: 600;
-}
-
-.login-form {
-  display: none;
-}
-
-.login-form.active {
-  display: block;
-  animation: fadeIn 0.3s ease;
-}
-
-@keyframes fadeIn {
-  from { opacity: 0; transform: translateY(10px); }
-  to { opacity: 1; transform: translateY(0); }
-}
-
-.form-group {
-  margin-bottom: 20px;
-}
-
-.form-label {
-  display: block;
-  color: var(--text-secondary);
-  font-size: 14px;
-  margin-bottom: 8px;
-}
-
-.phone-input-group {
-  display: flex;
-  gap: 12px;
-}
-
-.phone-input-group .input-field {
-  flex: 1;
-}
-
-.code-btn {
-  padding: 18px 20px;
-  background: rgba(0,212,255,0.1);
-  border: 1px solid rgba(0,212,255,0.3);
-  border-radius: 16px;
-  color: var(--primary);
-  font-size: 14px;
-  font-weight: 500;
-  cursor: pointer;
-  white-space: nowrap;
-  transition: all 0.3s;
-}
-
-.code-btn:disabled {
-  opacity: 0.4;
-  cursor: not-allowed;
-}
-
-.gender-selector {
-  display: flex;
-  gap: 16px;
-}
-
-.gender-option {
-  flex: 1;
-  padding: 24px;
-  background: rgba(255,255,255,0.03);
-  border: 1px solid var(--border);
-  border-radius: 16px;
-  text-align: center;
-  cursor: pointer;
-  transition: all 0.3s;
-}
-
-.gender-option.selected {
-  border-color: var(--primary);
-  background: rgba(0,212,255,0.1);
-}
-
-.gender-option .icon {
-  font-size: 32px;
-  margin-bottom: 8px;
-}
-
-.gender-option .text {
-  font-size: 14px;
-  color: var(--text-secondary);
-}
-
-.gender-option.selected .text {
-  color: var(--primary);
-  font-weight: 600;
-}
-
-.hint-text {
-  color: var(--text-secondary);
-  font-size: 12px;
-  margin-top: 8px;
-}
+.hint-text { color: var(--text-secondary); font-size: 12px; margin-top: 8px; }
 
 /* ========== 主页 ========== */
-.home-page {
-  background: var(--bg-dark);
-  padding-bottom: 100px;
-}
+.home-page { background: var(--bg-dark); padding-bottom: 100px; }
+.home-header { padding: 60px 24px 24px; }
+.home-date { color: var(--primary); font-size: 13px; font-weight: 500; margin-bottom: 4px; }
+.home-greeting { font-size: 28px; font-weight: 700; margin-bottom: 4px; }
+.home-subtitle { color: var(--text-secondary); font-size: 14px; }
 
-.home-header {
-  padding: 60px 24px 24px;
+/* 等级卡片 */
+.level-card {
+  display: flex; align-items: center; gap: 16px;
+  margin: 0 24px 20px; padding: 20px;
+  background: linear-gradient(135deg, rgba(0,212,255,0.15), rgba(255,45,146,0.1));
+  border: 1px solid rgba(0,212,255,0.3); border-radius: 20px;
 }
-
-.home-date {
-  color: var(--primary);
-  font-size: 13px;
-  font-weight: 500;
-  margin-bottom: 4px;
-}
-
-.home-greeting {
-  font-size: 28px;
-  font-weight: 700;
-  margin-bottom: 4px;
-}
-
-.home-subtitle {
-  color: var(--text-secondary);
-  font-size: 14px;
-}
+.level-avatar { width: 56px; height: 56px; background: linear-gradient(135deg, var(--primary), var(--secondary)); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 28px; }
+.level-info { flex: 1; }
+.level-row { display: flex; align-items: center; gap: 8px; margin-bottom: 6px; }
+.level-badge { padding: 4px 10px; background: rgba(255,215,0,0.2); border: 1px solid rgba(255,215,0,0.4); border-radius: 12px; font-size: 12px; color: #FFD700; font-weight: 600; }
+.level-name { font-size: 18px; font-weight: 700; }
+.level-progress-bg { height: 6px; background: rgba(255,255,255,0.1); border-radius: 3px; overflow: hidden; }
+.level-progress-bar { height: 100%; background: linear-gradient(90deg, var(--primary), var(--secondary)); border-radius: 3px; transition: width 0.5s ease; }
+.level-text { font-size: 12px; color: var(--text-secondary); margin-top: 4px; }
 
 /* 连续打卡 */
 .streak-card {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  margin: 0 24px 24px;
-  padding: 16px 20px;
+  display: flex; align-items: center; gap: 12px;
+  margin: 0 24px 24px; padding: 16px 20px;
   background: linear-gradient(135deg, rgba(255,45,146,0.15), rgba(255,107,107,0.1));
-  border: 1px solid rgba(255,45,146,0.3);
-  border-radius: 16px;
+  border: 1px solid rgba(255,45,146,0.3); border-radius: 16px;
 }
+.streak-icon { font-size: 28px; animation: flame 1s ease-in-out infinite; }
+@keyframes flame { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.1); } }
+.streak-info { flex: 1; }
+.streak-count { font-size: 20px; font-weight: 700; color: #FF6B6B; }
+.streak-label { font-size: 12px; color: var(--text-secondary); }
+.streak-days { display: flex; gap: 6px; }
+.day-dot { width: 8px; height: 8px; background: rgba(255,255,255,0.2); border-radius: 50%; }
+.day-dot.active { background: #FF6B6B; box-shadow: 0 0 8px #FF6B6B; }
 
-.streak-icon {
-  font-size: 28px;
+/* 积分展示 */
+.points-display {
+  display: flex; justify-content: space-around;
+  margin: 0 24px 24px; padding: 20px;
+  background: var(--bg-card); border: 1px solid var(--border); border-radius: 16px;
 }
-
-.streak-info {
-  flex: 1;
-}
-
-.streak-count {
-  font-size: 20px;
-  font-weight: 700;
-  color: #FF6B6B;
-}
-
-.streak-label {
-  font-size: 12px;
-  color: var(--text-secondary);
-}
+.point-item { text-align: center; }
+.point-value { font-size: 24px; font-weight: 700; color: var(--primary); }
+.point-label { font-size: 12px; color: var(--text-secondary); margin-top: 4px; }
 
 /* 目标卡片 */
-.goals-section {
-  padding: 0 24px;
-  margin-bottom: 32px;
-}
+.goals-section { padding: 0 24px; margin-bottom: 32px; }
+.section-title { font-size: 18px; font-weight: 600; margin-bottom: 16px; display: flex; align-items: center; gap: 8px; }
+.section-title .more { margin-left: auto; font-size: 13px; color: var(--text-secondary); font-weight: 400; }
 
-.section-title {
-  font-size: 18px;
-  font-weight: 600;
-  margin-bottom: 16px;
-}
-
-.goals-grid {
-  display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  gap: 12px;
-}
-
+.goals-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; }
 .goal-card {
-  background: var(--bg-card);
-  border: 1px solid var(--border);
-  border-radius: 20px;
-  padding: 20px;
-  position: relative;
-  cursor: pointer;
-  transition: all 0.3s;
+  background: var(--bg-card); border: 1px solid var(--border); border-radius: 20px;
+  padding: 20px; position: relative; cursor: pointer; transition: all 0.3s;
 }
-
-.goal-card:active {
-  transform: scale(0.98);
-  border-color: var(--primary);
-}
-
+.goal-card:active { transform: scale(0.98); border-color: var(--primary); }
 .goal-card::before {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  height: 3px;
-  background: linear-gradient(90deg, var(--primary), var(--secondary));
-  border-radius: 20px 20px 0 0;
+  content: ''; position: absolute; top: 0; left: 0; right: 0; height: 3px;
+  background: linear-gradient(90deg, var(--primary), var(--secondary)); border-radius: 20px 20px 0 0;
 }
-
-.goal-icon {
-  font-size: 24px;
-  margin-bottom: 12px;
-}
-
-.goal-value {
-  font-size: 24px;
-  font-weight: 700;
-  margin-bottom: 4px;
-}
-
-.goal-value .target {
-  font-size: 13px;
-  color: var(--text-secondary);
-  font-weight: 400;
-}
-
-.goal-label {
-  font-size: 12px;
-  color: var(--text-secondary);
-  margin-bottom: 12px;
-}
-
-.goal-progress {
-  height: 4px;
-  background: rgba(255,255,255,0.1);
-  border-radius: 2px;
-  overflow: hidden;
-}
-
-.goal-progress-bar {
-  height: 100%;
-  background: linear-gradient(90deg, var(--primary), var(--secondary));
-  border-radius: 2px;
-  transition: width 0.5s ease;
-}
-
-.goal-add-btn {
-  position: absolute;
-  top: 16px;
-  right: 16px;
-  width: 28px;
-  height: 28px;
-  background: rgba(0,212,255,0.2);
-  border-radius: 50%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 18px;
-  color: var(--primary);
-}
+.goal-icon { font-size: 24px; margin-bottom: 12px; }
+.goal-value { font-size: 24px; font-weight: 700; margin-bottom: 4px; }
+.goal-value .target { font-size: 13px; color: var(--text-secondary); font-weight: 400; }
+.goal-label { font-size: 12px; color: var(--text-secondary); margin-bottom: 12px; }
+.goal-progress { height: 4px; background: rgba(255,255,255,0.1); border-radius: 2px; overflow: hidden; }
+.goal-progress-bar { height: 100%; background: linear-gradient(90deg, var(--primary), var(--secondary)); border-radius: 2px; transition: width 0.5s ease; }
+.goal-add-btn { position: absolute; top: 16px; right: 16px; width: 28px; height: 28px; background: rgba(0,212,255,0.2); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 18px; color: var(--primary); }
 
 /* 快捷功能 */
-.quick-actions {
-  padding: 0 24px;
-}
-
-.actions-grid {
-  display: grid;
-  grid-template-columns: repeat(4, 1fr);
-  gap: 12px;
-}
-
-.action-item {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  padding: 16px 8px;
-  background: var(--bg-card);
-  border: 1px solid var(--border);
-  border-radius: 16px;
-  cursor: pointer;
-  transition: all 0.3s;
-}
-
-.action-item:active {
-  transform: scale(0.95);
-  border-color: var(--primary);
-}
-
-.action-icon {
-  width: 48px;
-  height: 48px;
-  border-radius: 14px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 24px;
-  margin-bottom: 8px;
-}
-
+.quick-actions { padding: 0 24px; margin-bottom: 32px; }
+.actions-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; }
+.action-item { display: flex; flex-direction: column; align-items: center; padding: 16px 8px; background: var(--bg-card); border: 1px solid var(--border); border-radius: 16px; cursor: pointer; transition: all 0.3s; }
+.action-item:active { transform: scale(0.95); border-color: var(--primary); }
+.action-icon { width: 48px; height: 48px; border-radius: 14px; display: flex; align-items: center; justify-content: center; font-size: 24px; margin-bottom: 8px; }
 .action-icon.workout { background: linear-gradient(135deg, #FF2D92, #FF6B6B); }
 .action-icon.diet { background: linear-gradient(135deg, #30D158, var(--primary)); }
 .action-icon.weight { background: linear-gradient(135deg, #FFD93D, #FF8C42); }
 .action-icon.sleep { background: linear-gradient(135deg, #9B59B6, #3498DB); }
+.action-icon.achieve { background: linear-gradient(135deg, #FFD700, #FF8C00); }
+.action-text { font-size: 12px; color: var(--text-secondary); }
 
-.action-text {
-  font-size: 12px;
-  color: var(--text-secondary);
-}
+/* 今日任务 */
+.tasks-section { padding: 0 24px; }
+.task-list { display: flex; flex-direction: column; gap: 12px; }
+.task-item { display: flex; align-items: center; padding: 16px; background: var(--bg-card); border: 1px solid var(--border); border-radius: 16px; cursor: pointer; transition: all 0.3s; }
+.task-item:active { border-color: var(--primary); }
+.task-item.completed { opacity: 0.6; }
+.task-checkbox { width: 24px; height: 24px; border: 2px solid var(--border); border-radius: 50%; margin-right: 16px; display: flex; align-items: center; justify-content: center; font-size: 14px; transition: all 0.3s; }
+.task-item.completed .task-checkbox { background: var(--primary); border-color: var(--primary); color: #000; }
+.task-info { flex: 1; }
+.task-name { font-size: 15px; font-weight: 500; margin-bottom: 4px; }
+.task-name.completed { text-decoration: line-through; color: var(--text-secondary); }
+.task-reward { font-size: 12px; color: var(--primary); }
+.task-icon { font-size: 24px; }
 
 /* ========== 训练页 ========== */
-.workout-page {
-  background: var(--bg-dark);
-}
+.workout-page { background: var(--bg-dark); }
+.page-header { padding: 60px 24px 20px; }
+.page-title { font-size: 28px; font-weight: 700; margin-bottom: 4px; }
+.page-subtitle { color: var(--text-secondary); font-size: 14px; }
 
-.page-header {
-  padding: 60px 24px 20px;
-}
+.category-tabs { display: flex; gap: 12px; padding: 0 24px 20px; overflow-x: auto; }
+.tab { padding: 10px 20px; background: rgba(255,255,255,0.05); border: 1px solid var(--border); border-radius: 20px; font-size: 14px; white-space: nowrap; cursor: pointer; transition: all 0.3s; }
+.tab.active { background: var(--primary); color: #000; border-color: var(--primary); font-weight: 600; }
 
-.page-title {
-  font-size: 28px;
-  font-weight: 700;
-  margin-bottom: 4px;
-}
-
-.page-subtitle {
-  color: var(--text-secondary);
-  font-size: 14px;
-}
-
-.category-tabs {
-  display: flex;
-  gap: 12px;
-  padding: 0 24px 20px;
-  overflow-x: auto;
-}
-
-.tab {
-  padding: 10px 20px;
-  background: rgba(255,255,255,0.05);
-  border: 1px solid var(--border);
-  border-radius: 20px;
-  font-size: 14px;
-  white-space: nowrap;
-  cursor: pointer;
-  transition: all 0.3s;
-}
-
-.tab.active {
-  background: var(--primary);
-  color: #000;
-  border-color: var(--primary);
-  font-weight: 600;
-}
-
-.workout-list {
-  padding: 0 24px;
-}
-
-.workout-item {
-  display: flex;
-  align-items: center;
-  padding: 16px;
-  background: var(--bg-card);
-  border: 1px solid var(--border);
-  border-radius: 20px;
-  margin-bottom: 12px;
-  cursor: pointer;
-  transition: all 0.3s;
-}
-
-.workout-item:active {
-  border-color: var(--primary);
-}
-
-.workout-thumb {
-  width: 80px;
-  height: 80px;
-  background: linear-gradient(135deg, var(--primary), var(--secondary));
-  border-radius: 16px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 36px;
-  margin-right: 16px;
-}
-
-.workout-info {
-  flex: 1;
-}
-
-.workout-name {
-  font-size: 16px;
-  font-weight: 600;
-  margin-bottom: 6px;
-}
-
-.workout-meta {
-  font-size: 13px;
-  color: var(--text-secondary);
-}
-
-.workout-meta span {
-  margin-right: 12px;
-}
-
-.workout-play-btn {
-  width: 44px;
-  height: 44px;
-  background: rgba(0,212,255,0.2);
-  border-radius: 50%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 20px;
-}
+.workout-list { padding: 0 24px; }
+.workout-item { display: flex; align-items: center; padding: 16px; background: var(--bg-card); border: 1px solid var(--border); border-radius: 20px; margin-bottom: 12px; cursor: pointer; transition: all 0.3s; }
+.workout-item:active { border-color: var(--primary); }
+.workout-thumb { width: 80px; height: 80px; background: linear-gradient(135deg, var(--primary), var(--secondary)); border-radius: 16px; display: flex; align-items: center; justify-content: center; font-size: 36px; margin-right: 16px; }
+.workout-info { flex: 1; }
+.workout-name { font-size: 16px; font-weight: 600; margin-bottom: 6px; }
+.workout-meta { font-size: 13px; color: var(--text-secondary); }
+.workout-meta span { margin-right: 12px; }
+.workout-play-btn { width: 44px; height: 44px; background: rgba(0,212,255,0.2); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 20px; }
 
 /* ========== 计时器页 ========== */
-.timer-page {
-  background: var(--bg-dark);
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  min-height: 100vh;
-  padding: 40px 24px;
-}
-
-.timer-workout-name {
-  font-size: 24px;
-  font-weight: 600;
-  margin-bottom: 8px;
-  text-align: center;
-}
-
-.timer-hint {
-  color: var(--text-secondary);
-  font-size: 14px;
-  margin-bottom: 60px;
-}
-
-.timer-display {
-  font-size: 80px;
-  font-weight: 200;
-  font-family: 'Courier New', monospace;
-  margin-bottom: 60px;
-  text-shadow: 0 0 30px rgba(0,212,255,0.3);
-}
-
-.timer-controls {
-  display: flex;
-  gap: 24px;
-  margin-bottom: 40px;
-}
-
-.timer-btn {
-  width: 80px;
-  height: 80px;
-  border-radius: 50%;
-  border: none;
-  font-size: 14px;
-  font-weight: 600;
-  cursor: pointer;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  gap: 4px;
-  transition: all 0.3s;
-}
-
-.timer-btn .icon {
-  font-size: 24px;
-}
-
-.timer-btn.primary {
-  background: var(--primary);
-  color: #000;
-  width: 100px;
-  height: 100px;
-  font-size: 16px;
-}
-
-.timer-btn.secondary {
-  background: rgba(255,255,255,0.1);
-  color: #fff;
-}
-
-.timer-btn:active {
-  transform: scale(0.95);
-}
+.timer-page { background: var(--bg-dark); display: flex; flex-direction: column; align-items: center; justify-content: center; min-height: 100vh; padding: 40px 24px; }
+.timer-workout-name { font-size: 24px; font-weight: 600; margin-bottom: 8px; text-align: center; }
+.timer-hint { color: var(--text-secondary); font-size: 14px; margin-bottom: 60px; }
+.timer-display { font-size: 80px; font-weight: 200; font-family: 'Courier New', monospace; margin-bottom: 60px; text-shadow: 0 0 30px rgba(0,212,255,0.3); }
+.timer-controls { display: flex; gap: 24px; margin-bottom: 40px; }
+.timer-btn { width: 80px; height: 80px; border-radius: 50%; border: none; font-size: 14px; font-weight: 600; cursor: pointer; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 4px; transition: all 0.3s; }
+.timer-btn .icon { font-size: 24px; }
+.timer-btn.primary { background: var(--primary); color: #000; width: 100px; height: 100px; font-size: 16px; }
+.timer-btn.secondary { background: rgba(255,255,255,0.1); color: #fff; }
+.timer-btn:active { transform: scale(0.95); }
 
 /* ========== 饮食页 ========== */
-.diet-page {
-  background: var(--bg-dark);
-}
-
+.diet-page { background: var(--bg-dark); }
 .calorie-card {
-  margin: 0 24px 24px;
-  padding: 28px;
+  margin: 0 24px 24px; padding: 28px;
   background: linear-gradient(135deg, rgba(0,212,255,0.1), rgba(255,45,146,0.1));
-  border: 1px solid rgba(0,212,255,0.2);
-  border-radius: 24px;
+  border: 1px solid rgba(0,212,255,0.2); border-radius: 24px;
 }
+.calorie-main { text-align: center; margin-bottom: 24px; }
+.calorie-value { font-size: 56px; font-weight: 800; background: linear-gradient(135deg, var(--primary), var(--secondary)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+.calorie-label { color: var(--text-secondary); font-size: 14px; margin-top: 4px; }
+.calorie-stats { display: flex; justify-content: space-around; padding-top: 24px; border-top: 1px solid rgba(255,255,255,0.1); }
+.cal-stat { text-align: center; }
+.cal-stat-value { font-size: 20px; font-weight: 700; color: var(--primary); margin-bottom: 4px; }
+.cal-stat-label { font-size: 12px; color: var(--text-secondary); }
 
-.calorie-main {
-  text-align: center;
-  margin-bottom: 24px;
-}
+.meal-list { padding: 0 24px; }
+.meal-item { display: flex; align-items: center; padding: 16px; background: var(--bg-card); border: 1px solid var(--border); border-radius: 16px; margin-bottom: 12px; }
+.meal-icon { width: 48px; height: 48px; background: rgba(255,255,255,0.1); border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 24px; margin-right: 16px; }
+.meal-info { flex: 1; }
+.meal-name { font-size: 16px; font-weight: 500; margin-bottom: 4px; }
+.meal-hint { font-size: 13px; color: var(--text-secondary); }
+.meal-add { width: 36px; height: 36px; background: var(--primary); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 24px; color: #000; cursor: pointer; }
 
-.calorie-value {
-  font-size: 56px;
-  font-weight: 800;
-  background: linear-gradient(135deg, var(--primary), var(--secondary));
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-}
+/* ========== 成就页 ========== */
+.achieve-page { background: var(--bg-dark); }
+.achieve-header { padding: 60px 24px 24px; text-align: center; }
+.achieve-stats { display: flex; justify-content: center; gap: 40px; margin-bottom: 32px; }
+.achieve-stat { text-align: center; }
+.achieve-stat-value { font-size: 36px; font-weight: 800; background: linear-gradient(135deg, #FFD700, #FF8C00); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+.achieve-stat-label { font-size: 13px; color: var(--text-secondary); margin-top: 4px; }
 
-.calorie-label {
-  color: var(--text-secondary);
-  font-size: 14px;
-  margin-top: 4px;
-}
-
-.calorie-stats {
-  display: flex;
-  justify-content: space-around;
-  padding-top: 24px;
-  border-top: 1px solid rgba(255,255,255,0.1);
-}
-
-.cal-stat {
-  text-align: center;
-}
-
-.cal-stat-value {
-  font-size: 20px;
-  font-weight: 700;
-  color: var(--primary);
-  margin-bottom: 4px;
-}
-
-.cal-stat-label {
-  font-size: 12px;
-  color: var(--text-secondary);
-}
-
-.meal-list {
-  padding: 0 24px;
-}
-
-.meal-item {
-  display: flex;
-  align-items: center;
-  padding: 16px;
-  background: var(--bg-card);
-  border: 1px solid var(--border);
-  border-radius: 16px;
-  margin-bottom: 12px;
-}
-
-.meal-icon {
-  width: 48px;
-  height: 48px;
-  background: rgba(255,255,255,0.1);
-  border-radius: 12px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 24px;
-  margin-right: 16px;
-}
-
-.meal-info {
-  flex: 1;
-}
-
-.meal-name {
-  font-size: 16px;
-  font-weight: 500;
-  margin-bottom: 4px;
-}
-
-.meal-hint {
-  font-size: 13px;
-  color: var(--text-secondary);
-}
-
-.meal-add {
-  width: 36px;
-  height: 36px;
-  background: var(--primary);
-  border-radius: 50%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 24px;
-  color: #000;
-  cursor: pointer;
-}
+.badge-grid { padding: 0 24px; display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; }
+.badge-item { text-align: center; padding: 20px 12px; background: var(--bg-card); border: 1px solid var(--border); border-radius: 16px; transition: all 0.3s; }
+.badge-item.unlocked { border-color: rgba(255,215,0,0.5); background: rgba(255,215,0,0.05); }
+.badge-item.locked { opacity: 0.5; }
+.badge-icon { font-size: 40px; margin-bottom: 12px; }
+.badge-name { font-size: 13px; font-weight: 500; margin-bottom: 4px; }
+.badge-item.locked .badge-name { color: var(--text-secondary); }
+.badge-desc { font-size: 11px; color: var(--text-secondary); }
 
 /* ========== 我的页 ========== */
-.profile-page {
-  background: var(--bg-dark);
-}
+.profile-page { background: var(--bg-dark); }
+.profile-header { text-align: center; padding: 60px 24px 32px; }
+.profile-avatar { width: 100px; height: 100px; background: linear-gradient(135deg, var(--primary), var(--secondary)); border-radius: 50%; margin: 0 auto 16px; display: flex; align-items: center; justify-content: center; font-size: 48px; box-shadow: 0 10px 40px rgba(0,212,255,0.3); }
+.profile-name { font-size: 24px; font-weight: 700; margin-bottom: 4px; }
+.profile-info { color: var(--text-secondary); font-size: 14px; }
 
-.profile-header {
-  text-align: center;
-  padding: 60px 24px 32px;
-}
+.profile-stats { display: flex; justify-content: space-around; margin: 0 24px 32px; padding: 20px; background: var(--bg-card); border: 1px solid var(--border); border-radius: 20px; }
+.profile-stat { text-align: center; }
+.profile-stat-value { font-size: 28px; font-weight: 700; background: linear-gradient(135deg, var(--primary), var(--secondary)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; margin-bottom: 4px; }
+.profile-stat-label { font-size: 12px; color: var(--text-secondary); }
 
-.profile-avatar {
-  width: 100px;
-  height: 100px;
-  background: linear-gradient(135deg, var(--primary), var(--secondary));
-  border-radius: 50%;
-  margin: 0 auto 16px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 48px;
-  box-shadow: 0 10px 40px rgba(0,212,255,0.3);
-}
+.menu-list { padding: 0 24px; }
+.menu-item { display: flex; align-items: center; padding: 18px 16px; background: var(--bg-card); border: 1px solid var(--border); border-radius: 16px; margin-bottom: 12px; cursor: pointer; transition: all 0.3s; }
+.menu-item:active { border-color: var(--primary); }
+.menu-icon { width: 40px; height: 40px; background: rgba(255,255,255,0.1); border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 20px; margin-right: 16px; }
+.menu-text { flex: 1; font-size: 15px; }
+.menu-arrow { color: var(--text-secondary); font-size: 20px; }
 
-.profile-name {
-  font-size: 24px;
-  font-weight: 700;
-  margin-bottom: 4px;
-}
-
-.profile-info {
-  color: var(--text-secondary);
-  font-size: 14px;
-}
-
-.profile-stats {
-  display: flex;
-  justify-content: space-around;
-  margin: 0 24px 32px;
-  padding: 20px;
-  background: var(--bg-card);
-  border: 1px solid var(--border);
-  border-radius: 20px;
-}
-
-.profile-stat {
-  text-align: center;
-}
-
-.profile-stat-value {
-  font-size: 28px;
-  font-weight: 700;
-  background: linear-gradient(135deg, var(--primary), var(--secondary));
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  margin-bottom: 4px;
-}
-
-.profile-stat-label {
-  font-size: 12px;
-  color: var(--text-secondary);
-}
-
-.menu-list {
-  padding: 0 24px;
-}
-
-.menu-item {
-  display: flex;
-  align-items: center;
-  padding: 18px 16px;
-  background: var(--bg-card);
-  border: 1px solid var(--border);
-  border-radius: 16px;
-  margin-bottom: 12px;
-  cursor: pointer;
-  transition: all 0.3s;
-}
-
-.menu-item:active {
-  border-color: var(--primary);
-}
-
-.menu-icon {
-  width: 40px;
-  height: 40px;
-  background: rgba(255,255,255,0.1);
-  border-radius: 12px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 20px;
-  margin-right: 16px;
-}
-
-.menu-text {
-  flex: 1;
-  font-size: 15px;
-}
-
-.menu-arrow {
-  color: var(--text-secondary);
-  font-size: 20px;
-}
-
-.logout-btn {
-  margin-top: 20px;
-  color: #FF6B6B;
-}
-
-.logout-btn .menu-icon {
-  background: rgba(255,107,107,0.1);
-}
+.logout-btn { margin-top: 20px; }
+.logout-btn .menu-icon { background: rgba(255,107,107,0.1); }
+.logout-btn .menu-text { color: #FF6B6B; }
 
 /* ========== 底部导航 ========== */
 .bottom-nav {
-  position: fixed;
-  bottom: 0;
-  left: 0;
-  right: 0;
-  display: flex;
-  justify-content: space-around;
+  position: fixed; bottom: 0; left: 0; right: 0;
+  display: flex; justify-content: space-around;
   padding: 12px 0 30px;
-  background: rgba(10,10,10,0.98);
-  backdrop-filter: blur(20px);
-  border-top: 1px solid rgba(255,255,255,0.05);
-  z-index: 1000;
+  background: rgba(10,10,10,0.98); backdrop-filter: blur(20px);
+  border-top: 1px solid rgba(255,255,255,0.05); z-index: 1000;
 }
-
-.nav-item {
-  flex: 1;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  padding: 8px;
-  cursor: pointer;
-  opacity: 0.4;
-  transition: all 0.3s;
-}
-
-.nav-item.active {
-  opacity: 1;
-}
-
-.nav-item .icon {
-  font-size: 24px;
-  margin-bottom: 4px;
-}
-
-.nav-item .text {
-  font-size: 11px;
-}
+.nav-item { flex: 1; display: flex; flex-direction: column; align-items: center; padding: 8px; cursor: pointer; opacity: 0.4; transition: all 0.3s; position: relative; }
+.nav-item.active { opacity: 1; }
+.nav-item.active::before { content: ''; position: absolute; top: 0; width: 20px; height: 3px; background: var(--primary); border-radius: 0 0 2px 2px; }
+.nav-item .icon { font-size: 24px; margin-bottom: 4px; }
+.nav-item .text { font-size: 11px; }
 
 /* ========== Toast ========== */
 .toast {
-  position: fixed;
-  top: 50%;
-  left: 50%;
+  position: fixed; top: 50%; left: 50%;
   transform: translate(-50%, -50%);
-  background: rgba(40,40,40,0.98);
-  padding: 16px 28px;
-  border-radius: 12px;
-  color: #fff;
-  font-size: 15px;
-  z-index: 100000;
-  display: none;
+  background: rgba(40,40,40,0.98); padding: 16px 28px;
+  border-radius: 12px; color: #fff; font-size: 15px;
+  z-index: 100000; display: none;
   border: 1px solid rgba(255,255,255,0.1);
 }
+.toast.show { display: block; animation: toastIn 0.3s ease; }
+@keyframes toastIn { from { opacity: 0; transform: translate(-50%, -40%); } to { opacity: 1; transform: translate(-50%, -50%); } }
 
-.toast.show {
-  display: block;
-  animation: toastIn 0.3s ease;
-}
-
-@keyframes toastIn {
-  from { opacity: 0; transform: translate(-50%, -40%); }
-  to { opacity: 1; transform: translate(-50%, -50%); }
-}
+/* ========== 签到弹窗 ========== */
+.modal-overlay { position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.8); z-index: 100001; display: none; align-items: center; justify-content: center; padding: 24px; }
+.modal-overlay.show { display: flex; }
+.modal-content { background: var(--bg-dark); border: 1px solid var(--border); border-radius: 24px; padding: 32px 24px; text-align: center; width: 100%; max-width: 340px; }
+.modal-title { font-size: 24px; font-weight: 700; margin-bottom: 8px; }
+.modal-subtitle { color: var(--text-secondary); font-size: 14px; margin-bottom: 24px; }
+.signin-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 8px; margin-bottom: 24px; }
+.signin-day { padding: 12px 4px; background: rgba(255,255,255,0.03); border: 1px solid var(--border); border-radius: 12px; }
+.signin-day.active { background: rgba(0,212,255,0.15); border-color: var(--primary); }
+.signin-day.completed { background: rgba(255,215,0,0.15); border-color: rgba(255,215,0,0.5); }
+.signin-day .day-label { font-size: 11px; color: var(--text-secondary); margin-bottom: 4px; }
+.signin-day .day-icon { font-size: 20px; }
+.signin-day .day-points { font-size: 11px; color: var(--primary); margin-top: 4px; }
+.signin-reward { padding: 16px; background: linear-gradient(135deg, rgba(255,215,0,0.1), rgba(255,140,0,0.1)); border: 1px solid rgba(255,215,0,0.3); border-radius: 16px; margin-bottom: 24px; }
+.signin-reward-icon { font-size: 40px; margin-bottom: 8px; }
+.signin-reward-text { font-size: 16px; font-weight: 600; color: #FFD700; }
 </style>
 </head>
 <body>
 
 <!-- Toast -->
 <div class="toast" id="toast"></div>
+
+<!-- 签到弹窗 -->
+<div class="modal-overlay" id="signinModal">
+<div class="modal-content">
+<div class="modal-title">🔥 每日签到</div>
+<div class="modal-subtitle">连续签到获得更多奖励</div>
+<div class="signin-grid" id="signinGrid">
+<!-- JS生成 -->
+</div>
+<div class="signin-reward" id="todayReward">
+<div class="signin-reward-icon">🎁</div>
+<div class="signin-reward-text">今日奖励: +50 积分</div>
+</div>
+<button class="btn-primary" onclick="doSignin()">立即签到</button>
+<button class="btn-secondary" onclick="closeSignin()" style="margin-top: 12px;">稍后再说</button>
+</div>
+</div>
 
 <!-- ========== 欢迎页 ========== -->
 <div class="page active" id="welcomePage">
@@ -1057,20 +460,463 @@ body {
 </div>
 </div>
 
+<!-- ========== 主页 ========== -->
+<div class="page" id="homePage">
+<div class="home-page">
+<div class="home-header">
+<div class="home-date" id="homeDate">--月--日 星期-</div>
+<div class="home-greeting" id="homeGreeting">你好</div>
+<div class="home-subtitle">今天也要加油哦 💪</div>
+</div>
+
+<!-- 等级卡片 -->
+<div class="level-card">
+<div class="level-avatar" id="levelAvatar">🥉</div>
+<div class="level-info">
+<div class="level-row">
+<span class="level-badge" id="levelBadge">LV.1</span>
+<span class="level-name" id="levelName">健身新手</span>
+</div>
+<div class="level-progress-bg">
+<div class="level-progress-bar" id="levelProgress" style="width: 35%"></div>
+</div>
+<div class="level-text">再获得 <span id="pointsNeeded">650</span> 积分升级到 <span id="nextLevel">健身达人</span></div>
+</div>
+</div>
+
+<!-- 连续打卡 -->
+<div class="streak-card" onclick="showSigninModal()">
+<div class="streak-icon">🔥</div>
+<div class="streak-info">
+<div class="streak-count">连续打卡 <span id="streakCount">3</span> 天</div>
+<div class="streak-label">点击查看签到详情</div>
+</div>
+<div class="streak-days" id="streakDays">
+<div class="day-dot active"></div>
+<div class="day-dot active"></div>
+<div class="day-dot active"></div>
+<div class="day-dot"></div>
+<div class="day-dot"></div>
+<div class="day-dot"></div>
+<div class="day-dot"></div>
+</div>
+</div>
+
+<!-- 积分展示 -->
+<div class="points-display">
+<div class="point-item">
+<div class="point-value" id="totalPoints">350</div>
+<div class="point-label">总积分</div>
+</div>
+<div class="point-item">
+<div class="point-value" id="todayPoints">+50</div>
+<div class="point-label">今日获得</div>
+</div>
+<div class="point-item">
+<div class="point-value" id="badgeCount">5</div>
+<div class="point-label">徽章</div>
+</div>
+</div>
+
+<!-- 今日目标 -->
+<div class="goals-section">
+<div class="section-title">🎯 今日目标</div>
+<div class="goals-grid">
+<div class="goal-card" onclick="addWater()">
+<div class="goal-add-btn">+</div>
+<div class="goal-icon">💧</div>
+<div class="goal-value"><span id="waterCurrent">0</span><span class="target" id="waterTarget">/2000ml</span></div>
+<div class="goal-label">饮水</div>
+<div class="goal-progress"><div class="goal-progress-bar" id="waterProgress" style="width: 0%"></div></div>
+</div>
+<div class="goal-card" onclick="addSteps()">
+<div class="goal-add-btn">+</div>
+<div class="goal-icon">👟</div>
+<div class="goal-value"><span id="stepCurrent">0</span><span class="target" id="stepTarget">/10000</span></div>
+<div class="goal-label">步数</div>
+<div class="goal-progress"><div class="goal-progress-bar" id="stepProgress" style="width: 0%"></div></div>
+</div>
+<div class="goal-card">
+<div class="goal-icon">🔥</div>
+<div class="goal-value"><span id="calCurrent">0</span><span class="target" id="calTarget">/500千卡</span></div>
+<div class="goal-label">消耗</div>
+<div class="goal-progress"><div class="goal-progress-bar" id="calProgress" style="width: 0%"></div></div>
+</div>
+<div class="goal-card" onclick="addSleep()">
+<div class="goal-add-btn">+</div>
+<div class="goal-icon">😴</div>
+<div class="goal-value"><span id="sleepCurrent">0</span><span class="target" id="sleepTarget">/8小时</span></div>
+<div class="goal-label">睡眠</div>
+<div class="goal-progress"><div class="goal-progress-bar" id="sleepProgress" style="width: 0%"></div></div>
+</div>
+</div>
+</div>
+
+<!-- 快捷功能 -->
+<div class="quick-actions">
+<div class="section-title">⚡ 快捷功能</div>
+<div class="actions-grid">
+<div class="action-item" onclick="showPage('workoutPage')">
+<div class="action-icon workout">💪</div>
+<div class="action-text">开始训练</div>
+</div>
+<div class="action-item" onclick="showPage('dietPage')">
+<div class="action-icon diet">🥗</div>
+<div class="action-text">记录饮食</div>
+</div>
+<div class="action-item" onclick="showPage('achievePage')">
+<div class="action-icon achieve">🏆</div>
+<div class="action-text">成就徽章</div>
+</div>
+<div class="action-item" onclick="showToast('体重记录功能开发中')">
+<div class="action-icon weight">⚖️</div>
+<div class="action-text">记体重</div>
+</div>
+</div>
+</div>
+
+<!-- 今日任务 -->
+<div class="tasks-section">
+<div class="section-title">✅ 今日任务</div>
+<div class="task-list" id="taskList">
+<!-- JS生成 -->
+</div>
+</div>
+</div>
+</div>
+
+<!-- ========== 训练页 ========== -->
+<div class="page" id="workoutPage">
+<div class="workout-page">
+<div class="page-header">
+<div class="page-title">训练计划</div>
+<div class="page-subtitle">选择适合你的训练课程</div>
+</div>
+
+<div class="category-tabs">
+<div class="tab active" onclick="filterWorkout('all', this)">全部</div>
+<div class="tab" onclick="filterWorkout('strength', this)">力量</div>
+<div class="tab" onclick="filterWorkout('cardio', this)">有氧</div>
+<div class="tab" onclick="filterWorkout('yoga', this)">瑜伽</div>
+</div>
+
+<div class="workout-list" id="workoutList">
+<div class="workout-item" onclick="startWorkout('全身燃脂训练', 20, 200)">
+<div class="workout-thumb">🔥</div>
+<div class="workout-info">
+<div class="workout-name">全身燃脂训练</div>
+<div class="workout-meta"><span>⏱️ 20分钟</span><span>🔥 200千卡</span><span>中级</span></div>
+</div>
+<div class="workout-play-btn">▶️</div>
+</div>
+
+<div class="workout-item" onclick="startWorkout('腹肌撕裂者', 15, 120)">
+<div class="workout-thumb">💪</div>
+<div class="workout-info">
+<div class="workout-name">腹肌撕裂者</div>
+<div class="workout-meta"><span>⏱️ 15分钟</span><span>🔥 120千卡</span><span>高级</span></div>
+</div>
+<div class="workout-play-btn">▶️</div>
+</div>
+
+<div class="workout-item" onclick="startWorkout('晨间瑜伽', 25, 80)">
+<div class="workout-thumb">🧘</div>
+<div class="workout-info">
+<div class="workout-name">晨间瑜伽</div>
+<div class="workout-meta"><span>⏱️ 25分钟</span><span>🔥 80千卡</span><span>初级</span></div>
+</div>
+<div class="workout-play-btn">▶️</div>
+</div>
+
+<div class="workout-item" onclick="startWorkout('HIIT高强度间歇', 30, 350)">
+<div class="workout-thumb">⚡</div>
+<div class="workout-info">
+<div class="workout-name">HIIT高强度间歇</div>
+<div class="workout-meta"><span>⏱️ 30分钟</span><span>🔥 350千卡</span><span>高级</span></div>
+</div>
+<div class="workout-play-btn">▶️</div>
+</div>
+
+<div class="workout-item" onclick="startWorkout('哑铃手臂训练', 20, 150)">
+<div class="workout-thumb">🏋️</div>
+<div class="workout-info">
+<div class="workout-name">哑铃手臂训练</div>
+<div class="workout-meta"><span>⏱️ 20分钟</span><span>🔥 150千卡</span><span>中级</span></div>
+</div>
+<div class="workout-play-btn">▶️</div>
+</div>
+
+<div class="workout-item" onclick="startWorkout('睡前放松拉伸', 15, 50)">
+<div class="workout-thumb">🌙</div>
+<div class="workout-info">
+<div class="workout-name">睡前放松拉伸</div>
+<div class="workout-meta"><span>⏱️ 15分钟</span><span>🔥 50千卡</span><span>初级</span></div>
+</div>
+<div class="workout-play-btn">▶️</div>
+</div>
+</div>
+</div>
+</div>
+
+<!-- ========== 计时器页 ========== -->
+<div class="page" id="timerPage">
+<div class="timer-page">
+<div class="timer-workout-name" id="timerWorkoutName">训练中</div>
+<div class="timer-hint">保持节奏，你可以的！💪</div>
+
+<div class="timer-display" id="timerDisplay">00:00</div>
+
+<div class="timer-controls">
+<button class="timer-btn secondary" onclick="resetTimer()">
+<span class="icon">🔄</span><span>重置</span>
+</button>
+<button class="timer-btn primary" id="timerStartBtn" onclick="toggleTimer()">
+<span class="icon">▶️</span><span>开始</span>
+</button>
+</div>
+
+<button class="btn-primary" onclick="finishWorkout()" style="margin: 40px 0 16px;">✅ 完成训练</button>
+<button class="btn-secondary" onclick="showPage('workoutPage')">← 返回列表</button>
+</div>
+</div>
+
+<!-- ========== 饮食页 ========== -->
+<div class="page" id="dietPage">
+<div class="diet-page">
+<div class="page-header">
+<div class="page-title">饮食记录</div>
+<div class="page-subtitle">记录每一餐，掌控热量摄入</div>
+</div>
+
+<div class="calorie-card">
+<div class="calorie-main">
+<div class="calorie-value" id="todayCalories">0</div>
+<div class="calorie-label">今日已摄入 (千卡)</div>
+</div>
+<div class="calorie-stats">
+<div class="cal-stat">
+<div class="cal-stat-value" id="proteinVal">0g</div>
+<div class="cal-stat-label">蛋白质</div>
+</div>
+<div class="cal-stat">
+<div class="cal-stat-value" id="carbVal">0g</div>
+<div class="cal-stat-label">碳水</div>
+</div>
+<div class="cal-stat">
+<div class="cal-stat-value" id="fatVal">0g</div>
+<div class="cal-stat-label">脂肪</div>
+</div>
+</div>
+</div>
+
+<div class="meal-list">
+<div class="section-title">🍽️ 今日餐食</div>
+<div id="mealContainer">
+<div class="meal-item">
+<div class="meal-icon">🌅</div>
+<div class="meal-info">
+<div class="meal-name">早餐</div>
+<div class="meal-hint">建议 400-500 千卡</div>
+</div>
+<div class="meal-add" onclick="addMeal('breakfast')">+</div>
+</div>
+<div class="meal-item">
+<div class="meal-icon">☀️</div>
+<div class="meal-info">
+<div class="meal-name">午餐</div>
+<div class="meal-hint">建议 600-700 千卡</div>
+</div>
+<div class="meal-add" onclick="addMeal('lunch')">+</div>
+</div>
+<div class="meal-item">
+<div class="meal-icon">🌙</div>
+<div class="meal-info">
+<div class="meal-name">晚餐</div>
+<div class="meal-hint">建议 500-600 千卡</div>
+</div>
+<div class="meal-add" onclick="addMeal('dinner')">+</div>
+</div>
+<div class="meal-item">
+<div class="meal-icon">🥤</div>
+<div class="meal-info">
+<div class="meal-name">加餐</div>
+<div class="meal-hint">建议 100-200 千卡</div>
+</div>
+<div class="meal-add" onclick="addMeal('snack')">+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+
+<!-- ========== 成就页 ========== -->
+<div class="page" id="achievePage">
+<div class="achieve-page">
+<div class="achieve-header">
+<div class="page-title">🏆 成就徽章</div>
+<div class="page-subtitle">解锁徽章，展示你的健身成果</div>
+</div>
+
+<div class="achieve-stats">
+<div class="achieve-stat">
+<div class="achieve-stat-value" id="unlockedBadges">5</div>
+<div class="achieve-stat-label">已解锁</div>
+</div>
+<div class="achieve-stat">
+<div class="achieve-stat-value" id="totalBadges">20</div>
+<div class="achieve-stat-label">总徽章</div>
+</div>
+</div>
+
+<div class="badge-grid" id="badgeGrid">
+<!-- JS生成 -->
+</div>
+</div>
+</div>
+
+<!-- ========== 我的页 ========== -->
+<div class="page" id="profilePage">
+<div class="profile-page">
+<div class="profile-header">
+<div class="profile-avatar" id="profileAvatar">👤</div>
+<div class="profile-name" id="profileName">用户</div>
+<div class="profile-info" id="profileInfo">--岁 | --cm | --kg</div>
+</div>
+
+<div class="profile-stats">
+<div class="profile-stat">
+<div class="profile-stat-value" id="profileBMI">--</div>
+<div class="profile-stat-label">BMI指数</div>
+</div>
+<div class="profile-stat">
+<div class="profile-stat-value" id="profileBMR">--</div>
+<div class="profile-stat-label">基础代谢</div>
+</div>
+<div class="profile-stat">
+<div class="profile-stat-value" id="profileDays">1</div>
+<div class="profile-stat-label">坚持天数</div>
+</div>
+</div>
+
+<div class="menu-list">
+<div class="menu-item" onclick="showToast('我的数据 - 功能开发中')">
+<div class="menu-icon">📊</div>
+<div class="menu-text">我的数据</div>
+<div class="menu-arrow">›</div>
+</div>
+<div class="menu-item" onclick="showPage('achievePage')">
+<div class="menu-icon">🏆</div>
+<div class="menu-text">成就徽章</div>
+<div class="menu-arrow">›</div>
+</div>
+<div class="menu-item" onclick="showToast('训练历史 - 功能开发中')">
+<div class="menu-icon">📅</div>
+<div class="menu-text">训练历史</div>
+<div class="menu-arrow">›</div>
+</div>
+<div class="menu-item" onclick="showToast('设置 - 功能开发中')">
+<div class="menu-icon">⚙️</div>
+<div class="menu-text">设置</div>
+<div class="menu-arrow">›</div>
+</div>
+<div class="menu-item logout-btn" onclick="logout()">
+<div class="menu-icon">🚪</div>
+<div class="menu-text">退出登录</div>
+<div class="menu-arrow">›</div>
+</div>
+</div>
+</div>
+</div>
+
+<!-- ========== 底部导航 ========== -->
+<div class="bottom-nav" id="bottomNav" style="display: none;">
+<div class="nav-item active" onclick="switchTab('home')" id="navHome">
+<span class="icon">🏠</span>
+<span class="text">首页</span>
+</div>
+<div class="nav-item" onclick="switchTab('workout')" id="navWorkout">
+<span class="icon">💪</span>
+<span class="text">训练</span>
+</div>
+<div class="nav-item" onclick="switchTab('diet')" id="navDiet">
+<span class="icon">🥗</span>
+<span class="text">饮食</span>
+</div>
+<div class="nav-item" onclick="switchTab('profile')" id="navProfile">
+<span class="icon">👤</span>
+<span class="text">我的</span>
+</div>
+</div>
+
 <script>
-// 页面切换
+// ==================== 全局状态 ====================
+var currentUser = null;
+var userData = {
+  points: 350,
+  totalPoints: 350,
+  level: 1,
+  levelName: '健身新手',
+  streak: 3,
+  badges: ['first_workout', 'water_master', 'early_bird', 'calorie_tracker', 'step_beginner'],
+  signinDays: [true, true, true, false, false, false, false],
+  todayData: { water: 0, steps: 0, calories: 0, sleep: 0, meals: [] },
+  tasks: [
+    { id: 1, name: '完成一次训练', reward: '+50积分', completed: false, icon: '💪' },
+    { id: 2, name: '记录今日饮食', reward: '+30积分', completed: false, icon: '🥗' },
+    { id: 3, name: '喝水2000ml', reward: '+20积分', completed: false, icon: '💧' },
+    { id: 4, name: '步数达到10000', reward: '+30积分', completed: false, icon: '👟' }
+  ]
+};
+var workoutTimer = null, workoutSeconds = 0, workoutRunning = false;
+var currentWorkout = { name: '', duration: 0, calories: 0 };
+
+// ==================== 徽章数据 ====================
+var badgeData = [
+  { id: 'first_workout', name: '初次训练', desc: '完成第一次训练', icon: '🏃', unlocked: true },
+  { id: 'water_master', name: '水分达人', desc: '连续7天喝水达标', icon: '💧', unlocked: true },
+  { id: 'early_bird', name: '早起鸟', desc: '连续3天早8点前打卡', icon: '🌅', unlocked: true },
+  { id: 'calorie_tracker', name: '卡路里记录', desc: '记录一周饮食', icon: '📝', unlocked: true },
+  { id: 'step_beginner', name: '万步新手', desc: '单日步数破万', icon: '👟', unlocked: true },
+  { id: 'week_warrior', name: '周战士', desc: '连续训练7天', icon: '🔥', unlocked: false },
+  { id: 'month_master', name: '月度大师', desc: '坚持30天', icon: '📅', unlocked: false },
+  { id: 'hiit_king', name: 'HIIT王者', desc: '完成50次HIIT', icon: '⚡', unlocked: false },
+  { id: 'yoga_lover', name: '瑜伽爱好者', desc: '完成20次瑜伽', icon: '🧘', unlocked: false },
+  { id: 'strength_beast', name: '力量野兽', desc: '深蹲1000次', icon: '🏋️', unlocked: false },
+  { id: 'night_owl', name: '夜猫子', desc: '晚10点后训练', icon: '🦉', unlocked: false },
+  { id: 'balanced_diet', name: '均衡饮食', desc: '一周营养均衡', icon: '🥗', unlocked: false }
+];
+
+// ==================== 页面切换 ====================
 function showPage(pageId) {
   document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
   document.getElementById(pageId).classList.add('active');
+  window.scrollTo(0, 0);
   
-  // 控制底部导航
-  var navPages = ['homePage', 'workoutPage', 'dietPage', 'profilePage'];
+  var navPages = ['homePage', 'workoutPage', 'dietPage', 'profilePage', 'achievePage'];
   var bottomNav = document.getElementById('bottomNav');
-  if (bottomNav) {
-    bottomNav.style.display = navPages.includes(pageId) ? 'flex' : 'none';
-  }
+  if (bottomNav) bottomNav.style.display = navPages.includes(pageId) ? 'flex' : 'none';
+  
+  if (pageId === 'homePage') updateNav('navHome');
+  if (pageId === 'workoutPage') updateNav('navWorkout');
+  if (pageId === 'dietPage') updateNav('navDiet');
+  if (pageId === 'profilePage') updateNav('navProfile');
+  if (pageId === 'achievePage') { updateNav('navHome'); renderBadges(); }
 }
 
+function updateNav(activeId) {
+  document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+  var activeNav = document.getElementById(activeId);
+  if (activeNav) activeNav.classList.add('active');
+}
+
+function switchTab(tab) {
+  if (tab === 'home') showPage('homePage');
+  if (tab === 'workout') showPage('workoutPage');
+  if (tab === 'diet') showPage('dietPage');
+  if (tab === 'profile') showPage('profilePage');
+}
+
+// ==================== Toast ====================
 function showToast(msg) {
   var t = document.getElementById('toast');
   t.textContent = msg;
@@ -1078,10 +924,54 @@ function showToast(msg) {
   setTimeout(() => t.classList.remove('show'), 2000);
 }
 
+// ==================== 签到系统 ====================
+function showSigninModal() {
+  var modal = document.getElementById('signinModal');
+  modal.classList.add('show');
+  renderSigninGrid();
+}
+
+function closeSignin() {
+  document.getElementById('signinModal').classList.remove('show');
+}
+
+function renderSigninGrid() {
+  var grid = document.getElementById('signinGrid');
+  var rewards = [20, 30, 40, 50, 60, 80, 100];
+  var days = ['周一', '周二', '周三', '周四', '周五', '周六', '周日'];
+  var html = '';
+  for (var i = 0; i < 7; i++) {
+    var cls = userData.signinDays[i] ? 'completed' : (i === userData.streak ? 'active' : '');
+    html += `
+      <div class="signin-day ${cls}">
+        <div class="day-label">${days[i]}</div>
+        <div class="day-icon">${userData.signinDays[i] ? '✅' : '🎁'}</div>
+        <div class="day-points">+${rewards[i]}</div>
+      </div>
+    `;
+  }
+  grid.innerHTML = html;
+}
+
+function doSignin() {
+  if (userData.signinDays[userData.streak]) {
+    showToast('今日已签到');
+    return;
+  }
+  userData.signinDays[userData.streak] = true;
+  userData.streak++;
+  var rewards = [20, 30, 40, 50, 60, 80, 100];
+  var points = rewards[userData.streak - 1] || 50;
+  addPoints(points);
+  showToast('🎉 签到成功！+' + points + '积分');
+  closeSignin();
+  updateHomePage();
+}
+
+// ==================== 登录系统 ====================
 function switchMode(mode) {
   document.querySelectorAll('.mode-btn').forEach(b => b.classList.remove('active'));
   document.querySelectorAll('.login-form').forEach(f => f.classList.remove('active'));
-  
   if (mode === 'boss') {
     document.getElementById('bossModeBtn').classList.add('active');
     document.getElementById('bossForm').classList.add('active');
@@ -1093,30 +983,378 @@ function switchMode(mode) {
 
 function loginBoss() {
   var code = document.getElementById('bossCode').value;
-  if (code !== '0812') {
-    showToast('识别码错误');
-    return;
-  }
-  showToast('欢迎BOSS');
+  if (code !== '0812') { showToast('识别码错误'); return; }
+  currentUser = { type: 'boss', name: 'BOSS Shao', gender: 'male', age: 25, height: 175, weight: 70 };
+  saveUserAndGoHome();
+  showToast('👑 欢迎BOSS');
 }
 
+var selectedGender = '';
 function selectGender(gender) {
+  selectedGender = gender;
   document.querySelectorAll('.gender-option').forEach(g => g.classList.remove('selected'));
   document.getElementById('gender' + (gender === 'male' ? 'Male' : 'Female')).classList.add('selected');
 }
 
 function sendVerifyCode() {
   var phone = document.getElementById('phoneInput').value;
-  if (phone.length !== 11) {
-    showToast('请输入正确的手机号');
-    return;
-  }
+  if (phone.length !== 11) { showToast('请输入正确的手机号'); return; }
   showToast('验证码已发送: 123456');
+  var btn = document.getElementById('sendCodeBtn');
+  var count = 60;
+  btn.disabled = true;
+  btn.textContent = count + 's';
+  var timer = setInterval(() => {
+    count--;
+    btn.textContent = count + 's';
+    if (count <= 0) { clearInterval(timer); btn.disabled = false; btn.textContent = '获取验证码'; }
+  }, 1000);
 }
 
 function registerUser() {
-  showToast('注册成功');
+  var code = document.getElementById('verifyCode').value;
+  var name = document.getElementById('userName').value;
+  var age = parseInt(document.getElementById('userAge').value);
+  var height = parseInt(document.getElementById('userHeight').value);
+  var weight = parseInt(document.getElementById('userWeight').value);
+  if (code !== '123456') { showToast('验证码错误'); return; }
+  if (!name || !selectedGender || !age || !height || !weight) { showToast('请完善信息'); return; }
+  currentUser = { type: 'user', name: name, gender: selectedGender, age: age, height: height, weight: weight };
+  saveUserAndGoHome();
+  showToast('🎉 欢迎，' + name);
 }
+
+function saveUserAndGoHome() {
+  localStorage.setItem('ambroseUser', JSON.stringify(currentUser));
+  localStorage.setItem('ambroseData', JSON.stringify(userData));
+  showPage('homePage');
+  updateHomePage();
+  updateProfilePage();
+}
+
+// ==================== 积分系统 ====================
+function addPoints(points) {
+  userData.points += points;
+  userData.totalPoints += points;
+  checkLevelUp();
+  saveData();
+  updateHomePage();
+}
+
+function checkLevelUp() {
+  var levels = [
+    { name: '健身新手', min: 0 },
+    { name: '健身达人', min: 1000 },
+    { name: '运动高手', min: 3000 },
+    { name: '健身专家', min: 6000 },
+    { name: '健身大师', min: 10000 }
+  ];
+  for (var i = levels.length - 1; i >= 0; i--) {
+    if (userData.totalPoints >= levels[i].min) {
+      if (userData.level !== i + 1) {
+        userData.level = i + 1;
+        userData.levelName = levels[i].name;
+        showToast('🎉 升级！' + levels[i].name);
+      }
+      break;
+    }
+  }
+}
+
+function getLevelProgress() {
+  var levels = [0, 1000, 3000, 6000, 10000, 99999];
+  var currentMin = levels[userData.level - 1];
+  var nextMin = levels[userData.level];
+  var progress = ((userData.totalPoints - currentMin) / (nextMin - currentMin)) * 100;
+  return Math.min(Math.max(progress, 0), 100);
+}
+
+// ==================== 主页更新 ====================
+function updateHomePage() {
+  if (!currentUser) return;
+  var now = new Date();
+  var dateStr = now.toLocaleDateString('zh-CN', {month: 'long', day: 'numeric', weekday: 'long'});
+  document.getElementById('homeDate').textContent = dateStr;
+  var hour = now.getHours();
+  var greet = hour < 12 ? '早上好' : (hour < 18 ? '下午好' : '晚上好');
+  document.getElementById('homeGreeting').textContent = greet + '，' + currentUser.name;
+  
+  // 等级
+  document.getElementById('levelBadge').textContent = 'LV.' + userData.level;
+  document.getElementById('levelName').textContent = userData.levelName;
+  document.getElementById('levelProgress').style.width = getLevelProgress() + '%';
+  var levels = ['健身新手', '健身达人', '运动高手', '健身专家', '健身大师'];
+  document.getElementById('nextLevel').textContent = levels[userData.level] || '满级';
+  document.getElementById('pointsNeeded').textContent = Math.max(0, [1000, 3000, 6000, 10000, 99999][userData.level - 1] - userData.totalPoints);
+  
+  // 积分
+  document.getElementById('totalPoints').textContent = userData.totalPoints;
+  document.getElementById('badgeCount').textContent = userData.badges.length;
+  document.getElementById('streakCount').textContent = userData.streak;
+  
+  // 目标
+  var weight = currentUser.weight;
+  document.getElementById('waterTarget').textContent = '/' + Math.round(weight * 35) + 'ml';
+  document.getElementById('calTarget').textContent = '/' + Math.round(weight * 7) + '千卡';
+  document.getElementById('waterCurrent').textContent = userData.todayData.water;
+  document.getElementById('stepCurrent').textContent = userData.todayData.steps;
+  document.getElementById('calCurrent').textContent = userData.todayData.calories;
+  document.getElementById('sleepCurrent').textContent = userData.todayData.sleep;
+  document.getElementById('waterProgress').style.width = Math.min(userData.todayData.water / (weight * 35) * 100, 100) + '%';
+  document.getElementById('stepProgress').style.width = Math.min(userData.todayData.steps / 10000 * 100, 100) + '%';
+  document.getElementById('calProgress').style.width = Math.min(userData.todayData.calories / (weight * 7) * 100, 100) + '%';
+  document.getElementById('sleepProgress').style.width = Math.min(userData.todayData.sleep / 8 * 100, 100) + '%';
+  
+  // 任务
+  renderTasks();
+}
+
+function renderTasks() {
+  var list = document.getElementById('taskList');
+  var html = '';
+  userData.tasks.forEach(task => {
+    var completed = task.completed ? 'completed' : '';
+    var check = task.completed ? '✓' : '';
+    var nameCls = task.completed ? 'completed' : '';
+    html += `
+      <div class="task-item ${completed}" onclick="completeTask(${task.id})">
+        <div class="task-checkbox">${check}</div>
+        <div class="task-info">
+          <div class="task-name ${nameCls}">${task.name}</div>
+          <div class="task-reward">${task.reward}</div>
+        </div>
+        <div class="task-icon">${task.icon}</div>
+      </div>
+    `;
+  });
+  list.innerHTML = html;
+}
+
+function completeTask(taskId) {
+  var task = userData.tasks.find(t => t.id === taskId);
+  if (!task || task.completed) return;
+  task.completed = true;
+  var points = parseInt(task.reward.replace(/\D/g, ''));
+  addPoints(points);
+  showToast('🎉 任务完成！' + task.reward);
+  renderTasks();
+}
+
+// ==================== 快速记录 ====================
+function addWater() {
+  userData.todayData.water += 250;
+  addPoints(5);
+  saveData();
+  updateHomePage();
+  showToast('💧 +250ml +5积分');
+}
+
+function addSteps() {
+  userData.todayData.steps += 1000;
+  addPoints(10);
+  saveData();
+  updateHomePage();
+  showToast('👟 +1000步 +10积分');
+}
+
+function addSleep() {
+  userData.todayData.sleep = 7.5;
+  addPoints(15);
+  saveData();
+  updateHomePage();
+  showToast('😴 已记录睡眠 +15积分');
+}
+
+// ==================== 训练功能 ====================
+function filterWorkout(category, el) {
+  document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+  if (el) el.classList.add('active');
+}
+
+function startWorkout(name, duration, calories) {
+  currentWorkout = { name: name, duration: duration, calories: calories };
+  document.getElementById('timerWorkoutName').textContent = name;
+  workoutSeconds = 0;
+  workoutRunning = false;
+  updateTimerDisplay();
+  var btn = document.getElementById('timerStartBtn');
+  btn.innerHTML = '<span class="icon">▶️</span><span>开始</span>';
+  btn.className = 'timer-btn primary';
+  showPage('timerPage');
+}
+
+function updateTimerDisplay() {
+  var m = Math.floor(workoutSeconds / 60);
+  var s = workoutSeconds % 60;
+  document.getElementById('timerDisplay').textContent = 
+    (m < 10 ? '0' : '') + m + ':' + (s < 10 ? '0' : '') + s;
+}
+
+function toggleTimer() {
+  var btn = document.getElementById('timerStartBtn');
+  if (workoutRunning) {
+    clearInterval(workoutTimer);
+    workoutRunning = false;
+    btn.innerHTML = '<span class="icon">▶️</span><span>继续</span>';
+    btn.className = 'timer-btn primary';
+  } else {
+    workoutTimer = setInterval(() => { workoutSeconds++; updateTimerDisplay(); }, 1000);
+    workoutRunning = true;
+    btn.innerHTML = '<span class="icon">⏸️</span><span>暂停</span>';
+    btn.className = 'timer-btn primary';
+  }
+}
+
+function resetTimer() {
+  clearInterval(workoutTimer);
+  workoutRunning = false;
+  workoutSeconds = 0;
+  updateTimerDisplay();
+  var btn = document.getElementById('timerStartBtn');
+  btn.innerHTML = '<span class="icon">▶️</span><span>开始</span>';
+  btn.className = 'timer-btn primary';
+}
+
+function finishWorkout() {
+  clearInterval(workoutTimer);
+  workoutRunning = false;
+  var minutes = Math.floor(workoutSeconds / 60) || 1;
+  var calories = Math.round(minutes * (currentWorkout.calories / currentWorkout.duration));
+  userData.todayData.calories += calories;
+  userData.todayData.steps += Math.round(minutes * 100);
+  
+  // 完成任务
+  var task = userData.tasks.find(t => t.id === 1);
+  if (task && !task.completed) completeTask(1);
+  
+  // 徽章检查
+  if (!userData.badges.includes('first_workout')) {
+    userData.badges.push('first_workout');
+    showToast('🏅 解锁徽章：初次训练！');
+  }
+  
+  addPoints(50);
+  saveData();
+  updateHomePage();
+  showToast('🎉 训练完成！+' + calories + '千卡 +50积分');
+  showPage('workoutPage');
+}
+
+// ==================== 饮食功能 ====================
+function addMeal(type) {
+  var foods = {
+    breakfast: [{name: '燕麦粥', cal: 150}, {name: '全麦面包+鸡蛋', cal: 250}, {name: '牛奶+香蕉', cal: 200}],
+    lunch: [{name: '鸡胸肉沙拉', cal: 350}, {name: '糙米饭+蔬菜', cal: 400}, {name: '牛肉+土豆', cal: 450}],
+    dinner: [{name: '蒸鱼+蔬菜', cal: 300}, {name: '豆腐+汤', cal: 250}, {name: '水果沙拉', cal: 150}],
+    snack: [{name: '坚果', cal: 100}, {name: '酸奶', cal: 120}, {name: '苹果', cal: 80}]
+  };
+  var options = foods[type];
+  var food = options[Math.floor(Math.random() * options.length)];
+  userData.todayData.meals.push({type: type, food: food.name, calories: food.cal});
+  userData.todayData.calories += food.cal;
+  addPoints(30);
+  saveData();
+  updateDietPage();
+  
+  var task = userData.tasks.find(t => t.id === 2);
+  if (task && !task.completed) completeTask(2);
+  
+  showToast('🍽️ 已记录: ' + food.name + ' +30积分');
+}
+
+function updateDietPage() {
+  var total = userData.todayData.meals.reduce((sum, m) => sum + m.calories, 0);
+  document.getElementById('todayCalories').textContent = total;
+  document.getElementById('proteinVal').textContent = Math.round(total * 0.25 / 4) + 'g';
+  document.getElementById('carbVal').textContent = Math.round(total * 0.5 / 4) + 'g';
+  document.getElementById('fatVal').textContent = Math.round(total * 0.25 / 9) + 'g';
+}
+
+// ==================== 成就页 ====================
+function renderBadges() {
+  var grid = document.getElementById('badgeGrid');
+  var unlocked = badgeData.filter(b => userData.badges.includes(b.id)).length;
+  document.getElementById('unlockedBadges').textContent = unlocked;
+  
+  var html = '';
+  badgeData.forEach(badge => {
+    var unlocked = userData.badges.includes(badge.id);
+    var cls = unlocked ? 'unlocked' : 'locked';
+    html += `
+      <div class="badge-item ${cls}">
+        <div class="badge-icon">${badge.icon}</div>
+        <div class="badge-name">${badge.name}</div>
+        <div class="badge-desc">${badge.desc}</div>
+      </div>
+    `;
+  });
+  grid.innerHTML = html;
+}
+
+// ==================== 个人资料 ====================
+function updateProfilePage() {
+  if (!currentUser) return;
+  document.getElementById('profileName').textContent = currentUser.name;
+  document.getElementById('profileInfo').textContent = 
+    currentUser.age + '岁 | ' + currentUser.height + 'cm | ' + currentUser.weight + 'kg';
+  document.getElementById('profileAvatar').textContent = currentUser.gender === 'male' ? '👨' : '👩';
+  var bmi = (currentUser.weight / Math.pow(currentUser.height/100, 2)).toFixed(1);
+  document.getElementById('profileBMI').textContent = bmi;
+  var bmr = currentUser.gender === 'male' 
+    ? Math.round(10 * currentUser.weight + 6.25 * currentUser.height - 5 * currentUser.age + 5)
+    : Math.round(10 * currentUser.weight + 6.25 * currentUser.height - 5 * currentUser.age - 161);
+  document.getElementById('profileBMR').textContent = bmr;
+  var loginTime = localStorage.getItem('ambroseLoginTime');
+  if (loginTime) {
+    var days = Math.floor((Date.now() - parseInt(loginTime)) / (1000 * 60 * 60 * 24)) + 1;
+    document.getElementById('profileDays').textContent = days;
+  }
+}
+
+// ==================== 退出登录 ====================
+function logout() {
+  localStorage.removeItem('ambroseUser');
+  currentUser = null;
+  document.getElementById('bossCode').value = '';
+  ['phoneInput', 'verifyCode', 'userName', 'userAge', 'userHeight', 'userWeight'].forEach(id => {
+    var el = document.getElementById(id);
+    if (el) el.value = '';
+  });
+  selectedGender = '';
+  document.querySelectorAll('.gender-option').forEach(g => g.classList.remove('selected'));
+  showPage('loginPage');
+  switchMode('boss');
+  document.getElementById('bottomNav').style.display = 'none';
+  showToast('已退出登录');
+}
+
+// ==================== 数据存储 ====================
+function saveData() {
+  localStorage.setItem('ambroseData', JSON.stringify(userData));
+}
+
+function loadData() {
+  var saved = localStorage.getItem('ambroseData');
+  if (saved) {
+    var parsed = JSON.parse(saved);
+    Object.assign(userData, parsed);
+  }
+}
+
+// ==================== 初始化 ====================
+window.onload = function() {
+  var saved = localStorage.getItem('ambroseUser');
+  if (saved) {
+    currentUser = JSON.parse(saved);
+    loadData();
+    showPage('homePage');
+    updateHomePage();
+    updateProfilePage();
+  } else {
+    showPage('loginPage');
+    switchMode('boss');
+  }
+};
 </script>
 
 </body>
