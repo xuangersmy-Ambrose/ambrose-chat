@@ -1072,7 +1072,49 @@ body {
 </div>
 </div>
 
-<!-- ========== 训练历史页 ========== -->
+<!-- 首次使用引导 -->
+<div id="onboardingModal" style="display: none; position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.95); z-index: 100000; padding: 40px 24px;">
+  <div style="max-width: 400px; margin: 0 auto; text-align: center;">
+    <div id="onboardingStep1">
+      <div style="font-size: 80px; margin-bottom: 24px;">🏋️</div>
+      <h2 style="font-size: 24px; margin-bottom: 16px;">欢迎来到 AMBROSE</h2>
+      <p style="color: var(--text-secondary); margin-bottom: 32px; line-height: 1.6;">您的AI健康教练，帮助您科学健身、管理健康</p>
+      <button class="btn-primary" onclick="nextOnboardingStep()">开始了解</button>
+    </div>
+    <div id="onboardingStep2" style="display: none;">
+      <div style="font-size: 80px; margin-bottom: 24px;">🤖</div>
+      <h2 style="font-size: 24px; margin-bottom: 16px;">AI智能教练</h2>
+      <p style="color: var(--text-secondary); margin-bottom: 32px; line-height: 1.6;">随时随地咨询健身问题，获取个性化训练建议</p>
+      <button class="btn-primary" onclick="nextOnboardingStep()">下一步</button>
+    </div>
+    <div id="onboardingStep3" style="display: none;">
+      <div style="font-size: 80px; margin-bottom: 24px;">📊</div>
+      <h2 style="font-size: 24px; margin-bottom: 16px;">追踪您的进步</h2>
+      <p style="color: var(--text-secondary); margin-bottom: 32px; line-height: 1.6;">记录训练、饮食、睡眠，见证每一天的改变</p>
+      <button class="btn-primary" onclick="completeOnboarding()">开始使用</button>
+    </div>
+    <div style="display: flex; justify-content: center; gap: 8px; margin-top: 32px;">
+      <span id="dot1" style="width: 8px; height: 8px; background: var(--primary); border-radius: 50%;"></span>
+      <span id="dot2" style="width: 8px; height: 8px; background: rgba(255,255,255,0.3); border-radius: 50%;"></span>
+      <span id="dot3" style="width: 8px; height: 8px; background: rgba(255,255,255,0.3); border-radius: 50%;"></span>
+    </div>
+  </div>
+</div>
+
+<!-- 加载优化 - 骨架屏 -->
+<div id="skeletonLoader" style="display: none; position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: var(--bg-dark); z-index: 99999; padding: 24px;">
+  <div style="max-width: 400px; margin: 0 auto;">
+    <div style="height: 200px; background: rgba(255,255,255,0.05); border-radius: 20px; margin-bottom: 20px; animation: pulse 1.5s infinite;"></div>
+    <div style="height: 100px; background: rgba(255,255,255,0.05); border-radius: 16px; margin-bottom: 16px; animation: pulse 1.5s infinite 0.2s;"></div>
+    <div style="height: 100px; background: rgba(255,255,255,0.05); border-radius: 16px; margin-bottom: 16px; animation: pulse 1.5s infinite 0.4s;"></div>
+    <div style="height: 100px; background: rgba(255,255,255,0.05); border-radius: 16px; animation: pulse 1.5s infinite 0.6s;"></div>
+  </div>
+</div>
+
+<!-- 快速导航悬浮按钮 -->
+<div id="quickNav" style="display: none; position: fixed; bottom: 100px; right: 20px; z-index: 9999;">
+  <button onclick="showQuickActions()" style="width: 56px; height: 56px; border-radius: 50%; background: linear-gradient(135deg, var(--primary), var(--secondary)); border: none; color: #000; font-size: 24px; cursor: pointer; box-shadow: 0 4px 20px rgba(0,212,255,0.4);">+</button>
+</div>
 <div class="page" id="historyPage">
 <div class="workout-page">
 <div class="page-header">
@@ -2155,7 +2197,79 @@ function exportData() {
   showToast('📥 数据导出成功');
 }
 
-// ==================== 训练打卡详细记录 ====================
+// ==================== 首次使用引导 ====================
+var currentOnboardingStep = 1;
+
+function checkOnboarding() {
+  var hasSeenOnboarding = localStorage.getItem('hasSeenOnboarding');
+  if (!hasSeenOnboarding) {
+    showOnboarding();
+  }
+}
+
+function showOnboarding() {
+  var modal = document.getElementById('onboardingModal');
+  if (modal) {
+    modal.style.display = 'block';
+  }
+}
+
+function nextOnboardingStep() {
+  document.getElementById('onboardingStep' + currentOnboardingStep).style.display = 'none';
+  document.getElementById('dot' + currentOnboardingStep).style.background = 'rgba(255,255,255,0.3)';
+  currentOnboardingStep++;
+  document.getElementById('onboardingStep' + currentOnboardingStep).style.display = 'block';
+  document.getElementById('dot' + currentOnboardingStep).style.background = 'var(--primary)';
+}
+
+function completeOnboarding() {
+  localStorage.setItem('hasSeenOnboarding', 'true');
+  document.getElementById('onboardingModal').style.display = 'none';
+  showToast('🎉 欢迎开始您的健康之旅！');
+}
+
+// ==================== 加载优化 ====================
+function showSkeletonLoader() {
+  var loader = document.getElementById('skeletonLoader');
+  if (loader) loader.style.display = 'block';
+}
+
+function hideSkeletonLoader() {
+  var loader = document.getElementById('skeletonLoader');
+  if (loader) loader.style.display = 'none';
+}
+
+// 页面加载完成后检查引导
+window.addEventListener('load', function() {
+  setTimeout(hideSkeletonLoader, 500);
+  checkOnboarding();
+});
+
+// ==================== 快速操作 ====================
+function showQuickActions() {
+  var existing = document.getElementById('quickActionsMenu');
+  if (existing) {
+    existing.remove();
+    return;
+  }
+  
+  var html = '<div id="quickActionsMenu" style="position: fixed; bottom: 170px; right: 20px; background: rgba(20,20,20,0.98); border: 1px solid rgba(255,255,255,0.1); border-radius: 16px; padding: 12px; z-index: 10000; backdrop-filter: blur(20px);">';
+  html += '<div onclick="showPage(\'workoutPage\'); closeQuickActions();" style="display: flex; align-items: center; gap: 12px; padding: 12px 16px; cursor: pointer; border-radius: 12px; margin-bottom: 4px;"><span style="font-size: 20px;">💪</span><span style="font-size: 14px;">开始训练</span></div>';
+  html += '<div onclick="showPage(\'dietPage\'); closeQuickActions();" style="display: flex; align-items: center; gap: 12px; padding: 12px 16px; cursor: pointer; border-radius: 12px; margin-bottom: 4px;"><span style="font-size: 20px;">🍽️</span><span style="font-size: 14px;">记录饮食</span></div>';
+  html += '<div onclick="showToast(\'AI教练即将开放\'); closeQuickActions();" style="display: flex; align-items: center; gap: 12px; padding: 12px 16px; cursor: pointer; border-radius: 12px;"><span style="font-size: 20px;">🤖</span><span style="font-size: 14px;">AI教练</span></div>';
+  html += '</div>';
+  
+  var div = document.createElement('div');
+  div.innerHTML = html;
+  document.body.appendChild(div);
+}
+
+function closeQuickActions() {
+  var menu = document.getElementById('quickActionsMenu');
+  if (menu) menu.remove();
+}
+
+// ==================== 数据存储 ====================
 var workoutHistory = [
   { date: '2026-03-06', name: '全身燃脂训练', duration: 20, calories: 200, feeling: '很棒' },
   { date: '2026-03-05', name: '腹肌撕裂者', duration: 15, calories: 120, feeling: '有点累' },
