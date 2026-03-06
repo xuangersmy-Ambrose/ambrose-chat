@@ -1,31 +1,13 @@
 {
   "version": 2,
-  "builds": [
-    {
-      "src": "*.html",
-      "use": "@vercel/static"
-    },
-    {
-      "src": "api/*.js",
-      "use": "@vercel/node"
-    }
-  ],
   "routes": [
     {
       "src": "/api/(.*)",
       "dest": "/api/$1"
     },
     {
-      "src": "/diagnostic",
-      "dest": "/diagnostic.html"
-    },
-    {
-      "src": "/setup",
-      "dest": "/setup.html"
-    },
-    {
       "src": "/(.*)",
-      "dest": "/index.html"
+      "dest": "/$1"
     }
   ]
 }
