@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>AMBROSE - 诊断模式</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:-apple-system,BlinkMacSystemFont,'PingFang SC',sans-serif;background:#000;color:#fff;min-height:100vh}
+.header{padding:60px 20px 20px}
+.time{color:#00D4FF;font-size:14px;margin-bottom:8px}
+.greeting{font-size:32px;font-weight:700;margin-bottom:8px}
+.sub{color:rgba(255,255,255,0.5);font-size:15px}
+.stats{display:grid;grid-template-columns:1fr 1fr;gap:12px;padding:20px}
+.stat{background:rgba(255,255,255,0.08);border:1px solid rgba(255,255,255,0.1);padding:20px;border-radius:16px;text-align:center}
+.stat-num{font-size:28px;font-weight:700;margin-bottom:6px}
+.stat-label{font-size:13px;color:rgba(255,255,255,0.5)}
+.btn{background:#00D4FF;color:#000;padding:18px 24px;margin:20px;border-radius:14px;text-align:center;font-size:17px;font-weight:600;cursor:pointer}
+.nav{position:fixed;bottom:0;left:0;right:0;display:flex;justify-content:space-around;padding:12px 0 30px;background:rgba(0,0,0,0.98);border-top:1px solid rgba(255,255,255,0.08)}
+.nav-item{flex:1;text-align:center;padding:8px;cursor:pointer;opacity:0.4}
+.nav-item.active{opacity:1}
+.nav-item span{display:block;font-size:22px;margin-bottom:2px}
+.nav-item small{font-size:11px;font-weight:500}
+#debug{position:fixed;top:10px;right:10px;background:rgba(255,0,0,0.8);color:#fff;padding:10px;border-radius:8px;font-size:12px;max-width:200px;z-index:99999}
+</style>
+</head>
+<body>
+<div id="debug">加载中...</div>
+
+<div class="header">
+<div class="time" id="time">--:--</div>
+<div class="greeting" id="greeting">你好</div>
+<div class="sub">今天感觉如何？💪</div>
+</div>
+
+<div class="stats">
+<div class="stat"><div class="stat-num">8,432</div><div class="stat-label">步数</div></div>
+<div class="stat"><div class="stat-num">342</div><div class="stat-label">千卡</div></div>
+<div class="stat"><div class="stat-num">7.5</div><div class="stat-label">小时</div></div>
+<div class="stat"><div class="stat-num">1.2L</div><div class="stat-label">饮水</div></div>
+</div>
+
+<div class="btn" onclick="alert('聊天功能')">💬 开始对话</div>
+
+<div style="padding:0 20px;display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:12px;">
+<div class="btn" style="margin:0;background:linear-gradient(135deg,#FF2D92,#00D4FF);" onclick="alert('健康中心')">❤️ 健康中心</div>
+<div class="btn" style="margin:0;background:linear-gradient(135deg,#30D158,#00D4FF);" onclick="alert('饮食记录')">🥗 饮食记录</div>
+</div>
+
+<div class="nav">
+<div class="nav-item active"><span>🏠</span><small>首页</small></div>
+<div class="nav-item"><span>📊</span><small>数据</small></div>
+<div class="nav-item"><span>💬</span><small>对话</small></div>
+<div class="nav-item"><span>👤</span><small>我的</small></div>
+</div>
+
+<script>
+// 最小化脚本，确保能运行
+try {
+    var debug = document.getElementById('debug');
+    
+    function updateTime() {
+        var now = new Date();
+        var utc = now.getTime() + now.getTimezoneOffset() * 60000;
+        var bj = new Date(utc + 3600000 * 8);
+        var h = bj.getHours();
+        var m = bj.getMinutes();
+        document.getElementById('time').textContent = 
+            (h<10?'0':'') + h + ':' + (m<10?'0':'') + m;
+    }
+    
+    updateTime();
+    setInterval(updateTime, 1000);
+    
+    // 检测加载成功
+    debug.textContent = '✅ 加载成功';
+    debug.style.background = 'rgba(0,212,255,0.8)';
+    setTimeout(function() {
+        debug.style.display = 'none';
+    }, 3000);
+    
+    console.log('✅ 诊断页面加载成功');
+} catch(e) {
+    debug.textContent = '❌ 错误: ' + e.message;
+    console.error(e);
+}
+</script>
+</body>
+</html>
