@@ -14,8 +14,9 @@ body { font-family: -apple-system, BlinkMacSystemFont, 'PingFang SC', 'Hiragino 
 ::-webkit-scrollbar { display: none; }
 
 /* 页面容器 */
-.page { display: none; min-height: 100vh; padding-bottom: 80px; }
-.page.active { display: block; }
+.page { display: none; min-height: 100vh; padding-bottom: 80px; opacity: 0; transition: opacity 0.3s ease; }
+.page.active { display: block; opacity: 1; }
+.page.show { display: block; opacity: 1; }
 
 /* ========== 按钮和输入 ========== */
 .btn { width: 100%; padding: 16px; background: linear-gradient(135deg, #00D4FF, #0099CC); color: #000; border: none; border-radius: 12px; font-size: 16px; font-weight: 600; cursor: pointer; transition: all 0.3s; }
@@ -509,13 +510,25 @@ var workoutRunning = false;
 
 // ==================== 页面切换 ====================
 function showPage(pageId) {
-document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
-document.getElementById(pageId).classList.add('active');
+console.log('切换到页面:', pageId);
+var pages = document.querySelectorAll('.page');
+pages.forEach(function(p) {
+p.classList.remove('active');
+});
+var target = document.getElementById(pageId);
+if (target) {
+target.classList.add('active');
+console.log('页面切换成功:', pageId);
+} else {
+console.error('页面不存在:', pageId);
+}
 
 // 控制底部导航显示
-var navPages = ['homePage', 'workoutPage', 'dietPage', 'profilePage'];
-document.getElementById('bottomNav').style.display = 
-navPages.includes(pageId) ? 'flex' : 'none';
+var navPages = ['homePage', 'workoutPage', 'dietPage', 'profilePage', 'timerPage'];
+var bottomNav = document.getElementById('bottomNav');
+if (bottomNav) {
+bottomNav.style.display = navPages.includes(pageId) ? 'flex' : 'none';
+}
 
 // 更新导航状态
 if (pageId === 'homePage') updateNav('navHome');
@@ -832,14 +845,23 @@ todayData = JSON.parse(saved);
 
 // ==================== 初始化 ====================
 window.onload = function() {
+console.log('APP初始化开始');
 var saved = localStorage.getItem('ambroseUser');
 if (saved) {
+console.log('已登录，加载主页');
 currentUser = JSON.parse(saved);
 loadTodayData();
+// 先显示页面再更新数据
 showPage('homePage');
+setTimeout(function() {
 updateHomePage();
 updateProfilePage();
 updateDietPage();
+console.log('主页加载完成');
+}, 100);
+} else {
+console.log('未登录，显示登录页');
+showPage('loginPage');
 }
 };
 </script>
