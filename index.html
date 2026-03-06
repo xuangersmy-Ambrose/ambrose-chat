@@ -3769,6 +3769,69 @@ function showPage(pageId) {
   }
 }
 
+// ==================== Push 通知功能 ====================
+const VAPID_PUBLIC_KEY = 'BEl62iTMYFb0-bwI0fE8x5S_J7R4vGz5lJz5lJz5lJz5lJz5lJz5lJz5lJz5lJz5lJz5lJz5lJz5lJz5lJz'; // 实际使用时替换
+
+async function requestNotificationPermission() {
+  if (!('Notification' in window)) {
+    showToast('❌ 浏览器不支持通知');
+    return false;
+  }
+  
+  const permission = await Notification.requestPermission();
+  if (permission === 'granted') {
+    showToast('✅ 通知权限已开启');
+    return true;
+  }
+  showToast('⚠️ 通知权限被拒绝');
+  return false;
+}
+
+async function subscribeToPushNotifications() {
+  try {
+    const hasPermission = await requestNotificationPermission();
+    if (!hasPermission) return;
+    
+    const registration = await navigator.serviceWorker.ready;
+    const subscription = await registration.pushManager.subscribe({
+      userVisibleOnly: true,
+      applicationServerKey: urlBase64ToUint8Array(VAPID_PUBLIC_KEY)
+    });
+    
+    // 保存到本地存储（实际应发送到服务器）
+    localStorage.setItem('pushSubscription', JSON.stringify(subscription));
+    showToast('✅ 推送订阅成功');
+    
+  } catch (error) {
+    console.error('Push subscription failed:', error);
+    showToast('❌ 订阅失败');
+  }
+}
+
+function urlBase64ToUint8Array(base64String) {
+  const padding = '='.repeat((4 - base64String.length % 4) % 4);
+  const base64 = (base64String + padding).replace(/\-/g, '+').replace(/_/g, '/');
+  const rawData = atob(base64);
+  const outputArray = new Uint8Array(rawData.length);
+  for (let i = 0; i < rawData.length; ++i) {
+    outputArray[i] = rawData.charCodeAt(i);
+  }
+  return outputArray;
+}
+
+// ==================== 后台同步功能 ====================
+async function registerBackgroundSync(tag) {
+  if ('sync' in ServiceWorkerRegistration.prototype) {
+    try {
+      const registration = await navigator.serviceWorker.ready;
+      await registration.sync.register(tag);
+      console.log('[App] Background sync registered:', tag);
+    } catch (error) {
+      console.warn('[App] Background sync failed:', error);
+    }
+  }
+}
+
 // ==================== 初始化 ====================
 window.onload = function() {
   // 注册 Service Worker (PWA支持)
