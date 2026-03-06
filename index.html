@@ -2746,30 +2746,59 @@ function safeSaveData() {
 }
 
 // ==================== 页面切换（带清理） ====================
-var originalShowPage = showPage;
-showPage = function(pageId) {
+function showPage(pageId) {
   try {
     cleanupPages();
-    originalShowPage(pageId);
+    document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+    var targetPage = document.getElementById(pageId);
+    if (targetPage) {
+      targetPage.classList.add('active');
+    }
+    window.scrollTo(0, 0);
+    
+    var navPages = ['homePage', 'workoutPage', 'dietPage', 'profilePage', 'achievePage'];
+    var bottomNav = document.getElementById('bottomNav');
+    if (bottomNav) bottomNav.style.display = navPages.includes(pageId) ? 'flex' : 'none';
+    
+    if (pageId === 'homePage' && typeof updateNav === 'function') updateNav('navHome');
+    if (pageId === 'workoutPage' && typeof updateNav === 'function') updateNav('navWorkout');
+    if (pageId === 'dietPage' && typeof updateNav === 'function') updateNav('navDiet');
+    if (pageId === 'profilePage' && typeof updateNav === 'function') updateNav('navProfile');
+    if (pageId === 'achievePage') { 
+      if (typeof updateNav === 'function') updateNav('navHome'); 
+      if (typeof renderBadges === 'function') renderBadges(); 
+    }
+    if (pageId === 'weightPage' && typeof updateWeightPage === 'function') { 
+      updateWeightPage(); 
+    }
   } catch (e) {
     console.error('页面切换失败:', e);
     showToast('⚠️ 页面加载失败');
   }
-};
+}
 
 // ==================== 初始化 ====================
 window.onload = function() {
-  var saved = localStorage.getItem('ambroseUser');
-  if (saved) {
-    currentUser = JSON.parse(saved);
-    loadData();
-    showPage('homePage');
-    updateHomePage();
-    updateProfilePage();
-  } else {
-    showPage('loginPage');
-    switchMode('boss');
-  }
+  // 显示骨架屏
+  showSkeletonLoader();
+  
+  setTimeout(function() {
+    hideSkeletonLoader();
+    
+    var saved = localStorage.getItem('ambroseUser');
+    if (saved) {
+      currentUser = JSON.parse(saved);
+      loadData();
+      showPage('homePage');
+      if (typeof updateHomePage === 'function') updateHomePage();
+      if (typeof updateProfilePage === 'function') updateProfilePage();
+      // 检查是否显示新手引导
+      setTimeout(checkOnboarding, 1000);
+    } else {
+      showPage('loginPage');
+      if (typeof switchMode === 'function') switchMode('boss');
+    }
+  }, 500);
 };
 </script>
 
