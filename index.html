@@ -361,6 +361,9 @@ body {
 </head>
 <body>
 
+<!-- 动态进度条容器 -->
+<div id="globalProgress" style="display:none;"></div>
+
 <!-- Toast -->
 <div class="toast" id="toast"></div>
 
@@ -2137,6 +2140,178 @@ function loadData() {
     var parsed = JSON.parse(saved);
     Object.assign(userData, parsed);
   }
+}
+
+// ==================== 进度条系统 ====================
+function showProgressBar(title, percent) {
+  var container = document.getElementById('globalProgress');
+  if (!container) return;
+  
+  container.style.display = 'block';
+  container.innerHTML = `
+    <div style="
+      position: fixed; top: 0; left: 0; right: 0; 
+      background: rgba(10,10,10,0.98); 
+      backdrop-filter: blur(20px);
+      border-bottom: 1px solid rgba(255,255,255,0.1);
+      padding: 16px 24px; z-index: 100000;
+    ">
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+        <span style="font-size: 14px; color: var(--text-secondary);">${title || '任务进度'}</span>
+        <span style="font-size: 16px; font-weight: 700; color: var(--primary);">${percent}%</span>
+      </div>
+      <div style="height: 6px; background: rgba(255,255,255,0.1); border-radius: 3px; overflow: hidden;">
+        <div style="
+          height: 100%; width: ${percent}%; 
+          background: ${percent === 100 ? '#30D158' : 'linear-gradient(90deg, #00D4FF, #FF2D92)'};
+          border-radius: 3px; transition: all 0.5s ease;
+        "></div>
+      </div>
+    </div>
+  `;
+}
+
+function hideProgressBar() {
+  var container = document.getElementById('globalProgress');
+  if (container) {
+    container.style.display = 'none';
+  }
+}
+
+// ==================== 个性化训练计划生成器 ====================
+var trainingPlans = {
+  beginner: {
+    name: '新手入门计划',
+    description: '专为零基础设计，循序渐进',
+    duration: '4周',
+    frequency: '每周3次',
+    workouts: ['全身燃脂训练', '晨间瑜伽', '办公族肩颈放松', '腹肌撕裂者', '全身拉伸'],
+    goal: '建立运动习惯'
+  },
+  fatLoss: {
+    name: '高效减脂计划',
+    description: '科学燃脂，快速瘦身',
+    duration: '8周',
+    frequency: '每周4-5次',
+    workouts: ['HIIT高强度间歇', '有氧舞蹈', '波比跳挑战', '跳绳训练', '全身燃脂训练'],
+    goal: '减脂塑形'
+  },
+  muscle: {
+    name: '增肌力量计划',
+    description: '增肌塑形，打造完美身材',
+    duration: '12周',
+    frequency: '每周4次',
+    workouts: ['哑铃手臂训练', '胸肌轰炸', '背部力量', '腿部塑形', '全身力量'],
+    goal: '增肌增力'
+  },
+  yoga: {
+    name: '瑜伽进阶计划',
+    description: '柔韧身心，平衡生活',
+    duration: '6周',
+    frequency: '每周3-4次',
+    workouts: ['晨间瑜伽', '流瑜伽', '力量瑜伽', '阴瑜伽', '睡前瑜伽'],
+    goal: '柔韧平衡'
+  }
+};
+
+function showPlanGenerator() {
+  var html = '<div class="page" id="planGeneratorPage"><div class="workout-page">';
+  html += '<div class="page-header"><div class="page-title">🎯 生成训练计划</div><div class="page-subtitle">选择适合你的专属计划</div></div>';
+  
+  // 问卷调查
+  html += '<div style="padding: 0 24px;">';
+  html += '<div style="background: var(--bg-card); border: 1px solid var(--border); border-radius: 20px; padding: 20px; margin-bottom: 16px;">';
+  html += '<div style="font-weight: 600; margin-bottom: 16px;">1. 你的健身目标？</div>';
+  html += '<div class="gender-selector">';
+  html += '<div class="gender-option" onclick="selectPlanGoal(\'fatLoss\')" id="goalFatLoss"><div class="icon">🔥</div><div class="text">减脂</div></div>';
+  html += '<div class="gender-option" onclick="selectPlanGoal(\'muscle\')" id="goalMuscle"><div class="icon">💪</div><div class="text">增肌</div></div>';
+  html += '<div class="gender-option" onclick="selectPlanGoal(\'yoga\')" id="goalYoga"><div class="icon">🧘</div><div class="text">瑜伽</div></div>';
+  html += '</div></div>';
+  
+  html += '<div style="background: var(--bg-card); border: 1px solid var(--border); border-radius: 20px; padding: 20px; margin-bottom: 16px;">';
+  html += '<div style="font-weight: 600; margin-bottom: 16px;">2. 你的运动基础？</div>';
+  html += '<div class="gender-selector">';
+  html += '<div class="gender-option" onclick="selectPlanLevel(\'beginner\')" id="levelBeginner"><div class="icon">🌱</div><div class="text">新手</div></div>';
+  html += '<div class="gender-option" onclick="selectPlanLevel(\'intermediate\')" id="levelIntermediate"><div class="icon">⭐</div><div class="text">进阶</div></div>';
+  html += '<div class="gender-option" onclick="selectPlanLevel(\'advanced\')" id="levelAdvanced"><div class="icon">🔥</div><div class="text">高级</div></div>';
+  html += '</div></div>';
+  
+  html += '<button class="btn-primary" onclick="generatePlan()" style="margin-top: 24px;">生成我的专属计划</button>';
+  html += '</div>';
+  
+  html += '<button class="btn-secondary" onclick="showPage(\'homePage\')" style="margin: 40px 24px;">← 返回首页</button>';
+  html += '</div></div>';
+  
+  document.body.insertAdjacentHTML('beforeend', html);
+  showPage('planGeneratorPage');
+}
+
+var selectedPlanGoal = '';
+var selectedPlanLevel = '';
+
+function selectPlanGoal(goal) {
+  selectedPlanGoal = goal;
+  ['goalFatLoss', 'goalMuscle', 'goalYoga'].forEach(id => {
+    var el = document.getElementById(id);
+    if (el) el.classList.remove('selected');
+  });
+  document.getElementById('goal' + goal.charAt(0).toUpperCase() + goal.slice(1)).classList.add('selected');
+}
+
+function selectPlanLevel(level) {
+  selectedPlanLevel = level;
+  ['levelBeginner', 'levelIntermediate', 'levelAdvanced'].forEach(id => {
+    var el = document.getElementById(id);
+    if (el) el.classList.remove('selected');
+  });
+  document.getElementById('level' + level.charAt(0).toUpperCase() + level.slice(1)).classList.add('selected');
+}
+
+function generatePlan() {
+  if (!selectedPlanGoal) { showToast('请选择健身目标'); return; }
+  if (!selectedPlanLevel) { showToast('请选择运动基础'); return; }
+  
+  var planKey = selectedPlanLevel === 'beginner' ? 'beginner' : selectedPlanGoal;
+  var plan = trainingPlans[planKey];
+  
+  var html = '<div class="page" id="planResultPage"><div class="workout-page">';
+  html += '<div class="page-header"><div class="page-title">🎉 你的专属计划</div><div class="page-subtitle">' + plan.name + '</div></div>';
+  
+  html += '<div style="padding: 0 24px;">';
+  html += '<div style="background: linear-gradient(135deg, rgba(0,212,255,0.1), rgba(255,45,146,0.1)); border: 1px solid rgba(0,212,255,0.3); border-radius: 20px; padding: 24px; margin-bottom: 20px;">';
+  html += '<div style="text-align: center; margin-bottom: 20px;">';
+  html += '<div style="font-size: 48px; margin-bottom: 12px;">🎯</div>';
+  html += '<div style="font-size: 24px; font-weight: 700; margin-bottom: 8px;">' + plan.name + '</div>';
+  html += '<div style="color: var(--text-secondary);">' + plan.description + '</div>';
+  html += '</div>';
+  
+  html += '<div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 16px; margin-bottom: 20px;">';
+  html += '<div style="text-align: center; padding: 16px; background: rgba(255,255,255,0.05); border-radius: 12px;"><div style="font-size: 20px; font-weight: 700; color: var(--primary);">' + plan.duration + '</div><div style="font-size: 12px; color: var(--text-secondary);">计划周期</div></div>';
+  html += '<div style="text-align: center; padding: 16px; background: rgba(255,255,255,0.05); border-radius: 12px;"><div style="font-size: 20px; font-weight: 700; color: var(--secondary);">' + plan.frequency + '</div><div style="font-size: 12px; color: var(--text-secondary);">训练频率</div></div>';
+  html += '</div>';
+  
+  html += '<div style="font-weight: 600; margin-bottom: 12px;">📋 训练课程</div>';
+  html += '<div style="display: flex; flex-direction: column; gap: 8px;">';
+  plan.workouts.forEach((w, i) => {
+    html += '<div style="display: flex; align-items: center; padding: 12px; background: rgba(255,255,255,0.05); border-radius: 12px;"><span style="margin-right: 12px;">' + ['一','二','三','四','五'][i] + '</span><span>' + w + '</span></div>';
+  });
+  html += '</div>';
+  html += '</div>';
+  
+  html += '<button class="btn-primary" onclick="startPlan()">开始执行计划</button>';
+  html += '<button class="btn-secondary" onclick="showPlanGenerator()" style="margin-top: 12px;">重新生成</button>';
+  html += '</div>';
+  
+  html += '</div></div>';
+  
+  document.body.insertAdjacentHTML('beforeend', html);
+  showPage('planResultPage');
+  showToast('🎉 专属计划已生成！');
+}
+
+function startPlan() {
+  showToast('🚀 计划已开始！加油！');
+  showPage('homePage');
 }
 
 // ==================== 初始化 ====================
