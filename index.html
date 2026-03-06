@@ -3,311 +3,402 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-<meta name="apple-mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-<meta name="apple-mobile-web-app-title" content="AMBROSE Health">
-<meta name="format-detection" content="telephone=no">
-<meta name="theme-color" content="#000000">
-<meta name="description" content="AI健康陪伴师 - 私人健康顾问 + 健身教练 + 养生管家">
 <title>AMBROSE - AI Health Coach</title>
 <style>
-*{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
-body{font-family:-apple-system,BlinkMacSystemFont,'PingFang SC','Hiragino Sans GB','Microsoft YaHei',sans-serif;background:#000;color:#fff;-webkit-overflow-scrolling:touch}
-.page{display:none;min-height:100vh;padding-bottom:100px}
-.page.show{display:block}
+* { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+body { font-family: -apple-system, BlinkMacSystemFont, 'PingFang SC', sans-serif; background: #000; color: #fff; min-height: 100vh; }
+.page { display: none; min-height: 100vh; padding-bottom: 100px; }
+.page.active { display: block; }
 
-/* 认证 */
-.auth{position:fixed;top:0;left:0;right:0;bottom:0;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:20px;background:#000;z-index:99999}
-.auth.hide{display:none}
-.logo{width:80px;height:80px;background:linear-gradient(135deg,#00D4FF,#FF2D92);border-radius:20px;margin-bottom:20px;display:flex;align-items:center;justify-content:center;font-size:32px;font-weight:bold;color:#000;box-shadow:0 4px 20px rgba(0,212,255,0.3)}
-h1{font-size:28px;margin-bottom:10px;font-weight:600}
-p{color:rgba(255,255,255,0.5);margin-bottom:30px;font-size:15px}
-input{width:280px;padding:15px;font-size:17px;background:rgba(255,255,255,0.1);border:1px solid rgba(255,255,255,0.2);border-radius:10px;color:#fff;text-align:center;margin-bottom:12px;-webkit-appearance:none;outline:none}
-input:focus{border-color:#00D4FF;background:rgba(255,255,255,0.15)}
-input.hide{display:none !important}
-button{width:280px;padding:16px;font-size:17px;font-weight:600;background:#00D4FF;color:#000;border:none;border-radius:10px;cursor:pointer;-webkit-appearance:none;outline:none}
-button:active{opacity:0.8;transform:scale(0.98)}
-button:disabled{opacity:0.5}
+/* 通用样式 */
+.btn { width: 100%; padding: 16px; background: #00D4FF; color: #000; border: none; border-radius: 12px; font-size: 17px; font-weight: 600; cursor: pointer; margin-top: 16px; }
+.btn:disabled { opacity: 0.5; cursor: not-allowed; }
+.btn-secondary { background: rgba(255,255,255,0.1); color: #fff; }
+.input { width: 100%; padding: 16px; background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.2); border-radius: 12px; color: #fff; font-size: 16px; margin-top: 12px; }
+.input:focus { outline: none; border-color: #00D4FF; }
+.label { display: block; color: rgba(255,255,255,0.7); font-size: 14px; margin-top: 20px; margin-bottom: 8px; }
 
-/* 首页 */
-.header{padding:60px 20px 20px}
-.time{color:#00D4FF;font-size:14px;margin-bottom:8px;font-weight:500}
-.greeting{font-size:32px;font-weight:700;margin-bottom:8px}
-.sub{color:rgba(255,255,255,0.5);font-size:15px}
-.stats{display:grid;grid-template-columns:1fr 1fr;gap:12px;padding:20px}
-.stat{background:rgba(255,255,255,0.08);border:1px solid rgba(255,255,255,0.1);padding:20px;border-radius:16px;text-align:center;cursor:pointer;transition:all 0.2s}
-.stat:active{transform:scale(0.96);background:rgba(255,255,255,0.12)}
-.stat-num{font-size:28px;font-weight:700;margin-bottom:6px;color:#fff}
-.stat-label{font-size:13px;color:rgba(255,255,255,0.5)}
-.main-btn{background:#00D4FF;color:#000;padding:18px 24px;margin:20px;border-radius:14px;text-align:center;font-size:17px;font-weight:600;cursor:pointer;transition:all 0.2s;box-shadow:0 4px 20px rgba(0,212,255,0.2)}
-.main-btn:active{transform:scale(0.96);opacity:0.9}
-.nav{position:fixed;bottom:0;left:0;right:0;display:flex;justify-content:space-around;padding:12px 0 30px;background:rgba(0,0,0,0.98);border-top:1px solid rgba(255,255,255,0.08);backdrop-filter:blur(20px);z-index:100}
-.nav-item{flex:1;text-align:center;padding:8px;cursor:pointer;opacity:0.4;transition:opacity 0.2s}
-.nav-item.active{opacity:1}
-.nav-item span{display:block;font-size:22px;margin-bottom:2px}
-.nav-item small{font-size:11px;font-weight:500}
+/* 欢迎页 */
+.welcome { display: flex; flex-direction: column; align-items: center; justify-content: center; min-height: 100vh; padding: 40px 20px; text-align: center; }
+.logo { width: 100px; height: 100px; background: linear-gradient(135deg, #00D4FF, #FF2D92); border-radius: 24px; margin-bottom: 24px; display: flex; align-items: center; justify-content: center; font-size: 48px; font-weight: bold; color: #000; }
+.title { font-size: 36px; font-weight: 700; margin-bottom: 8px; }
+.subtitle { color: rgba(255,255,255,0.6); font-size: 16px; margin-bottom: 40px; }
 
-/* 聊天 */
-.chat-header{display:flex;align-items:center;padding:16px 20px;padding-top:50px;border-bottom:1px solid rgba(255,255,255,0.08);background:rgba(0,0,0,0.95);position:sticky;top:0;z-index:10}
-.back-btn{width:40px;height:40px;display:flex;align-items:center;justify-content:center;font-size:20px;cursor:pointer;margin-right:12px;border-radius:50%}
-.back-btn:active{background:rgba(255,255,255,0.1)}
-.chat-title{font-size:17px;font-weight:600}
-.chat-status{font-size:13px;color:#30D158;display:flex;align-items:center;gap:6px;margin-top:2px}
-.status-dot{width:6px;height:6px;background:#30D158;border-radius:50%;animation:pulse 2s infinite}
-@keyframes pulse{0%,100%{opacity:1;box-shadow:0 0 0 0 rgba(48,209,88,0.4)}50%{opacity:0.8;box-shadow:0 0 0 4px rgba(48,209,88,0)}}
-.chat-messages{padding:20px;padding-bottom:140px;min-height:calc(100vh - 200px)}
-.msg{margin-bottom:20px;max-width:85%;animation:fadeIn 0.3s ease}
-@keyframes fadeIn{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
-.msg.user{margin-left:auto;text-align:right}
-.msg-bubble{display:inline-block;padding:12px 16px;border-radius:20px;font-size:15px;line-height:1.5;word-break:break-word;max-width:100%}
-.msg.ai .msg-bubble{background:rgba(255,255,255,0.1);border-bottom-left-radius:4px}
-.msg.user .msg-bubble{background:#00D4FF;color:#000;border-bottom-right-radius:4px}
-.chat-input{position:fixed;bottom:0;left:0;right:0;padding:12px 16px 30px;background:#000;border-top:1px solid rgba(255,255,255,0.08);display:flex;gap:10px;z-index:20}
-.chat-input input{flex:1;padding:12px 16px;font-size:15px;background:rgba(255,255,255,0.08);border:1px solid rgba(255,255,255,0.15);border-radius:24px;color:#fff;margin:0;-webkit-appearance:none;outline:none}
-.chat-input input:focus{border-color:#00D4FF}
-.chat-input button{width:auto;padding:12px 24px;margin:0;border-radius:24px;font-size:15px}
+/* 注册页 */
+.register-container { padding: 40px 20px; max-width: 400px; margin: 0 auto; }
+.register-title { font-size: 28px; font-weight: 700; margin-bottom: 8px; }
+.register-subtitle { color: rgba(255,255,255,0.6); font-size: 14px; margin-bottom: 30px; }
+.phone-input-wrapper { display: flex; gap: 12px; }
+.phone-input-wrapper .input { flex: 1; }
+.code-btn { padding: 16px 20px; background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.2); border-radius: 12px; color: #00D4FF; font-size: 14px; cursor: pointer; white-space: nowrap; margin-top: 12px; }
+.code-btn:disabled { color: rgba(255,255,255,0.4); cursor: not-allowed; }
+
+/* 个人信息页 */
+.profile-container { padding: 40px 20px; max-width: 400px; margin: 0 auto; }
+.gender-selector { display: flex; gap: 12px; margin-top: 12px; }
+.gender-option { flex: 1; padding: 20px; background: rgba(255,255,255,0.05); border: 2px solid rgba(255,255,255,0.1); border-radius: 16px; text-align: center; cursor: pointer; transition: all 0.2s; }
+.gender-option.selected { border-color: #00D4FF; background: rgba(0,212,255,0.1); }
+.gender-option .emoji { font-size: 32px; margin-bottom: 8px; }
+.gender-option .text { font-size: 14px; color: rgba(255,255,255,0.7); }
+
+/* 主页 */
+.home-header { padding: 60px 20px 20px; }
+.home-time { color: #00D4FF; font-size: 14px; margin-bottom: 8px; }
+.home-greeting { font-size: 28px; font-weight: 700; margin-bottom: 4px; }
+.home-subtitle { color: rgba(255,255,255,0.5); font-size: 15px; }
+
+/* 推荐卡片 */
+.recommendations { padding: 0 20px; margin-top: 20px; }
+.rec-title { font-size: 14px; color: rgba(255,255,255,0.6); margin-bottom: 12px; }
+.rec-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; }
+.rec-card { background: linear-gradient(135deg, rgba(0,212,255,0.1), rgba(255,45,146,0.1)); border: 1px solid rgba(0,212,255,0.2); border-radius: 16px; padding: 16px; text-align: center; }
+.rec-card .value { font-size: 24px; font-weight: 700; color: #00D4FF; margin-bottom: 4px; }
+.rec-card .unit { font-size: 12px; color: rgba(255,255,255,0.5); }
+.rec-card .label { font-size: 12px; color: rgba(255,255,255,0.7); margin-top: 4px; }
+
+/* 统计数据 */
+.stats-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; padding: 20px; }
+.stat-card { background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); border-radius: 16px; padding: 20px; text-align: center; }
+.stat-card .number { font-size: 32px; font-weight: 700; margin-bottom: 4px; }
+.stat-card .label { font-size: 13px; color: rgba(255,255,255,0.5); }
+
+/* 功能按钮 */
+.feature-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; padding: 0 20px; margin-top: 20px; }
+.feature-btn { padding: 20px; border-radius: 16px; text-align: center; cursor: pointer; transition: all 0.2s; }
+.feature-btn:active { transform: scale(0.96); }
+.feature-btn.chat { background: linear-gradient(135deg, #00D4FF, #0099CC); color: #000; }
+.feature-btn.health { background: linear-gradient(135deg, #FF2D92, #FF6B6B); color: #fff; }
+.feature-btn.nutrition { background: linear-gradient(135deg, #30D158, #00D4FF); color: #000; }
+.feature-btn.profile { background: linear-gradient(135deg, #FFD93D, #FF8C42); color: #000; }
+.feature-btn .emoji { font-size: 28px; margin-bottom: 8px; }
+.feature-btn .text { font-size: 15px; font-weight: 600; }
 
 /* Toast */
-.toast{position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);background:rgba(40,40,40,0.98);padding:16px 28px;border-radius:12px;color:#fff;font-size:15px;z-index:100000;display:none;text-align:center;max-width:80%}
-.toast.show{display:block;animation:toastIn 0.3s ease}
-@keyframes toastIn{from{opacity:0;transform:translate(-50%,-40%)}to{opacity:1;transform:translate(-50%,-50%)}}
+.toast { position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); background: rgba(40,40,40,0.98); padding: 16px 28px; border-radius: 12px; color: #fff; font-size: 15px; z-index: 100000; display: none; }
+.toast.show { display: block; }
 
-/* 功能按钮区 */
-.feature-btns{padding:0 20px;display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:12px}
-.feature-btn{padding:16px;border-radius:14px;text-align:center;font-size:15px;font-weight:600;cursor:pointer;color:#000}
-.feature-btn.chat{background:linear-gradient(135deg,#00D4FF,#0099CC)}
-.feature-btn.health{background:linear-gradient(135deg,#FF2D92,#FF6B6B)}
-.feature-btn.nutrition{background:linear-gradient(135deg,#30D158,#00D4FF)}
-.feature-btn.weight{background:linear-gradient(135deg,#FFD93D,#FF8C42)}
+/* 底部导航 */
+.bottom-nav { position: fixed; bottom: 0; left: 0; right: 0; display: flex; justify-content: space-around; padding: 12px 0 30px; background: rgba(0,0,0,0.98); border-top: 1px solid rgba(255,255,255,0.08); backdrop-filter: blur(20px); }
+.nav-item { flex: 1; text-align: center; padding: 8px; cursor: pointer; opacity: 0.4; }
+.nav-item.active { opacity: 1; }
+.nav-item .emoji { font-size: 24px; display: block; margin-bottom: 4px; }
+.nav-item .text { font-size: 11px; }
 </style>
 </head>
 <body>
 
 <div class="toast" id="toast"></div>
 
-<!-- 认证 -->
-<div class="auth" id="authPage">
+<!-- ========== 第1页：欢迎 ========== -->
+<div class="page active" id="welcomePage">
+<div class="welcome">
 <div class="logo">A</div>
-<h1>AMBROSE</h1>
-<p>AI Health Coach</p>
-
-<!-- 模式切换 -->
-<div style="margin-bottom:20px">
-<button id="bossBtn" onclick="switchMode('boss')" style="width:136px;margin-right:8px;background:#FF2D92">我是 BOSS</button>
-<button id="guestBtn" onclick="switchMode('guest')" style="width:136px;background:rgba(255,255,255,0.2)">我是访客</button>
-</div>
-
-<!-- BOSS模式：只显示识别码 -->
-<div id="bossMode">
-<input type="text" id="bossCode" placeholder="识别码" maxlength="4" autocomplete="off">
-<button onclick="doBossLogin()">进入</button>
-</div>
-
-<!-- 访客模式：显示名称和邀请码 -->
-<div id="guestMode" style="display:none">
-<input type="text" id="guestName" placeholder="怎么称呼你？" maxlength="10" autocomplete="off">
-<input type="text" id="guestCode" placeholder="邀请码" maxlength="4" autocomplete="off">
-<button onclick="doGuestLogin()">进入</button>
+<div class="title">AMBROSE</div>
+<div class="subtitle">AI Health Coach</div>
+<button class="btn" onclick="goToRegister()">开始使用</button>
 </div>
 </div>
 
-<!-- 首页 -->
+<!-- ========== 第2页：手机号注册 ========== -->
+<div class="page" id="registerPage">
+<div class="register-container">
+<div class="register-title">创建账号</div>
+<div class="register-subtitle">请输入手机号完成注册</div>
+
+<label class="label">手机号码</label>
+<div class="phone-input-wrapper">
+<input type="tel" class="input" id="phoneInput" placeholder="请输入手机号" maxlength="11">
+<button class="code-btn" id="codeBtn" onclick="sendCode()">获取验证码</button>
+</div>
+
+<label class="label">验证码</label>
+<input type="text" class="input" id="codeInput" placeholder="请输入验证码" maxlength="6">
+
+<button class="btn" onclick="verifyCode()">下一步</button>
+</div>
+</div>
+
+<!-- ========== 第3页：设置个人信息 ========== -->
+<div class="page" id="profilePage">
+<div class="profile-container">
+<div class="register-title">完善信息</div>
+<div class="register-subtitle">让我们更好地了解你</div>
+
+<label class="label">性别</label>
+<div class="gender-selector">
+<div class="gender-option" onclick="selectGender('male')" id="maleOption">
+<div class="emoji">👨</div>
+<div class="text">男士</div>
+</div>
+<div class="gender-option" onclick="selectGender('female')" id="femaleOption">
+<div class="emoji">👩</div>
+<div class="text">女士</div>
+</div>
+</div>
+
+<label class="label">姓名</label>
+<input type="text" class="input" id="nameInput" placeholder="请输入姓名">
+
+<label class="label">年龄</label>
+<input type="number" class="input" id="ageInput" placeholder="请输入年龄" min="10" max="100">
+
+<label class="label">身高 (cm)</label>
+<input type="number" class="input" id="heightInput" placeholder="请输入身高" min="100" max="250">
+
+<label class="label">体重 (kg)</label>
+<input type="number" class="input" id="weightInput" placeholder="请输入体重" min="30" max="200">
+
+<button class="btn" onclick="saveProfile()">完成</button>
+</div>
+</div>
+
+<!-- ========== 第4页：主页 ========== -->
 <div class="page" id="homePage">
-<div class="header">
-<div class="time" id="timeDisplay">--:--</div>
-<div class="greeting" id="userGreeting">你好</div>
-<div class="sub">今天感觉如何？💪</div>
+<div class="home-header">
+<div class="home-time" id="currentTime">--:--</div>
+<div class="home-greeting" id="userGreeting">你好</div>
+<div class="home-subtitle">今天的健康目标</div>
 </div>
 
-<div class="stats">
-<div class="stat" onclick="showToast('步数: 8,432步')">
-<div class="stat-num">8,432</div>
-<div class="stat-label">步数</div>
+<!-- 个性化推荐 -->
+<div class="recommendations">
+<div class="rec-title">💡 为你推荐</div>
+<div class="rec-grid">
+<div class="rec-card">
+<div class="value" id="waterRec">2000</div>
+<div class="unit">ml/天</div>
+<div class="label">饮水量</div>
 </div>
-<div class="stat" onclick="showToast('消耗: 342千卡')">
-<div class="stat-num">342</div>
-<div class="stat-label">千卡</div>
+<div class="rec-card">
+<div class="value" id="proteinRec">60</div>
+<div class="unit">g/天</div>
+<div class="label">蛋白质</div>
 </div>
-<div class="stat" onclick="showToast('睡眠: 7.5小时')">
-<div class="stat-num">7.5</div>
-<div class="stat-label">小时</div>
+<div class="rec-card">
+<div class="value" id="carbRec">250</div>
+<div class="unit">g/天</div>
+<div class="label">碳水化合物</div>
 </div>
-<div class="stat" onclick="showToast('饮水: 1.2L')">
-<div class="stat-num">1.2L</div>
-<div class="stat-label">饮水</div>
+</div>
+</div>
+
+<!-- 统计数据 -->
+<div class="stats-grid">
+<div class="stat-card">
+<div class="number">8,432</div>
+<div class="label">今日步数</div>
+</div>
+<div class="stat-card">
+<div class="number">342</div>
+<div class="label">消耗千卡</div>
 </div>
 </div>
 
 <!-- 功能按钮 -->
-<div class="feature-btns">
-<div class="feature-btn chat" onclick="openChat()">💬 开始对话</div>
-<div class="feature-btn health" onclick="showToast('❤️ 健康中心: 记录和分析您的健康数据')">❤️ 健康中心</div>
-<div class="feature-btn nutrition" onclick="showToast('🥗 饮食记录: 追踪每日营养摄入')">🥗 饮食记录</div>
-<div class="feature-btn weight" onclick="showToast('⚖️ 体重管理: 记录体重变化趋势')">⚖️ 体重管理</div>
+<div class="feature-grid">
+<div class="feature-btn chat" onclick="showToast('AI对话功能开发中')">
+<div class="emoji">💬</div>
+<div class="text">开始对话</div>
 </div>
-
-<div class="nav">
-<div class="nav-item active" onclick="showToast('首页')">🏠<br><small>首页</small></div>
-<div class="nav-item" onclick="showToast('数据中心')">📊<br><small>数据</small></div>
-<div class="nav-item" onclick="openChat()">💬<br><small>对话</small></div>
-<div class="nav-item" onclick="showToast('个人中心')">👤<br><small>我的</small></div>
+<div class="feature-btn health" onclick="showToast('健康中心功能开发中')">
+<div class="emoji">❤️</div>
+<div class="text">健康中心</div>
 </div>
+<div class="feature-btn nutrition" onclick="showToast('饮食记录功能开发中')">
+<div class="emoji">🥗</div>
+<div class="text">饮食记录</div>
 </div>
-
-<!-- 聊天 -->
-<div class="page" id="chatPage">
-<div class="chat-header">
-<div class="back-btn" onclick="goHome()">←</div>
-<div>
-<div class="chat-title">AMBROSE</div>
-<div class="chat-status"><span class="status-dot"></span>在线</div>
+<div class="feature-btn profile" onclick="showToast('个人资料功能开发中')">
+<div class="emoji">👤</div>
+<div class="text">我的资料</div>
 </div>
 </div>
 
-<div class="chat-messages" id="chatMessages">
-<div class="msg ai"><div class="msg-bubble">你好！我是AMBROSE，你的AI健康教练。有什么可以帮助你的吗？</div></div>
+<!-- 底部导航 -->
+<div class="bottom-nav">
+<div class="nav-item active" onclick="showToast('首页')">
+<span class="emoji">🏠</span>
+<span class="text">首页</span>
 </div>
-
-<div class="chat-input">
-<input type="text" id="messageInput" placeholder="输入消息..." autocomplete="off">
-<button onclick="sendMessage()">发送</button>
+<div class="nav-item" onclick="showToast('数据')">
+<span class="emoji">📊</span>
+<span class="text">数据</span>
+</div>
+<div class="nav-item" onclick="showToast('对话')">
+<span class="emoji">💬</span>
+<span class="text">对话</span>
+</div>
+<div class="nav-item" onclick="showToast('我的')">
+<span class="emoji">👤</span>
+<span class="text">我的</span>
+</div>
 </div>
 </div>
 
 <script>
-// 显示提示
+// ========== 全局变量 ==========
+var userData = {
+phone: '',
+gender: '',
+name: '',
+age: 0,
+height: 0,
+weight: 0
+};
+
+// ========== 页面切换 ==========
+function showPage(pageId) {
+document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+document.getElementById(pageId).classList.add('active');
+}
+
+function goToRegister() {
+showPage('registerPage');
+}
+
+// ========== 显示提示 ==========
 function showToast(msg) {
 var t = document.getElementById('toast');
 t.textContent = msg;
 t.classList.add('show');
-setTimeout(function() { t.classList.remove('show'); }, 2000);
+setTimeout(() => t.classList.remove('show'), 2000);
 }
 
-// 更新时间
+// ========== 发送验证码 ==========
+function sendCode() {
+var phone = document.getElementById('phoneInput').value;
+if (!phone || phone.length !== 11) {
+showToast('请输入正确的手机号');
+return;
+}
+
+// 模拟发送验证码
+showToast('验证码已发送：123456');
+userData.phone = phone;
+
+var btn = document.getElementById('codeBtn');
+btn.disabled = true;
+var count = 60;
+btn.textContent = count + 's';
+var timer = setInterval(() => {
+count--;
+btn.textContent = count + 's';
+if (count <= 0) {
+clearInterval(timer);
+btn.disabled = false;
+btn.textContent = '获取验证码';
+}
+}, 1000);
+}
+
+// ========== 验证验证码 ==========
+function verifyCode() {
+var code = document.getElementById('codeInput').value;
+if (code !== '123456') {
+showToast('验证码错误');
+return;
+}
+showPage('profilePage');
+}
+
+// ========== 选择性别 ==========
+function selectGender(gender) {
+userData.gender = gender;
+document.getElementById('maleOption').classList.remove('selected');
+document.getElementById('femaleOption').classList.remove('selected');
+document.getElementById(gender + 'Option').classList.add('selected');
+}
+
+// ========== 保存个人信息 ==========
+function saveProfile() {
+userData.name = document.getElementById('nameInput').value;
+userData.age = parseInt(document.getElementById('ageInput').value);
+userData.height = parseInt(document.getElementById('heightInput').value);
+userData.weight = parseInt(document.getElementById('weightInput').value);
+
+if (!userData.gender) { showToast('请选择性别'); return; }
+if (!userData.name) { showToast('请输入姓名'); return; }
+if (!userData.age) { showToast('请输入年龄'); return; }
+if (!userData.height) { showToast('请输入身高'); return; }
+if (!userData.weight) { showToast('请输入体重'); return; }
+
+// 保存到本地存储
+localStorage.setItem('userData', JSON.stringify(userData));
+localStorage.setItem('isLoggedIn', 'true');
+
+// 计算推荐值
+calculateRecommendations();
+
+// 进入主页
+showPage('homePage');
+updateHomePage();
+showToast('欢迎，' + userData.name);
+}
+
+// ========== 计算推荐值 ==========
+function calculateRecommendations() {
+var gender = userData.gender;
+var age = userData.age;
+var height = userData.height;
+var weight = userData.weight;
+
+// 计算基础代谢率 (BMR) - Mifflin-St Jeor 公式
+var bmr;
+if (gender === 'male') {
+bmr = 10 * weight + 6.25 * height - 5 * age + 5;
+} else {
+bmr = 10 * weight + 6.25 * height - 5 * age - 161;
+}
+
+// 每日总能量消耗 (TDEE) - 假设轻度活动
+var tdee = bmr * 1.375;
+
+// 推荐饮水量 (ml) - 体重 * 35ml
+var water = Math.round(weight * 35);
+
+// 推荐蛋白质 (g) - 体重 * 1.2g (轻度活动)
+var protein = Math.round(weight * 1.2);
+
+// 推荐碳水化合物 (g) - 占总热量的50%
+var carbs = Math.round((tdee * 0.5) / 4);
+
+// 保存推荐值
+var recommendations = { water: water, protein: protein, carbs: carbs, tdee: Math.round(tdee) };
+localStorage.setItem('recommendations', JSON.stringify(recommendations));
+}
+
+// ========== 更新主页 ==========
+function updateHomePage() {
+var rec = JSON.parse(localStorage.getItem('recommendations') || '{}');
+if (rec.water) document.getElementById('waterRec').textContent = rec.water;
+if (rec.protein) document.getElementById('proteinRec').textContent = rec.protein;
+if (rec.carbs) document.getElementById('carbRec').textContent = rec.carbs;
+
+var user = JSON.parse(localStorage.getItem('userData') || '{}');
+if (user.name) {
+var hour = new Date().getHours();
+var greet = hour < 12 ? '早上好' : (hour < 18 ? '下午好' : '晚上好');
+document.getElementById('userGreeting').textContent = greet + '，' + user.name;
+}
+
+updateTime();
+setInterval(updateTime, 1000);
+}
+
 function updateTime() {
 var now = new Date();
-var utc = now.getTime() + now.getTimezoneOffset() * 60000;
-var bj = new Date(utc + 3600000 * 8);
-var h = bj.getHours(), m = bj.getMinutes();
-document.getElementById('timeDisplay').textContent = 
+var h = now.getHours(), m = now.getMinutes();
+document.getElementById('currentTime').textContent = 
 (h < 10 ? '0' : '') + h + ':' + (m < 10 ? '0' : '') + m;
-
-// 更新问候语
-var greet = h < 12 ? '早上好' : (h < 18 ? '下午好' : '晚上好');
-var saved = localStorage.getItem('user');
-var userName = localStorage.getItem('userName') || '朋友';
-if (saved) {
-document.getElementById('userGreeting').textContent = greet + '，' + userName;
-}
-}
-setInterval(updateTime, 1000);
-updateTime();
-
-// 模式切换
-var currentMode = 'boss';
-function switchMode(mode) {
-currentMode = mode;
-var bossBtn = document.getElementById('bossBtn');
-var guestBtn = document.getElementById('guestBtn');
-var bossMode = document.getElementById('bossMode');
-var guestMode = document.getElementById('guestMode');
-
-if (mode === 'boss') {
-bossBtn.style.background = '#FF2D92';
-guestBtn.style.background = 'rgba(255,255,255,0.2)';
-bossMode.style.display = 'block';
-guestMode.style.display = 'none';
-} else {
-bossBtn.style.background = 'rgba(255,255,255,0.2)';
-guestBtn.style.background = '#00D4FF';
-bossMode.style.display = 'none';
-guestMode.style.display = 'block';
-}
 }
 
-// BOSS登录
-doBossLogin = function() {
-var code = document.getElementById('bossCode').value;
-if (code !== '0812') { showToast('识别码错误'); return; }
-
-document.getElementById('authPage').classList.add('hide');
-document.getElementById('homePage').classList.add('show');
-localStorage.setItem('user', 'boss');
-localStorage.setItem('userName', 'BOSS Shao');
-updateTime();
-showToast('欢迎回来，BOSS');
-};
-
-// 访客登录
-doGuestLogin = function() {
-var name = document.getElementById('guestName').value.trim();
-var code = document.getElementById('guestCode').value;
-
-if (!name) { showToast('请输入称呼'); return; }
-if (code !== '8888') { showToast('邀请码错误'); return; }
-
-document.getElementById('authPage').classList.add('hide');
-document.getElementById('homePage').classList.add('show');
-localStorage.setItem('user', 'guest');
-localStorage.setItem('userName', name);
-updateTime();
-showToast('欢迎，' + name);
-};
-
-// 检查已登录
-if (localStorage.getItem('user')) {
-document.getElementById('authPage').classList.add('hide');
-document.getElementById('homePage').classList.add('show');
-updateTime();
-} else {
-// 默认显示BOSS模式
-switchMode('boss');
+// ========== 检查登录状态 ==========
+window.onload = function() {
+if (localStorage.getItem('isLoggedIn') === 'true') {
+showPage('homePage');
+updateHomePage();
 }
-
-// 页面切换
-openChat = function() {
-document.getElementById('homePage').classList.remove('show');
-document.getElementById('chatPage').classList.add('show');
 };
-
-goHome = function() {
-document.getElementById('chatPage').classList.remove('show');
-document.getElementById('homePage').classList.add('show');
-document.querySelectorAll('.nav-item').forEach(function(el, i) {
-el.classList.toggle('active', i === 0);
-});
-};
-
-// 发送消息
-sendMessage = function() {
-var input = document.getElementById('messageInput');
-var text = input.value.trim();
-if (!text) return;
-
-var msgs = document.getElementById('chatMessages');
-msgs.innerHTML += '<div class="msg user"><div class="msg-bubble">' + text + '</div></div>';
-input.value = '';
-msgs.scrollTop = msgs.scrollHeight;
-
-// AI回复
-setTimeout(function() {
-var userName = localStorage.getItem('userName') || '朋友';
-var isBoss = localStorage.getItem('user') === 'boss';
-var reply = isBoss 
-? 'BOSS，我记录下来了。作为你的健康教练，我会持续关注你的数据变化。'
-: userName + '，收到！我会帮你记录下来，一起加油！';
-msgs.innerHTML += '<div class="msg ai"><div class="msg-bubble">' + reply + '</div></div>';
-msgs.scrollTop = msgs.scrollHeight;
-}, 800);
-};
-
-// 回车发送
-document.getElementById('messageInput').onkeypress = function(e) {
-if (e.key === 'Enter') sendMessage();
-};
-
-console.log('🚀 AMBROSE Health v1.2.0 已启动');
-console.log('✅ 功能: AI对话、健康数据、饮食记录、体重管理');
 </script>
 
 </body>
