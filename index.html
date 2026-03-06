@@ -1849,26 +1849,285 @@ function finishWorkout() {
   showPage('workoutPage');
 }
 
-// ==================== 饮食功能 ====================
-function addMeal(type) {
-  var foods = {
-    breakfast: [{name: '燕麦粥', cal: 150}, {name: '全麦面包+鸡蛋', cal: 250}, {name: '牛奶+香蕉', cal: 200}],
-    lunch: [{name: '鸡胸肉沙拉', cal: 350}, {name: '糙米饭+蔬菜', cal: 400}, {name: '牛肉+土豆', cal: 450}],
-    dinner: [{name: '蒸鱼+蔬菜', cal: 300}, {name: '豆腐+汤', cal: 250}, {name: '水果沙拉', cal: 150}],
-    snack: [{name: '坚果', cal: 100}, {name: '酸奶', cal: 120}, {name: '苹果', cal: 80}]
+// ==================== 饮食功能（薄荷App风格）====================
+// 食物数据库
+var foodDatabase = [
+  // 主食类
+  { name: '米饭', unit: '碗(150g)', calories: 174, category: '主食', icon: '🍚' },
+  { name: '馒头', unit: '个(100g)', calories: 223, category: '主食', icon: '🥯' },
+  { name: '面条', unit: '碗(200g)', calories: 280, category: '主食', icon: '🍜' },
+  { name: '燕麦', unit: '碗(40g)', calories: 150, category: '主食', icon: '🥣' },
+  { name: '全麦面包', unit: '片(30g)', calories: 75, category: '主食', icon: '🍞' },
+  { name: '玉米', unit: '根(200g)', calories: 112, category: '主食', icon: '🌽' },
+  { name: '红薯', unit: '个(150g)', calories: 129, category: '主食', icon: '🍠' },
+  { name: '紫薯', unit: '个(150g)', calories: 133, category: '主食', icon: '🍠' },
+  { name: '小米粥', unit: '碗(250g)', calories: 120, category: '主食', icon: '🥣' },
+  { name: '包子', unit: '个(100g)', calories: 220, category: '主食', icon: '🥟' },
+  
+  // 蛋白质类
+  { name: '鸡蛋', unit: '个(50g)', calories: 70, category: '蛋白质', icon: '🥚' },
+  { name: '鸡胸肉', unit: '100g', calories: 165, category: '蛋白质', icon: '🍗' },
+  { name: '牛肉', unit: '100g', calories: 250, category: '蛋白质', icon: '🥩' },
+  { name: '猪瘦肉', unit: '100g', calories: 143, category: '蛋白质', icon: '🥓' },
+  { name: '鱼肉', unit: '100g', calories: 120, category: '蛋白质', icon: '🐟' },
+  { name: '虾', unit: '100g', calories: 85, category: '蛋白质', icon: '🦐' },
+  { name: '豆腐', unit: '100g', calories: 76, category: '蛋白质', icon: '🧈' },
+  { name: '牛奶', unit: '杯(250ml)', calories: 150, category: '蛋白质', icon: '🥛' },
+  { name: '酸奶', unit: '杯(200g)', calories: 140, category: '蛋白质', icon: '🥛' },
+  { name: '豆浆', unit: '杯(250ml)', calories: 120, category: '蛋白质', icon: '🥛' },
+  { name: '火腿肠', unit: '根(40g)', calories: 80, category: '蛋白质', icon: '🌭' },
+  
+  // 蔬菜类
+  { name: '西兰花', unit: '100g', calories: 34, category: '蔬菜', icon: '🥦' },
+  { name: '菠菜', unit: '100g', calories: 23, category: '蔬菜', icon: '🥬' },
+  { name: '生菜', unit: '100g', calories: 15, category: '蔬菜', icon: '🥬' },
+  { name: '黄瓜', unit: '根(200g)', calories: 32, category: '蔬菜', icon: '🥒' },
+  { name: '番茄', unit: '个(150g)', calories: 27, category: '蔬菜', icon: '🍅' },
+  { name: '胡萝卜', unit: '根(100g)', calories: 41, category: '蔬菜', icon: '🥕' },
+  { name: '青椒', unit: '个(80g)', calories: 16, category: '蔬菜', icon: '🫑' },
+  { name: '洋葱', unit: '个(150g)', calories: 60, category: '蔬菜', icon: '🧅' },
+  { name: '芹菜', unit: '100g', calories: 14, category: '蔬菜', icon: '🥬' },
+  { name: '白菜', unit: '100g', calories: 18, category: '蔬菜', icon: '🥬' },
+  
+  // 水果类
+  { name: '苹果', unit: '个(200g)', calories: 104, category: '水果', icon: '🍎' },
+  { name: '香蕉', unit: '根(120g)', calories: 105, category: '水果', icon: '🍌' },
+  { name: '橙子', unit: '个(150g)', calories: 62, category: '水果', icon: '🍊' },
+  { name: '葡萄', unit: '100g', calories: 69, category: '水果', icon: '🍇' },
+  { name: '草莓', unit: '100g', calories: 32, category: '水果', icon: '🍓' },
+  { name: '西瓜', unit: '块(300g)', calories: 90, category: '水果', icon: '🍉' },
+  { name: '猕猴桃', unit: '个(100g)', calories: 61, category: '水果', icon: '🥝' },
+  { name: '蓝莓', unit: '盒(125g)', calories: 71, category: '水果', icon: '🫐' },
+  { name: '梨', unit: '个(150g)', calories: 77, category: '水果', icon: '🍐' },
+  { name: '桃子', unit: '个(150g)', calories: 58, category: '水果', icon: '🍑' },
+  
+  // 坚果零食
+  { name: '杏仁', unit: '10颗(15g)', calories: 90, category: '坚果', icon: '🌰' },
+  { name: '核桃', unit: '2个(20g)', calories: 130, category: '坚果', icon: '🌰' },
+  { name: '花生', unit: '20颗(30g)', calories: 166, category: '坚果', icon: '🥜' },
+  { name: '巧克力', unit: '块(20g)', calories: 107, category: '零食', icon: '🍫' },
+  { name: '饼干', unit: '片(10g)', calories: 50, category: '零食', icon: '🍪' },
+  { name: '薯片', unit: '包(30g)', calories: 160, category: '零食', icon: '🥔' },
+  { name: '蛋糕', unit: '块(100g)', calories: 350, category: '零食', icon: '🍰' },
+  
+  // 饮品类
+  { name: '咖啡', unit: '杯(300ml)', calories: 5, category: '饮品', icon: '☕' },
+  { name: '奶茶', unit: '杯(500ml)', calories: 300, category: '饮品', icon: '🧋' },
+  { name: '可乐', unit: '罐(330ml)', calories: 140, category: '饮品', icon: '🥤' },
+  { name: '果汁', unit: '杯(250ml)', calories: 120, category: '饮品', icon: '🧃' },
+  { name: '啤酒', unit: '罐(500ml)', calories: 150, category: '饮品', icon: '🍺' },
+  { name: '绿茶', unit: '杯(300ml)', calories: 2, category: '饮品', icon: '🍵' }
+];
+
+var currentMealType = 'breakfast';
+var selectedFood = null;
+var selectedQuantity = 1;
+
+function showFoodSelector(mealType) {
+  currentMealType = mealType || 'breakfast';
+  var existing = document.getElementById('foodSelectorModal');
+  if (existing) existing.remove();
+  
+  var totalCalories = userData.todayData.meals ? userData.todayData.meals.reduce(function(sum, m) { return sum + (m.calories || 0); }, 0) : 0;
+  
+  var html = '<div id="foodSelectorModal" style="position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.95); z-index: 100000; overflow-y: auto;">';
+  html += '<div style="max-width: 500px; margin: 0 auto; padding: 24px;">';
+  
+  // 头部
+  html += '<div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 24px;">';
+  html += '<div><h3 style="font-size: 20px; margin-bottom: 4px;">🍽️ 记录饮食</h3>';
+  html += '<p style="color: var(--text-secondary); font-size: 14px;">今日已摄入: ' + totalCalories + '千卡</p></div>';
+  html += '<button onclick="closeFoodSelector()" style="background: none; border: none; color: var(--text-secondary); font-size: 24px; cursor: pointer;">✕</button>';
+  html += '</div>';
+  
+  // 分类标签
+  var categories = ['全部', '主食', '蛋白质', '蔬菜', '水果', '坚果', '零食', '饮品'];
+  html += '<div style="display: flex; gap: 8px; overflow-x: auto; margin-bottom: 20px; padding-bottom: 8px;">';
+  categories.forEach(function(cat, index) {
+    var activeStyle = index === 0 ? 'background: var(--primary); color: #000;' : 'background: rgba(255,255,255,0.05); color: var(--text-secondary);';
+    html += '<button onclick="filterFoodCategory(this, \'' + cat + '\')" style="padding: 8px 16px; border: none; border-radius: 20px; font-size: 14px; cursor: pointer; white-space: nowrap; ' + activeStyle + '">' + cat + '</button>';
+  });
+  html += '</div>';
+  
+  // 搜索框
+  html += '<div style="margin-bottom: 20px;">';
+  html += '<input type="text" id="foodSearchInput" placeholder="🔍 搜索食物..." oninput="searchFood(this.value)" style="width: 100%; padding: 16px; background: rgba(255,255,255,0.05); border: 1px solid var(--border); border-radius: 12px; color: #fff; font-size: 16px;">';
+  html += '</div>';
+  
+  // 食物列表
+  html += '<div id="foodListContainer">';
+  html += renderFoodList(foodDatabase);
+  html += '</div>';
+  
+  html += '</div></div>';
+  
+  document.body.insertAdjacentHTML('beforeend', html);
+}
+
+function renderFoodList(foods) {
+  var html = '<div style="display: grid; gap: 12px;">';
+  foods.forEach(function(food, index) {
+    html += '<div onclick="showFoodDetail(' + index + ')" style="display: flex; align-items: center; padding: 16px; background: var(--bg-card); border: 1px solid var(--border); border-radius: 16px; cursor: pointer; transition: all 0.2s;">';
+    html += '<div style="width: 48px; height: 48px; background: linear-gradient(135deg, rgba(0,212,255,0.2), rgba(255,45,146,0.2)); border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 24px; margin-right: 16px;">' + food.icon + '</div>';
+    html += '<div style="flex: 1;">';
+    html += '<div style="font-weight: 600; margin-bottom: 4px;">' + food.name + '</div>';
+    html += '<div style="font-size: 13px; color: var(--text-secondary);">' + food.unit + '</div>';
+    html += '</div>';
+    html += '<div style="text-align: right;">';
+    html += '<div style="font-weight: 700; color: var(--secondary);">' + food.calories + '</div>';
+    html += '<div style="font-size: 12px; color: var(--text-secondary);">千卡</div>';
+    html += '</div>';
+    html += '</div>';
+  });
+  html += '</div>';
+  return html;
+}
+
+function filterFoodCategory(btn, category) {
+  // 更新按钮样式
+  btn.parentElement.querySelectorAll('button').forEach(function(b) {
+    b.style.background = 'rgba(255,255,255,0.05)';
+    b.style.color = 'var(--text-secondary)';
+  });
+  btn.style.background = 'var(--primary)';
+  btn.style.color = '#000';
+  
+  // 过滤食物
+  var filtered = category === '全部' ? foodDatabase : foodDatabase.filter(function(f) { return f.category === category; });
+  document.getElementById('foodListContainer').innerHTML = renderFoodList(filtered);
+}
+
+function searchFood(keyword) {
+  if (!keyword) {
+    document.getElementById('foodListContainer').innerHTML = renderFoodList(foodDatabase);
+    return;
+  }
+  var filtered = foodDatabase.filter(function(f) { return f.name.includes(keyword); });
+  document.getElementById('foodListContainer').innerHTML = renderFoodList(filtered);
+}
+
+function showFoodDetail(index) {
+  selectedFood = foodDatabase[index];
+  selectedQuantity = 1;
+  
+  var html = '<div id="foodDetailModal" style="position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.95); z-index: 100001; display: flex; align-items: center; justify-content: center; padding: 24px;">';
+  html += '<div style="background: var(--bg-card); border: 1px solid var(--border); border-radius: 24px; padding: 32px 24px; width: 100%; max-width: 400px;">';
+  
+  // 食物信息
+  html += '<div style="text-align: center; margin-bottom: 32px;">';
+  html += '<div style="font-size: 64px; margin-bottom: 8px;">' + selectedFood.icon + '</div>';
+  html += '<h3 style="font-size: 24px; margin-bottom: 4px;">' + selectedFood.name + '</h3>';
+  html += '<p style="color: var(--text-secondary);">' + selectedFood.unit + '</p>';
+  html += '<div style="font-size: 48px; font-weight: 700; color: var(--primary); margin-top: 16px;">' + selectedFood.calories + '<span style="font-size: 16px; color: var(--text-secondary);"> 千卡</span></div>';
+  html += '</div>';
+  
+  // 数量选择
+  html += '<div style="margin-bottom: 24px;">';
+  html += '<label style="display: block; color: var(--text-secondary); font-size: 14px; margin-bottom: 12px; text-align: center;">选择数量</label>';
+  html += '<div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px;">';
+  [0.5, 1, 1.5, 2, 2.5, 3, 4, 5].forEach(function(qty) {
+    var active = qty === 1 ? 'background: var(--primary); color: #000; border-color: var(--primary);' : 'background: rgba(255,255,255,0.05); color: #fff;';
+    html += '<button onclick="selectFoodQuantity(this, ' + qty + ')" class="qty-btn" style="padding: 12px; border: 1px solid var(--border); border-radius: 12px; font-size: 14px; cursor: pointer; ' + active + '">' + qty + '</button>';
+  });
+  html += '</div>';
+  html += '</div>';
+  
+  // 自定义数量
+  html += '<div style="margin-bottom: 24px;">';
+  html += '<label style="display: block; color: var(--text-secondary); font-size: 14px; margin-bottom: 8px;">自定义数量</label>';
+  html += '<input type="number" id="customFoodQty" placeholder="输入数量" min="0.1" max="10" step="0.1" oninput="updateFoodCalories(this.value)" style="width: 100%; padding: 16px; background: rgba(255,255,255,0.05); border: 1px solid var(--border); border-radius: 12px; color: #fff; font-size: 16px; text-align: center;">';
+  html += '</div>';
+  
+  // 预估热量
+  html += '<div id="estimatedCalories" style="text-align: center; padding: 16px; background: rgba(0,212,255,0.1); border-radius: 12px; margin-bottom: 24px; font-size: 18px; font-weight: 600;">预计: ' + selectedFood.calories + ' 千卡</div>';
+  
+  // 按钮
+  html += '<div style="display: flex; gap: 12px;">';
+  html += '<button onclick="closeFoodDetail()" style="flex: 1; padding: 16px; background: transparent; border: 1px solid var(--border); border-radius: 12px; color: var(--text-secondary); font-size: 16px; cursor: pointer;">取消</button>';
+  html += '<button onclick="addFoodRecord()" style="flex: 1; padding: 16px; background: var(--primary); border: none; border-radius: 12px; color: #000; font-weight: 600; font-size: 16px; cursor: pointer;">添加记录</button>';
+  html += '</div>';
+  
+  html += '</div></div>';
+  
+  document.body.insertAdjacentHTML('beforeend', html);
+}
+
+function selectFoodQuantity(btn, qty) {
+  selectedQuantity = qty;
+  document.querySelectorAll('.qty-btn').forEach(function(b) {
+    b.style.background = 'rgba(255,255,255,0.05)';
+    b.style.color = '#fff';
+    b.style.borderColor = 'var(--border)';
+  });
+  btn.style.background = 'var(--primary)';
+  btn.style.color = '#000';
+  btn.style.borderColor = 'var(--primary)';
+  
+  document.getElementById('customFoodQty').value = '';
+  updateFoodCaloriesDisplay();
+}
+
+function updateFoodCalories(val) {
+  if (val) {
+    selectedQuantity = parseFloat(val);
+    document.querySelectorAll('.qty-btn').forEach(function(b) {
+      b.style.background = 'rgba(255,255,255,0.05)';
+      b.style.color = '#fff';
+    });
+  }
+  updateFoodCaloriesDisplay();
+}
+
+function updateFoodCaloriesDisplay() {
+  var estimated = Math.round(selectedFood.calories * selectedQuantity);
+  document.getElementById('estimatedCalories').textContent = '预计: ' + estimated + ' 千卡';
+}
+
+function addFoodRecord() {
+  var customQty = document.getElementById('customFoodQty');
+  var quantity = customQty && customQty.value ? parseFloat(customQty.value) : selectedQuantity;
+  var calories = Math.round(selectedFood.calories * quantity);
+  
+  var meal = {
+    type: currentMealType,
+    food: selectedFood.name,
+    quantity: quantity,
+    unit: selectedFood.unit,
+    calories: calories,
+    time: new Date().toLocaleTimeString('zh-CN', { hour: '2-digit', minute: '2-digit' })
   };
-  var options = foods[type];
-  var food = options[Math.floor(Math.random() * options.length)];
-  userData.todayData.meals.push({type: type, food: food.name, calories: food.cal});
-  userData.todayData.calories += food.cal;
+  
+  if (!userData.todayData.meals) userData.todayData.meals = [];
+  userData.todayData.meals.push(meal);
+  userData.todayData.calories = (userData.todayData.calories || 0) + calories;
+  
   addPoints(30);
   saveData();
-  updateDietPage();
+  updateHomePage();
+  if (typeof updateDietPage === 'function') updateDietPage();
   
-  var task = userData.tasks.find(t => t.id === 2);
+  // 检查任务完成
+  var task = userData.tasks.find(function(t) { return t.id === 2; });
   if (task && !task.completed) completeTask(2);
   
-  showToast('🍽️ 已记录: ' + food.name + ' +30积分');
+  closeFoodDetail();
+  closeFoodSelector();
+  showToast('🍽️ 已添加 ' + selectedFood.name + ' +' + calories + '千卡 +30积分');
+}
+
+function closeFoodDetail() {
+  var modal = document.getElementById('foodDetailModal');
+  if (modal) modal.remove();
+}
+
+function closeFoodSelector() {
+  var modal = document.getElementById('foodSelectorModal');
+  if (modal) modal.remove();
+}
+
+// 旧版函数保留兼容
+function addMeal(type) {
+  showFoodSelector(type);
 }
 
 function updateDietPage() {
