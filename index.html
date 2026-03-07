@@ -2429,7 +2429,6 @@ function closeSignin() {
 
 function renderSigninGrid() {
   var grid = document.getElementById('signinGrid');
-  var rewards = [20, 30, 40, 50, 60, 80, 100];
   var days = ['周一', '周二', '周三', '周四', '周五', '周六', '周日'];
   var streak = getStreakDays();
   var signedToday = isSignedToday();
@@ -2452,13 +2451,20 @@ function renderSigninGrid() {
     }
     // 今天之后的日子都是未完成的
     
+    // 计算这一天的理论积分
+    var dayStreak = streak - (currentDayIndex - i);
+    if (i > currentDayIndex) dayStreak = streak + (i - currentDayIndex);
+    if (i === currentDayIndex && !signedToday) dayStreak = streak;
+    
+    var dayReward = getTodayReward(Math.max(0, dayStreak - 1));
+    
     var isToday = i === currentDayIndex;
     var cls = isCompleted ? 'completed' : (isToday ? 'active' : '');
     html += `
       <div class="signin-day ${cls}">
         <div class="day-label">${days[i]}</div>
         <div class="day-icon">${isCompleted ? '✅' : (isToday ? '📍' : '🎁')}</div>
-        <div class="day-points">+${rewards[i]}</div>
+        <div class="day-points">+${dayReward}</div>
       </div>
     `;
   }
@@ -2468,6 +2474,37 @@ function renderSigninGrid() {
   document.getElementById('streakCount').textContent = streak;
 }
 
+// 签到积分规则配置
+var SIGNIN_REWARDS = {
+  // 普通打卡（断签后重新开始）
+  normal: [20, 25, 30, 35, 40, 45, 50],
+  // 连续打卡（持续打卡递增更多）
+  streak: [30, 40, 55, 70, 90, 110, 150],
+  // 特殊里程碑奖励
+  milestone: {
+    7: 200,   // 7天
+    14: 500,  // 14天
+    30: 1000, // 30天
+    60: 2000, // 60天
+    100: 5000 // 100天
+  }
+};
+
+// 获取今日应得积分
+function getTodayReward(streak) {
+  // 检查是否是里程碑
+  if (SIGNIN_REWARDS.milestone[streak + 1]) {
+    return SIGNIN_REWARDS.milestone[streak + 1];
+  }
+  
+  // 连续7天以上使用streak规则，否则使用normal规则
+  if (streak >= 7) {
+    return SIGNIN_REWARDS.streak[Math.min(streak % 7, 6)];
+  } else {
+    return SIGNIN_REWARDS.normal[Math.min(streak, 6)];
+  }
+}
+
 // 更新签到按钮状态
 function updateSigninButton() {
   var actionArea = document.getElementById('signinActionArea');
@@ -2475,25 +2512,37 @@ function updateSigninButton() {
   
   var signedToday = isSignedToday();
   var streak = getStreakDays();
-  var rewards = [20, 30, 40, 50, 60, 80, 100];
-  var todayReward = rewards[Math.min(streak, 6)];
+  var todayReward = getTodayReward(streak);
+  
+  // 计算明日奖励预览
+  var tomorrowReward = getTodayReward(streak + 1);
+  var isMilestone = SIGNIN_REWARDS.milestone[streak + 1] !== undefined;
 
   if (signedToday) {
+    var nextRewardText = isMilestone ? 
+      `🎉 明天是第${streak + 1}天，里程碑奖励 ${tomorrowReward} 积分！` :
+      `明天可领 ${tomorrowReward} 积分`;
+      
     actionArea.innerHTML = `
       <div class="signin-reward" id="todayReward">
         <div class="signin-reward-icon">✅</div>
-        <div class="signin-reward-text">今日已签到</div>
-        <div style="font-size: 14px; color: var(--text-secondary); margin-top: 8px;">连续打卡 ${streak} 天，明天见！</div>
+        <div class="signin-reward-text">今日已签到 (+${todayReward})</div>
+        <div style="font-size: 14px; color: var(--primary); margin-top: 8px;">连续打卡 ${streak} 天 🔥</div>
+        <div style="font-size: 12px; color: var(--text-secondary); margin-top: 4px;">${nextRewardText}</div>
       </div>
       <button class="btn-secondary" disabled style="opacity: 0.5; cursor: not-allowed; margin-top: 16px;">已签到</button>
       <button class="btn-secondary" onclick="closeSignin()" style="margin-top: 12px;">关闭</button>
     `;
   } else {
+    var milestoneHint = isMilestone ? 
+      `<div style="font-size: 13px; color: #FFD700; margin-top: 8px;">🎯 明天是第${streak + 1}天里程碑，奖励${tomorrowReward}积分！</div>` :
+      `<div style="font-size: 12px; color: var(--text-secondary); margin-top: 8px;">连续打卡积分递增更多，明天可领 ${tomorrowReward} 积分</div>`;
+      
     actionArea.innerHTML = `
       <div class="signin-reward" id="todayReward">
         <div class="signin-reward-icon">🎁</div>
         <div class="signin-reward-text">今日奖励: +${todayReward} 积分</div>
-        <div style="font-size: 14px; color: var(--text-secondary); margin-top: 8px;">连续签到可获得更多奖励</div>
+        ${milestoneHint}
       </div>
       <button class="btn-primary" onclick="doSignin()" id="signinBtn" style="margin-top: 16px;">立即签到</button>
       <button class="btn-secondary" onclick="closeSignin()" style="margin-top: 12px;">稍后再说</button>
@@ -2510,8 +2559,10 @@ function doSignin() {
   }
 
   var streak = getStreakDays();
-  var rewards = [20, 30, 40, 50, 60, 80, 100];
-  var points = rewards[Math.min(streak, 6)];
+  var points = getTodayReward(streak);
+  
+  // 检查是否是里程碑
+  var isMilestone = SIGNIN_REWARDS.milestone[streak + 1] !== undefined;
 
   // 保存签到信息
   localStorage.setItem('ambrose_last_signin', getTodayString());
@@ -2521,17 +2572,61 @@ function doSignin() {
   addPoints(points);
 
   // 显示成功提示
-  showToast('🎉 签到成功！+' + points + '积分');
+  var successMsg = isMilestone ? 
+    `🎉 里程碑达成！第${streak + 1}天！+${points}积分` : 
+    `✅ 签到成功！+${points}积分，连续${streak + 1}天`;
+  showToast(successMsg);
 
   // 更新UI
   renderSigninGrid();
   updateSigninButton();
   updateHomePage();
 
+  // 里程碑特殊庆祝
+  if (isMilestone) {
+    playMilestoneAnimation(streak + 1);
+  }
+
   // 延迟关闭弹窗，让用户看到更新后的状态
   setTimeout(function() {
     closeSignin();
-  }, 1500);
+  }, 2000);
+}
+
+// 里程碑庆祝动画
+function playMilestoneAnimation(days) {
+  var celebration = document.createElement('div');
+  celebration.style.cssText = `
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0,0,0,0.8);
+    z-index: 999999;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    animation: fadeIn 0.5s ease-out;
+  `;
+  celebration.innerHTML = `
+    <div style="font-size: 80px; animation: bounce 1s ease infinite;">🏆</div>
+    <div style="font-size: 32px; font-weight: 700; color: #FFD700; margin-top: 20px;">连续打卡 ${days} 天！</div>
+    <div style="font-size: 18px; color: #fff; margin-top: 12px;">太棒了，继续保持！</div>
+  `;
+  
+  var style = document.createElement('style');
+  style.textContent = `
+    @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+    @keyframes bounce { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.2); } }
+  `;
+  document.head.appendChild(style);
+  document.body.appendChild(celebration);
+  
+  setTimeout(function() {
+    celebration.remove();
+  }, 2500);
 }
 
 // 页面加载时更新连续打卡显示
@@ -5028,6 +5123,9 @@ window.onload = function() {
 
 <!-- AMBROSE Health - 饮食功能修复 -->
 <script src="js/diet-fixes.js"></script>
+
+<!-- AMBROSE Health - 扩充食谱数据 -->
+<script src="js/enhanced-recipes-data.js"></script>
 
 </body>
 </html>
