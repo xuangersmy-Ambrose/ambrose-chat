@@ -8,6 +8,17 @@
 <link rel="manifest" href="/manifest.json">
 <link rel="apple-touch-icon" href="/icon-192.png">
 <title>AMBROSE - AI健康教练</title>
+<script>
+// 核心函数预定义（确保按钮点击可用）
+window.showPage = function(pageId) {
+  try {
+    document.querySelectorAll('.page').forEach(function(p) { p.classList.remove('active'); });
+    var target = document.getElementById(pageId);
+    if (target) target.classList.add('active');
+    window.scrollTo(0, 0);
+  } catch(e) { console.error(e); }
+};
+</script>
 <style>
 :root {
   --primary: #00D4FF;
@@ -1961,7 +1972,6 @@ function completeTask(taskId) {
   showToast('🎉 任务完成！' + task.reward);
   renderTasks();
   saveData();
-}
 }
 
 // ==================== 快速记录 ====================
