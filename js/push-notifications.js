@@ -2,25 +2,78 @@
  * AMBROSE Health Push Notification System v1.1
  * 推送提醒系统 (喝水/运动/睡眠)
  * 基于 Service Workers + Push API
+ * 修复：XSS漏洞、内存泄漏、敏感信息硬编码
  */
+
+// 常量定义
+const PUSH_CONSTANTS = {
+  STORAGE_KEYS: {
+    TOKEN: 'ambrose_token',
+    SUBSCRIPTION: 'pushSubscription',
+    SETTINGS: 'pushSettings'
+  },
+  API_ENDPOINTS: {
+    SETTINGS: '/push/settings',
+    SUBSCRIBE: '/push/subscribe',
+    UNSUBSCRIBE: '/push/unsubscribe',
+    TEST: '/push/test'
+  },
+  DEFAULT_SETTINGS: {
+    isSubscribed: false,
+    preferences: {
+      waterReminders: {
+        enabled: true,
+        interval: 60,
+        startTime: '08:00',
+        endTime: '22:00'
+      },
+      exerciseReminders: {
+        enabled: true,
+        time: '18:00',
+        days: ['mon', 'tue', 'wed', 'thu', 'fri']
+      },
+      sleepReminders: {
+        enabled: true,
+        bedtime: '22:30',
+        wakeTime: '07:00'
+      },
+      reportNotifications: {
+        enabled: true,
+        time: '09:00'
+      }
+    }
+  },
+  INTERVALS: {
+    MINUTE: 60 * 1000,
+    HOUR: 60 * 60 * 1000
+  }
+};
+
+// 安全转义函数
+function escapeHtml(text) {
+  if (text == null) return '';
+  const div = document.createElement('div');
+  div.textContent = String(text);
+  return div.innerHTML;
+}
 
 class PushNotificationManager {
   constructor() {
     this.apiBaseUrl = window.AMBROSE_CONFIG?.apiUrl || 'http://localhost:5000/api';
+    // VAPID公钥从配置读取，不再硬编码
+    this.vapidPublicKey = window.AMBROSE_CONFIG?.vapidPublicKey || '';
     this.swRegistration = null;
     this.isSubscribed = false;
     this.subscription = null;
     this.settings = null;
     this.reminderTimers = {};
-    
-    // VAPID公钥 (需要在服务器配置)
-    this.vapidPublicKey = 'BEl62iM-_Y5y1P7T5wHb9w5y1P7T5wHb9w5y1P7T5wHb9w5y1P7T5wHb9'; // 替换为实际公钥
+    this.isDestroyed = false;
   }
 
-  // 初始化
   async init() {
+    if (this.isDestroyed) return false;
+    
     if (!('serviceWorker' in navigator) || !('PushManager' in window)) {
-      console.log('Push notifications not supported');
       this.renderUnsupportedUI();
       return false;
     }
@@ -28,7 +81,6 @@ class PushNotificationManager {
     try {
       // 注册Service Worker
       this.swRegistration = await navigator.serviceWorker.register('/sw.js');
-      console.log('Service Worker registered:', this.swRegistration);
       
       // 获取当前订阅状态
       this.subscription = await this.swRegistration.pushManager.getSubscription();
@@ -45,22 +97,33 @@ class PushNotificationManager {
         this.startLocalReminders();
       }
       
+      // 页面卸载时清理资源
+      this.setupCleanupHandler();
+      
       return true;
     } catch (error) {
-      console.error('Push notification init error:', error);
       return false;
     }
   }
 
-  // 获取认证Token
-  getAuthToken() {
-    return localStorage.getItem('ambrose_token') || '';
+  setupCleanupHandler() {
+    // 页面卸载前清理资源
+    const cleanup = () => this.destroy();
+    window.addEventListener('beforeunload', cleanup);
+    document.addEventListener('visibilitychange', () => {
+      if (document.hidden) {
+        // 页面隐藏时可以暂停非必要的定时器
+      }
+    });
   }
 
-  // 加载推送设置
+  getAuthToken() {
+    return localStorage.getItem(PUSH_CONSTANTS.STORAGE_KEYS.TOKEN) || '';
+  }
+
   async loadSettings() {
     try {
-      const response = await fetch(`${this.apiBaseUrl}/push/settings`, {
+      const response = await fetch(`${this.apiBaseUrl}${PUSH_CONSTANTS.API_ENDPOINTS.SETTINGS}`, {
         headers: {
           'Authorization': `Bearer ${this.getAuthToken()}`,
           'Content-Type': 'application/json'
@@ -72,46 +135,19 @@ class PushNotificationManager {
         this.settings = result.data;
         this.isSubscribed = result.data.isSubscribed;
       } else {
-        // 使用默认设置
-        this.settings = this.getDefaultSettings();
+        this.settings = { ...PUSH_CONSTANTS.DEFAULT_SETTINGS };
       }
     } catch (error) {
-      console.error('Load settings error:', error);
-      this.settings = this.getDefaultSettings();
+      this.settings = { ...PUSH_CONSTANTS.DEFAULT_SETTINGS };
     }
   }
 
-  // 获取默认设置
-  getDefaultSettings() {
-    return {
-      isSubscribed: false,
-      preferences: {
-        waterReminders: {
-          enabled: true,
-          interval: 60,
-          startTime: '08:00',
-          endTime: '22:00'
-        },
-        exerciseReminders: {
-          enabled: true,
-          time: '18:00',
-          days: ['mon', 'tue', 'wed', 'thu', 'fri']
-        },
-        sleepReminders: {
-          enabled: true,
-          bedtime: '22:30',
-          wakeTime: '07:00'
-        },
-        reportNotifications: {
-          enabled: true,
-          time: '09:00'
-        }
-      }
-    };
-  }
-
-  // 订阅推送
   async subscribe() {
+    if (!this.vapidPublicKey) {
+      this.showToast('推送服务未配置，请联系管理员', 'error');
+      return false;
+    }
+    
     try {
       // 请求通知权限
       const permission = await Notification.requestPermission();
@@ -141,13 +177,11 @@ class PushNotificationManager {
       
       return true;
     } catch (error) {
-      console.error('Subscribe error:', error);
       this.showToast('订阅失败，请重试', 'error');
       return false;
     }
   }
 
-  // 取消订阅
   async unsubscribe() {
     try {
       if (this.subscription) {
@@ -155,7 +189,7 @@ class PushNotificationManager {
       }
       
       // 通知服务器
-      await fetch(`${this.apiBaseUrl}/push/unsubscribe`, {
+      await fetch(`${this.apiBaseUrl}${PUSH_CONSTANTS.API_ENDPOINTS.UNSUBSCRIBE}`, {
         method: 'DELETE',
         headers: {
           'Authorization': `Bearer ${this.getAuthToken()}`,
@@ -174,16 +208,14 @@ class PushNotificationManager {
       
       return true;
     } catch (error) {
-      console.error('Unsubscribe error:', error);
       this.showToast('取消订阅失败', 'error');
       return false;
     }
   }
 
-  // 保存订阅到服务器
   async saveSubscription(subscription) {
     try {
-      await fetch(`${this.apiBaseUrl}/push/subscribe`, {
+      await fetch(`${this.apiBaseUrl}${PUSH_CONSTANTS.API_ENDPOINTS.SUBSCRIBE}`, {
         method: 'POST',
         headers: {
           'Authorization': `Bearer ${this.getAuthToken()}`,
@@ -199,14 +231,13 @@ class PushNotificationManager {
         })
       });
     } catch (error) {
-      console.error('Save subscription error:', error);
+      // 静默处理错误
     }
   }
 
-  // 更新设置
   async updateSettings(preferences) {
     try {
-      const response = await fetch(`${this.apiBaseUrl}/push/settings`, {
+      const response = await fetch(`${this.apiBaseUrl}${PUSH_CONSTANTS.API_ENDPOINTS.SETTINGS}`, {
         method: 'PUT',
         headers: {
           'Authorization': `Bearer ${this.getAuthToken()}`,
@@ -228,14 +259,13 @@ class PushNotificationManager {
         return true;
       }
     } catch (error) {
-      console.error('Update settings error:', error);
       this.showToast('保存失败', 'error');
     }
     return false;
   }
 
-  // 启动本地提醒 (备用方案)
   startLocalReminders() {
+    if (this.isDestroyed) return;
     if (!this.settings?.preferences) return;
     
     const prefs = this.settings.preferences;
@@ -261,19 +291,22 @@ class PushNotificationManager {
     }
   }
 
-  // 停止本地提醒
   stopLocalReminders() {
     Object.values(this.reminderTimers).forEach(timer => {
-      if (timer) clearInterval(timer);
+      if (timer) {
+        clearInterval(timer);
+        clearTimeout(timer);
+      }
     });
     this.reminderTimers = {};
   }
 
-  // 安排喝水提醒
   scheduleWaterReminders(settings) {
-    const interval = (settings.interval || 60) * 60 * 1000; // 转换为毫秒
+    const interval = (settings.interval || 60) * PUSH_CONSTANTS.INTERVALS.MINUTE;
     
     const checkAndNotify = () => {
+      if (this.isDestroyed) return;
+      
       const now = new Date();
       const currentTime = `${String(now.getHours()).padStart(2, '0')}:${String(now.getMinutes()).padStart(2, '0')}`;
       
@@ -289,9 +322,10 @@ class PushNotificationManager {
     this.reminderTimers.water = setInterval(checkAndNotify, interval);
   }
 
-  // 安排运动提醒
   scheduleExerciseReminders(settings) {
     const checkAndNotify = () => {
+      if (this.isDestroyed) return;
+      
       const now = new Date();
       const dayNames = ['sun', 'mon', 'tue', 'wed', 'thu', 'fri', 'sat'];
       const today = dayNames[now.getDay()];
@@ -304,12 +338,13 @@ class PushNotificationManager {
       }
     };
     
-    this.reminderTimers.exercise = setInterval(checkAndNotify, 60 * 1000); // 每分钟检查
+    this.reminderTimers.exercise = setInterval(checkAndNotify, PUSH_CONSTANTS.INTERVALS.MINUTE);
   }
 
-  // 安排睡眠提醒
   scheduleSleepReminders(settings) {
     const checkAndNotify = () => {
+      if (this.isDestroyed) return;
+      
       const now = new Date();
       const currentTime = `${String(now.getHours()).padStart(2, '0')}:${String(now.getMinutes()).padStart(2, '0')}`;
       
@@ -331,12 +366,13 @@ class PushNotificationManager {
       }
     };
     
-    this.reminderTimers.sleep = setInterval(checkAndNotify, 60 * 1000);
+    this.reminderTimers.sleep = setInterval(checkAndNotify, PUSH_CONSTANTS.INTERVALS.MINUTE);
   }
 
-  // 安排报告提醒
   scheduleReportReminders(settings) {
     const checkAndNotify = () => {
+      if (this.isDestroyed) return;
+      
       const now = new Date();
       const currentTime = `${String(now.getHours()).padStart(2, '0')}:${String(now.getMinutes()).padStart(2, '0')}`;
       
@@ -345,11 +381,11 @@ class PushNotificationManager {
       }
     };
     
-    this.reminderTimers.report = setInterval(checkAndNotify, 60 * 1000);
+    this.reminderTimers.report = setInterval(checkAndNotify, PUSH_CONSTANTS.INTERVALS.MINUTE);
   }
 
-  // 显示本地通知
   showLocalNotification(title, body, tag = 'general') {
+    if (this.isDestroyed) return;
     if (!('Notification' in window) || Notification.permission !== 'granted') return;
     
     const options = {
@@ -371,7 +407,6 @@ class PushNotificationManager {
     }
   }
 
-  // 发送测试通知
   async sendTestNotification(type = 'test') {
     if (!this.isSubscribed) {
       this.showToast('请先启用推送通知', 'error');
@@ -379,7 +414,7 @@ class PushNotificationManager {
     }
     
     try {
-      const response = await fetch(`${this.apiBaseUrl}/push/test`, {
+      const response = await fetch(`${this.apiBaseUrl}${PUSH_CONSTANTS.API_ENDPOINTS.TEST}`, {
         method: 'POST',
         headers: {
           'Authorization': `Bearer ${this.getAuthToken()}`,
@@ -392,7 +427,6 @@ class PushNotificationManager {
         this.showToast('测试通知已发送');
       }
     } catch (error) {
-      console.error('Test notification error:', error);
       // 本地测试
       const testMessages = {
         water: { title: '💧 喝水提醒', body: '该喝水了！保持身体水分充足。' },
@@ -405,7 +439,6 @@ class PushNotificationManager {
     }
   }
 
-  // 更新UI
   updateUI() {
     // 更新订阅状态显示
     const statusEl = document.getElementById('pushStatus');
@@ -425,14 +458,14 @@ class PushNotificationManager {
     this.renderSettingsForm();
   }
 
-  // 渲染设置表单
   renderSettingsForm() {
     const container = document.getElementById('pushSettingsForm');
     if (!container || !this.settings) return;
     
     const prefs = this.settings.preferences;
     
-    container.innerHTML = `
+    const form = document.createElement('div');
+    form.innerHTML = `
       <div class="setting-group">
         <div class="setting-header">
           <span class="setting-title">💧 喝水提醒</span>
@@ -452,11 +485,11 @@ class PushNotificationManager {
           </div>
           <div class="option-row">
             <label>开始时间</label>
-            <input type="time" id="waterStartTime" value="${prefs.waterReminders?.startTime || '08:00'}">
+            <input type="time" id="waterStartTime" value="${escapeHtml(prefs.waterReminders?.startTime || '08:00')}">
           </div>
           <div class="option-row">
             <label>结束时间</label>
-            <input type="time" id="waterEndTime" value="${prefs.waterReminders?.endTime || '22:00'}">
+            <input type="time" id="waterEndTime" value="${escapeHtml(prefs.waterReminders?.endTime || '22:00')}">
           </div>
         </div>
       </div>
@@ -472,7 +505,7 @@ class PushNotificationManager {
         <div class="setting-options" ${prefs.exerciseReminders?.enabled ? '' : 'style="display:none"'}>
           <div class="option-row">
             <label>提醒时间</label>
-            <input type="time" id="exerciseTime" value="${prefs.exerciseReminders?.time || '18:00'}">
+            <input type="time" id="exerciseTime" value="${escapeHtml(prefs.exerciseReminders?.time || '18:00')}">
           </div>
         </div>
       </div>
@@ -488,17 +521,20 @@ class PushNotificationManager {
         <div class="setting-options" ${prefs.sleepReminders?.enabled ? '' : 'style="display:none"'}>
           <div class="option-row">
             <label>就寝时间</label>
-            <input type="time" id="sleepBedtime" value="${prefs.sleepReminders?.bedtime || '22:30'}">
+            <input type="time" id="sleepBedtime" value="${escapeHtml(prefs.sleepReminders?.bedtime || '22:30')}">
           </div>
           <div class="option-row">
             <label>起床时间</label>
-            <input type="time" id="sleepWakeTime" value="${prefs.sleepReminders?.wakeTime || '07:00'}">
+            <input type="time" id="sleepWakeTime" value="${escapeHtml(prefs.sleepReminders?.wakeTime || '07:00')}">
           </div>
         </div>
       </div>
 
-      <button class="btn-primary" onclick="window.pushNotificationManager.saveSettings()">保存设置</button>
+      <button class="btn-primary" id="savePushSettings">保存设置</button>
     `;
+    
+    container.innerHTML = '';
+    container.appendChild(form);
     
     // 绑定切换事件
     container.querySelectorAll('.toggle-switch input').forEach(toggle => {
@@ -509,9 +545,14 @@ class PushNotificationManager {
         }
       });
     });
+    
+    // 绑定保存按钮
+    const saveBtn = document.getElementById('savePushSettings');
+    if (saveBtn) {
+      saveBtn.addEventListener('click', () => this.saveSettings());
+    }
   }
 
-  // 保存设置
   async saveSettings() {
     const prefs = {
       waterReminders: {
@@ -539,7 +580,6 @@ class PushNotificationManager {
     await this.updateSettings(prefs);
   }
 
-  // 渲染不支持UI
   renderUnsupportedUI() {
     const container = document.getElementById('pushNotificationSection');
     if (container) {
@@ -553,7 +593,6 @@ class PushNotificationManager {
     }
   }
 
-  // Base64转Uint8Array
   urlBase64ToUint8Array(base64String) {
     const padding = '='.repeat((4 - base64String.length % 4) % 4);
     const base64 = (base64String + padding)
@@ -570,16 +609,30 @@ class PushNotificationManager {
     return outputArray;
   }
 
-  // 显示提示
   showToast(message, type = 'success') {
     const toast = document.getElementById('toast');
     if (toast) {
-      toast.textContent = message;
-      toast.className = `toast show ${type}`;
-      setTimeout(() => toast.classList.remove('show'), 3000);
+      toast.textContent = escapeHtml(message);
+      toast.className = `toast show ${escapeHtml(type)}`;
+      setTimeout(() => toast.classList.remove('show', type), 3000);
     }
+  }
+
+  // 销毁方法 - 清理所有资源
+  destroy() {
+    this.isDestroyed = true;
+    
+    // 停止所有定时器
+    this.stopLocalReminders();
+    
+    // 清理引用
+    this.swRegistration = null;
+    this.subscription = null;
+    this.settings = null;
   }
 }
 
 // 导出实例
 window.pushNotificationManager = new PushNotificationManager();
+window.PushNotificationManager = PushNotificationManager;
+window.PUSH_CONSTANTS = PUSH_CONSTANTS;

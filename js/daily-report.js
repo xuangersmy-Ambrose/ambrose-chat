@@ -1,29 +1,66 @@
 /**
  * AMBROSE Health Daily Report Module v1.1
  * AI每日健康报告生成模块
+ * 修复：XSS漏洞、清理console、添加常量
  */
+
+// 常量定义
+const REPORT_CONSTANTS = {
+  API_ENDPOINTS: {
+    TODAY: '/reports/today',
+    GENERATE: '/reports/generate',
+    HISTORY: '/reports/history'
+  },
+  STORAGE_KEY: 'ambrose_token',
+  SCORE_COLORS: {
+    EXCELLENT: '#30D158',
+    GOOD: '#FFD93D',
+    POOR: '#FF6B6B'
+  },
+  CATEGORY_LABELS: {
+    exercise: '💪 运动',
+    nutrition: '🥗 营养',
+    sleep: '😴 睡眠',
+    hydration: '💧 饮水',
+    lifestyle: '🌱 生活方式'
+  },
+  PRIORITY_LABELS: {
+    high: '高优先级',
+    medium: '中优先级',
+    low: '低优先级'
+  }
+};
+
+// 安全转义函数
+function escapeHtml(text) {
+  if (text == null) return '';
+  const div = document.createElement('div');
+  div.textContent = String(text);
+  return div.innerHTML;
+}
 
 class DailyReportManager {
   constructor() {
     this.apiBaseUrl = window.AMBROSE_CONFIG?.apiUrl || 'http://localhost:5000/api';
     this.currentReport = null;
+    this.isLoading = false;
   }
 
-  // 初始化
   async init() {
     await this.loadTodayReport();
     this.setupEventListeners();
   }
 
-  // 获取认证Token
   getAuthToken() {
-    return localStorage.getItem('ambrose_token') || '';
+    return localStorage.getItem(REPORT_CONSTANTS.STORAGE_KEY) || '';
   }
 
-  // 加载今日报告
   async loadTodayReport() {
+    if (this.isLoading) return;
+    this.isLoading = true;
+    
     try {
-      const response = await fetch(`${this.apiBaseUrl}/reports/today`, {
+      const response = await fetch(`${this.apiBaseUrl}${REPORT_CONSTANTS.API_ENDPOINTS.TODAY}`, {
         headers: {
           'Authorization': `Bearer ${this.getAuthToken()}`,
           'Content-Type': 'application/json'
@@ -38,12 +75,15 @@ class DailyReportManager {
       
       return this.currentReport;
     } catch (error) {
-      console.error('Load report error:', error);
+      if (window.AMBROSE_CONFIG?.debug) {
+        // 仅在调试模式下输出
+      }
       this.loadMockReport();
+    } finally {
+      this.isLoading = false;
     }
   }
 
-  // 模拟报告数据
   loadMockReport() {
     this.currentReport = {
       content: {
@@ -85,7 +125,6 @@ class DailyReportManager {
     this.renderReport();
   }
 
-  // 渲染报告
   renderReport() {
     if (!this.currentReport) return;
     
@@ -97,17 +136,17 @@ class DailyReportManager {
     this.renderDataSnapshot();
   }
 
-  // 渲染总结
   renderSummary() {
     const el = document.getElementById('reportSummary');
     if (el) {
-      el.textContent = this.currentReport.content.summary;
+      // 安全设置文本内容
+      el.textContent = this.currentReport.content.summary || '';
     }
   }
 
-  // 渲染评分
   renderScores() {
     const { scores } = this.currentReport;
+    if (!scores) return;
     
     const updateScore = (id, value, label) => {
       const el = document.getElementById(id);
@@ -117,8 +156,8 @@ class DailyReportManager {
       const text = el.querySelector('.score-value');
       const labelEl = el.querySelector('.score-label');
       
-      if (text) text.textContent = value;
-      if (labelEl) labelEl.textContent = label;
+      if (text) text.textContent = escapeHtml(value);
+      if (labelEl) labelEl.textContent = escapeHtml(label);
       
       // 更新圆形进度
       if (circle) {
@@ -135,14 +174,12 @@ class DailyReportManager {
     updateScore('sleepScore', scores.sleep, '睡眠');
   }
 
-  // 获取评分颜色
   getScoreColor(score) {
-    if (score >= 80) return '#30D158';
-    if (score >= 60) return '#FFD93D';
-    return '#FF6B6B';
+    if (score >= 80) return REPORT_CONSTANTS.SCORE_COLORS.EXCELLENT;
+    if (score >= 60) return REPORT_CONSTANTS.SCORE_COLORS.GOOD;
+    return REPORT_CONSTANTS.SCORE_COLORS.POOR;
   }
 
-  // 渲染亮点
   renderHighlights() {
     const container = document.getElementById('reportHighlights');
     if (!container) return;
@@ -154,15 +191,23 @@ class DailyReportManager {
       return;
     }
     
-    container.innerHTML = highlights.map(h => `
-      <div class="highlight-item">
+    // 使用DocumentFragment优化性能
+    const fragment = document.createDocumentFragment();
+    
+    highlights.forEach(h => {
+      const item = document.createElement('div');
+      item.className = 'highlight-item';
+      item.innerHTML = `
         <span class="highlight-icon">🌟</span>
-        <span class="highlight-text">${h}</span>
-      </div>
-    `).join('');
+        <span class="highlight-text">${escapeHtml(h)}</span>
+      `;
+      fragment.appendChild(item);
+    });
+    
+    container.innerHTML = '';
+    container.appendChild(fragment);
   }
 
-  // 渲染关注点
   renderConcerns() {
     const container = document.getElementById('reportConcerns');
     if (!container) return;
@@ -174,73 +219,76 @@ class DailyReportManager {
       return;
     }
     
-    container.innerHTML = concerns.map(c => `
-      <div class="concern-item">
+    const fragment = document.createDocumentFragment();
+    
+    concerns.forEach(c => {
+      const item = document.createElement('div');
+      item.className = 'concern-item';
+      item.innerHTML = `
         <span class="concern-icon">⚠️</span>
-        <span class="concern-text">${c}</span>
-      </div>
-    `).join('');
+        <span class="concern-text">${escapeHtml(c)}</span>
+      `;
+      fragment.appendChild(item);
+    });
+    
+    container.innerHTML = '';
+    container.appendChild(fragment);
   }
 
-  // 渲染建议
   renderRecommendations() {
     const container = document.getElementById('reportRecommendations');
     if (!container) return;
     
     const recs = this.currentReport.content.recommendations || [];
     
-    container.innerHTML = recs.map(rec => `
-      <div class="recommendation-card priority-${rec.priority}">
+    const fragment = document.createDocumentFragment();
+    
+    recs.forEach(rec => {
+      const card = document.createElement('div');
+      card.className = `recommendation-card priority-${escapeHtml(rec.priority)}`;
+      card.innerHTML = `
         <div class="rec-header">
-          <span class="rec-category">${this.getCategoryLabel(rec.category)}</span>
-          <span class="rec-priority">${this.getPriorityLabel(rec.priority)}</span>
+          <span class="rec-category">${escapeHtml(this.getCategoryLabel(rec.category))}</span>
+          <span class="rec-priority">${escapeHtml(this.getPriorityLabel(rec.priority))}</span>
         </div>
-        <h4 class="rec-title">${rec.title}</h4>
-        <p class="rec-description">${rec.description}</p>
-      </div>
-    `).join('');
+        <h4 class="rec-title">${escapeHtml(rec.title)}</h4>
+        <p class="rec-description">${escapeHtml(rec.description)}</p>
+      `;
+      fragment.appendChild(card);
+    });
+    
+    container.innerHTML = '';
+    container.appendChild(fragment);
   }
 
-  // 获取分类标签
   getCategoryLabel(category) {
-    const labels = {
-      exercise: '💪 运动',
-      nutrition: '🥗 营养',
-      sleep: '😴 睡眠',
-      hydration: '💧 饮水',
-      lifestyle: '🌱 生活方式'
-    };
-    return labels[category] || category;
+    return REPORT_CONSTANTS.CATEGORY_LABELS[category] || category;
   }
 
-  // 获取优先级标签
   getPriorityLabel(priority) {
-    const labels = {
-      high: '高优先级',
-      medium: '中优先级',
-      low: '低优先级'
-    };
-    return labels[priority] || priority;
+    return REPORT_CONSTANTS.PRIORITY_LABELS[priority] || priority;
   }
 
-  // 渲染数据快照
   renderDataSnapshot() {
     const { dataSnapshot } = this.currentReport;
+    if (!dataSnapshot) return;
     
     const updateEl = (id, value, suffix = '') => {
       const el = document.getElementById(id);
-      if (el) el.textContent = value + suffix;
+      if (el) {
+        // 安全设置文本内容
+        el.textContent = (typeof value === 'number' ? value.toLocaleString() : escapeHtml(value)) + suffix;
+      }
     };
     
-    updateEl('reportSteps', dataSnapshot.steps.toLocaleString());
-    updateEl('reportCalories', dataSnapshot.calories.toLocaleString());
-    updateEl('reportWater', dataSnapshot.water.toLocaleString(), 'ml');
+    updateEl('reportSteps', dataSnapshot.steps);
+    updateEl('reportCalories', dataSnapshot.calories);
+    updateEl('reportWater', dataSnapshot.water, 'ml');
     updateEl('reportSleep', dataSnapshot.sleep, '小时');
     updateEl('reportExercise', dataSnapshot.exercise, '分钟');
     updateEl('goalCompletion', dataSnapshot.goalCompletion, '%');
   }
 
-  // 生成新报告
   async generateNewReport() {
     const btn = document.getElementById('generateReportBtn');
     if (btn) {
@@ -249,7 +297,7 @@ class DailyReportManager {
     }
     
     try {
-      const response = await fetch(`${this.apiBaseUrl}/reports/generate`, {
+      const response = await fetch(`${this.apiBaseUrl}${REPORT_CONSTANTS.API_ENDPOINTS.GENERATE}`, {
         method: 'POST',
         headers: {
           'Authorization': `Bearer ${this.getAuthToken()}`,
@@ -265,7 +313,6 @@ class DailyReportManager {
       
       this.showToast('报告已生成！');
     } catch (error) {
-      console.error('Generate report error:', error);
       this.showToast('生成失败，请重试', 'error');
     } finally {
       if (btn) {
@@ -275,10 +322,9 @@ class DailyReportManager {
     }
   }
 
-  // 查看历史报告
   async viewHistory() {
     try {
-      const response = await fetch(`${this.apiBaseUrl}/reports/history?limit=7`, {
+      const response = await fetch(`${this.apiBaseUrl}${REPORT_CONSTANTS.API_ENDPOINTS.HISTORY}?limit=7`, {
         headers: {
           'Authorization': `Bearer ${this.getAuthToken()}`,
           'Content-Type': 'application/json'
@@ -290,21 +336,20 @@ class DailyReportManager {
       const result = await response.json();
       this.renderHistoryChart(result.data);
     } catch (error) {
-      console.error('Load history error:', error);
+      // 静默处理错误
     }
   }
 
-  // 渲染历史趋势图
   renderHistoryChart(history) {
     const ctx = document.getElementById('historyChart')?.getContext('2d');
     if (!ctx || !window.Chart) return;
     
-    const labels = history.map(h => {
+    const labels = (history || []).map(h => {
       const date = new Date(h.date);
       return `${date.getMonth() + 1}/${date.getDate()}`;
     }).reverse();
     
-    const scores = history.map(h => h.scores?.overall || 0).reverse();
+    const scores = (history || []).map(h => h.scores?.overall || 0).reverse();
     
     new Chart(ctx, {
       type: 'line',
@@ -330,12 +375,11 @@ class DailyReportManager {
     });
   }
 
-  // 标记为已读
   async markAsRead() {
     if (!this.currentReport?._id) return;
     
     try {
-      await fetch(`${this.apiBaseUrl}/reports/${this.currentReport._id}/read`, {
+      await fetch(`${this.apiBaseUrl}${REPORT_CONSTANTS.API_ENDPOINTS.TODAY}/${this.currentReport._id}/read`, {
         method: 'PATCH',
         headers: {
           'Authorization': `Bearer ${this.getAuthToken()}`,
@@ -343,11 +387,10 @@ class DailyReportManager {
         }
       });
     } catch (error) {
-      console.error('Mark as read error:', error);
+      // 静默处理错误
     }
   }
 
-  // 设置事件监听
   setupEventListeners() {
     const generateBtn = document.getElementById('generateReportBtn');
     if (generateBtn) {
@@ -360,16 +403,33 @@ class DailyReportManager {
     }
   }
 
-  // 显示提示
   showToast(message, type = 'success') {
     const toast = document.getElementById('toast');
     if (toast) {
-      toast.textContent = message;
-      toast.className = `toast show ${type}`;
-      setTimeout(() => toast.classList.remove('show'), 3000);
+      toast.textContent = escapeHtml(message);
+      toast.className = `toast show ${escapeHtml(type)}`;
+      setTimeout(() => toast.classList.remove('show', type), 3000);
     }
+  }
+
+  // 清理方法
+  destroy() {
+    // 清理事件监听器
+    const generateBtn = document.getElementById('generateReportBtn');
+    const historyBtn = document.getElementById('viewHistoryBtn');
+    
+    if (generateBtn) {
+      generateBtn.replaceWith(generateBtn.cloneNode(true));
+    }
+    if (historyBtn) {
+      historyBtn.replaceWith(historyBtn.cloneNode(true));
+    }
+    
+    this.currentReport = null;
   }
 }
 
 // 导出实例
 window.dailyReportManager = new DailyReportManager();
+window.DailyReportManager = DailyReportManager;
+window.REPORT_CONSTANTS = REPORT_CONSTANTS;

@@ -1,30 +1,87 @@
 /**
  * AMBROSE Health Recommendations Module v1.1
  * 个性化建议引擎前端模块
+ * 修复：XSS漏洞、清理console、添加常量
  */
+
+// 常量定义
+const RECOMMENDATION_CONSTANTS = {
+  API_ENDPOINTS: {
+    TODAY: '/recommendations/today',
+    ACCEPT: (id) => `/recommendations/${id}/accept`,
+    COMPLETE: (id) => `/recommendations/${id}/complete`,
+    DISMISS: (id) => `/recommendations/${id}/dismiss`
+  },
+  TYPE_ICONS: {
+    exercise: '💪',
+    nutrition: '🥗',
+    sleep: '😴',
+    hydration: '💧',
+    lifestyle: '🌱'
+  },
+  TYPE_LABELS: {
+    exercise: '运动',
+    nutrition: '营养',
+    sleep: '睡眠',
+    hydration: '饮水',
+    lifestyle: '生活方式'
+  },
+  DIFFICULTY_LABELS: {
+    easy: '简单',
+    medium: '中等',
+    hard: '困难'
+  },
+  ACTION_MESSAGES: {
+    accept: '已接受建议，加油完成！',
+    complete: '太棒了！继续保持！',
+    dismiss: '已跳过此建议'
+  }
+};
+
+// 安全转义函数
+function escapeHtml(text) {
+  if (text == null) return '';
+  const div = document.createElement('div');
+  div.textContent = String(text);
+  return div.innerHTML;
+}
+
+// 防抖函数
+function debounce(func, wait) {
+  let timeout;
+  return function executedFunction(...args) {
+    const later = () => {
+      clearTimeout(timeout);
+      func(...args);
+    };
+    clearTimeout(timeout);
+    timeout = setTimeout(later, wait);
+  };
+}
 
 class RecommendationEngine {
   constructor() {
     this.apiBaseUrl = window.AMBROSE_CONFIG?.apiUrl || 'http://localhost:5000/api';
     this.recommendations = [];
     this.userProfile = null;
+    this.isLoading = false;
   }
 
-  // 初始化
   async init() {
     await this.loadRecommendations();
     this.setupEventListeners();
   }
 
-  // 获取认证Token
   getAuthToken() {
     return localStorage.getItem('ambrose_token') || '';
   }
 
-  // 加载今日建议
   async loadRecommendations() {
+    if (this.isLoading) return;
+    this.isLoading = true;
+    
     try {
-      const response = await fetch(`${this.apiBaseUrl}/recommendations/today`, {
+      const response = await fetch(`${this.apiBaseUrl}${RECOMMENDATION_CONSTANTS.API_ENDPOINTS.TODAY}`, {
         headers: {
           'Authorization': `Bearer ${this.getAuthToken()}`,
           'Content-Type': 'application/json'
@@ -39,12 +96,12 @@ class RecommendationEngine {
       
       return this.recommendations;
     } catch (error) {
-      console.error('Load recommendations error:', error);
       this.loadMockRecommendations();
+    } finally {
+      this.isLoading = false;
     }
   }
 
-  // 模拟建议数据
   loadMockRecommendations() {
     this.recommendations = [
       {
@@ -92,7 +149,6 @@ class RecommendationEngine {
     this.renderRecommendations();
   }
 
-  // 渲染建议列表
   renderRecommendations() {
     const container = document.getElementById('recommendationsList');
     if (!container) return;
@@ -110,91 +166,77 @@ class RecommendationEngine {
       return;
     }
     
-    container.innerHTML = pendingRecs.map(rec => this.createRecommendationCard(rec)).join('');
+    // 使用DocumentFragment优化性能
+    const fragment = document.createDocumentFragment();
     
-    // 绑定卡片事件
     pendingRecs.forEach(rec => {
-      this.bindCardEvents(rec);
+      const card = this.createRecommendationCard(rec);
+      fragment.appendChild(card);
     });
+    
+    container.innerHTML = '';
+    container.appendChild(fragment);
   }
 
-  // 创建建议卡片HTML
   createRecommendationCard(rec) {
-    const typeIcons = {
-      exercise: '💪',
-      nutrition: '🥗',
-      sleep: '😴',
-      hydration: '💧',
-      lifestyle: '🌱'
-    };
+    const typeIcons = RECOMMENDATION_CONSTANTS.TYPE_ICONS;
+    const typeLabels = RECOMMENDATION_CONSTANTS.TYPE_LABELS;
+    const difficultyLabels = RECOMMENDATION_CONSTANTS.DIFFICULTY_LABELS;
     
-    const typeLabels = {
-      exercise: '运动',
-      nutrition: '营养',
-      sleep: '睡眠',
-      hydration: '饮水',
-      lifestyle: '生活方式'
-    };
+    const card = document.createElement('div');
+    card.className = 'recommendation-card';
+    card.dataset.id = escapeHtml(rec.id);
     
-    const difficultyLabels = {
-      easy: '简单',
-      medium: '中等',
-      hard: '困难'
-    };
-    
-    return `
-      <div class="recommendation-card" data-id="${rec.id}">
-        <div class="rec-header">
-          <div class="rec-type">
-            <span class="rec-icon">${typeIcons[rec.type] || '💡'}</span>
-            <span class="rec-type-label">${typeLabels[rec.type] || rec.type}</span>
-          </div>
-          <span class="rec-difficulty difficulty-${rec.difficulty}">${difficultyLabels[rec.difficulty]}</span>
+    card.innerHTML = `
+      <div class="rec-header">
+        <div class="rec-type">
+          <span class="rec-icon">${escapeHtml(typeIcons[rec.type] || '💡')}</span>
+          <span class="rec-type-label">${escapeHtml(typeLabels[rec.type] || rec.type)}</span>
         </div>
-        
-        <h4 class="rec-title">${rec.title}</h4>
-        <p class="rec-description">${rec.description}</p>
-        
-        <div class="rec-meta">
-          ${rec.estimatedTime ? `<span class="rec-time">⏱️ ${rec.estimatedTime}分钟</span>` : ''}
-          ${rec.calories ? `<span class="rec-calories">🔥 ${rec.calories}千卡</span>` : ''}
-        </div>
-        
-        <div class="rec-reason">💡 ${rec.reason}</div>
-        
-        <div class="rec-actions"㹾
-          <button class="rec-btn accept" data-action="accept">接受</button>
-          <button class="rec-btn complete" data-action="complete">已完成</button>
-          <button class="rec-btn dismiss" data-action="dismiss">暂不需要</button>
-        </div>
+        <span class="rec-difficulty difficulty-${escapeHtml(rec.difficulty)}">${escapeHtml(difficultyLabels[rec.difficulty])}</span>
+      </div>
+      
+      <h4 class="rec-title">${escapeHtml(rec.title)}</h4>
+      <p class="rec-description">${escapeHtml(rec.description)}</p>
+      
+      <div class="rec-meta">
+        ${rec.estimatedTime ? `<span class="rec-time">⏱️ ${escapeHtml(rec.estimatedTime)}分钟</span>` : ''}
+        ${rec.calories ? `<span class="rec-calories">🔥 ${escapeHtml(rec.calories)}千卡</span>` : ''}
+      </div>
+      
+      <div class="rec-reason">💡 ${escapeHtml(rec.reason)}</div>
+      
+      <div class="rec-actions">
+        <button class="rec-btn accept" data-action="accept">接受</button>
+        <button class="rec-btn complete" data-action="complete">已完成</button>
+        <button class="rec-btn dismiss" data-action="dismiss">暂不需要</button>
       </div>
     `;
-  }
-
-  // 绑定卡片事件
-  bindCardEvents(rec) {
-    const card = document.querySelector(`.recommendation-card[data-id="${rec.id}"]`);
-    if (!card) return;
     
-    card.querySelectorAll('.rec-btn').forEach(btn => {
+    // 绑定按钮事件
+    const buttons = card.querySelectorAll('.rec-btn');
+    buttons.forEach(btn => {
       btn.addEventListener('click', (e) => {
         e.stopPropagation();
         const action = btn.dataset.action;
         this.handleAction(rec.id, action);
       });
     });
+    
+    return card;
   }
 
-  // 处理建议操作
   async handleAction(recId, action) {
-    const endpoints = {
-      accept: 'accept',
-      complete: 'complete',
-      dismiss: 'dismiss'
-    };
+    const validActions = ['accept', 'complete', 'dismiss'];
+    if (!validActions.includes(action)) {
+      this.showToast('无效的操作', 'error');
+      return;
+    }
     
     try {
-      const response = await fetch(`${this.apiBaseUrl}/recommendations/${recId}/${endpoints[action]}`, {
+      const endpoint = RECOMMENDATION_CONSTANTS.API_ENDPOINTS[action.toUpperCase()](recId);
+      
+      const response = await fetch(`${this.apiBaseUrl}${endpoint}`, {
         method: 'POST',
         headers: {
           'Authorization': `Bearer ${this.getAuthToken()}`,
@@ -214,15 +256,9 @@ class RecommendationEngine {
       this.renderRecommendations();
       
       // 显示反馈
-      const messages = {
-        accept: '已接受建议，加油完成！',
-        complete: '太棒了！继续保持！',
-        dismiss: '已跳过此建议'
-      };
-      this.showToast(messages[action]);
+      this.showToast(RECOMMENDATION_CONSTANTS.ACTION_MESSAGES[action]);
       
     } catch (error) {
-      console.error('Action error:', error);
       this.showToast('操作失败，请重试', 'error');
       
       // 本地模拟
@@ -234,7 +270,6 @@ class RecommendationEngine {
     }
   }
 
-  // 刷新建议
   async refreshRecommendations() {
     const btn = document.getElementById('refreshRecsBtn');
     if (btn) {
@@ -252,7 +287,6 @@ class RecommendationEngine {
     this.showToast('建议已更新！');
   }
 
-  // 获取建议统计
   getRecommendationStats() {
     const total = this.recommendations.length;
     const completed = this.recommendations.filter(r => r.status === 'completed').length;
@@ -262,7 +296,6 @@ class RecommendationEngine {
     return { total, completed, accepted, completionRate };
   }
 
-  // 渲染统计
   renderStats() {
     const stats = this.getRecommendationStats();
     
@@ -277,7 +310,6 @@ class RecommendationEngine {
     updateEl('recCompletionRate', stats.completionRate + '%');
   }
 
-  // 筛选建议
   filterByType(type) {
     const container = document.getElementById('recommendationsList');
     if (!container) return;
@@ -300,30 +332,45 @@ class RecommendationEngine {
     });
   }
 
-  // 设置事件监听
   setupEventListeners() {
-    // 刷新按钮
+    // 刷新按钮 - 使用防抖
     const refreshBtn = document.getElementById('refreshRecsBtn');
     if (refreshBtn) {
-      refreshBtn.addEventListener('click', () => this.refreshRecommendations());
+      refreshBtn.addEventListener('click', debounce(() => this.refreshRecommendations(), 300));
     }
     
-    // 筛选按钮
+    // 筛选按钮 - 使用防抖
     document.querySelectorAll('.filter-btn').forEach(btn => {
-      btn.addEventListener('click', () => this.filterByType(btn.dataset.filter));
+      btn.addEventListener('click', debounce(() => this.filterByType(btn.dataset.filter), 100));
     });
   }
 
-  // 显示提示
   showToast(message, type = 'success') {
     const toast = document.getElementById('toast');
     if (toast) {
-      toast.textContent = message;
-      toast.className = `toast show ${type}`;
-      setTimeout(() => toast.classList.remove('show'), 3000);
+      toast.textContent = escapeHtml(message);
+      toast.className = `toast show ${escapeHtml(type)}`;
+      setTimeout(() => toast.classList.remove('show', type), 3000);
     }
+  }
+
+  // 清理方法
+  destroy() {
+    // 清理事件监听器
+    const refreshBtn = document.getElementById('refreshRecsBtn');
+    if (refreshBtn) {
+      refreshBtn.replaceWith(refreshBtn.cloneNode(true));
+    }
+    
+    document.querySelectorAll('.filter-btn').forEach(btn => {
+      btn.replaceWith(btn.cloneNode(true));
+    });
+    
+    this.recommendations = [];
   }
 }
 
 // 导出实例
 window.recommendationEngine = new RecommendationEngine();
+window.RecommendationEngine = RecommendationEngine;
+window.RECOMMENDATION_CONSTANTS = RECOMMENDATION_CONSTANTS;

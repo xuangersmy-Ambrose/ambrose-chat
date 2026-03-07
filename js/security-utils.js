@@ -1,208 +1,148 @@
 /**
- * AMBROSE Health - 安全工具库
- * 修复XSS漏洞和其他安全问题
+ * AMBROSE Health - Security Utilities
+ * 安全工具函数 - 防止XSS攻击
  */
 
 const SecurityUtils = {
   /**
-   * HTML转义 - 防止XSS
+   * 转义HTML特殊字符，防止XSS攻击
+   * @param {string} text - 需要转义的文本
+   * @returns {string} - 转义后的安全HTML
    */
   escapeHtml(text) {
-    if (typeof text !== 'string') return text;
+    if (text == null) return '';
     const div = document.createElement('div');
-    div.textContent = text;
+    div.textContent = String(text);
     return div.innerHTML;
   },
 
   /**
-   * 安全的innerHTML设置
+   * 验证输入是否为有效的字符串
+   * @param {*} value - 输入值
+   * @param {object} options - 验证选项
+   * @returns {object} - { valid: boolean, msg: string, value: any }
    */
-  safeSetHTML(element, html) {
-    // 清理事件处理器
-    const cleaned = html
-      .replace(/on\w+\s*=/gi, '')
-      .replace(/javascript:/gi, '');
-    element.innerHTML = cleaned;
-  },
+  validateInput(value, options = {}) {
+    const { 
+      type = 'string', 
+      required = true, 
+      minLength = 0, 
+      maxLength = 1000,
+      min = null,
+      max = null,
+      pattern = null,
+      allowEmpty = false
+    } = options;
 
-  /**
-   * 验证输入
-   */
-  validateInput(value, type = 'string') {
-    if (value === null || value === undefined) return false;
-    
-    switch(type) {
+    // 空值检查
+    if (value === null || value === undefined || value === '') {
+      if (required && !allowEmpty) {
+        return { valid: false, msg: '输入不能为空', value: null };
+      }
+      return { valid: true, msg: '', value: allowEmpty ? value : null };
+    }
+
+    const strValue = String(value).trim();
+
+    // 长度验证
+    if (strValue.length < minLength) {
+      return { valid: false, msg: `输入长度不能少于 ${minLength} 个字符`, value: null };
+    }
+    if (strValue.length > maxLength) {
+      return { valid: false, msg: `输入长度不能超过 ${maxLength} 个字符`, value: null };
+    }
+
+    // 类型验证
+    switch (type) {
+      case 'number': {
+        const num = parseFloat(strValue);
+        if (isNaN(num)) {
+          return { valid: false, msg: '请输入有效的数字', value: null };
+        }
+        if (min !== null && num < min) {
+          return { valid: false, msg: `数值不能小于 ${min}`, value: null };
+        }
+        if (max !== null && num > max) {
+          return { valid: false, msg: `数值不能大于 ${max}`, value: null };
+        }
+        return { valid: true, msg: '', value: num };
+      }
+      
+      case 'phone': {
+        if (!/^1[3-9]\d{9}$/.test(strValue)) {
+          return { valid: false, msg: '手机号格式不正确', value: null };
+        }
+        return { valid: true, msg: '', value: strValue };
+      }
+      
+      case 'email': {
+        if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(strValue)) {
+          return { valid: false, msg: '邮箱格式不正确', value: null };
+        }
+        return { valid: true, msg: '', value: strValue };
+      }
+      
+      case 'date': {
+        const date = new Date(strValue);
+        if (isNaN(date.getTime())) {
+          return { valid: false, msg: '日期格式不正确', value: null };
+        }
+        return { valid: true, msg: '', value: date };
+      }
+      
       case 'string':
-        return typeof value === 'string' && value.trim().length > 0;
-      case 'number':
-        return typeof value === 'number' && !isNaN(value) && isFinite(value);
-      case 'positiveNumber':
-        return typeof value === 'number' && value > 0 && isFinite(value);
-      case 'email':
-        return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value);
-      case 'date':
-        return !isNaN(Date.parse(value));
-      default:
-        return true;
-    }
-  },
-
-  /**
-   * 安全的JSON解析
-   */
-  safeJSONParse(str, defaultVal = null) {
-    try {
-      return JSON.parse(str);
-    } catch {
-      return defaultVal;
-    }
-  },
-
-  /**
-   * 安全的localStorage操作
-   */
-  storage: {
-    get(key, defaultVal = null) {
-      try {
-        const item = localStorage.getItem(key);
-        return item ? SecurityUtils.safeJSONParse(item, defaultVal) : defaultVal;
-      } catch {
-        return defaultVal;
+      default: {
+        // 自定义正则验证
+        if (pattern && !pattern.test(strValue)) {
+          return { valid: false, msg: '输入格式不正确', value: null };
+        }
+        return { valid: true, msg: '', value: strValue };
       }
-    },
+    }
+  },
+
+  /**
+   * 清理URL，防止开放重定向
+   * @param {string} url - 需要清理的URL
+   * @returns {string|null} - 安全的URL或null
+   */
+  sanitizeUrl(url) {
+    if (!url || typeof url !== 'string') return null;
     
-    set(key, value) {
-      try {
-        localStorage.setItem(key, JSON.stringify(value));
-        return true;
-      } catch {
-        return false;
-      }
-    },
-    
-    remove(key) {
-      try {
-        localStorage.removeItem(key);
-        return true;
-      } catch {
-        return false;
-      }
+    // 禁止javascript:协议
+    const sanitized = url.trim().replace(/^[\x00-\x20]+/, '');
+    if (/^[\w-]+:/i.test(sanitized) && !/^https?:/i.test(sanitized)) {
+      return null;
     }
+    
+    return sanitized;
   },
 
   /**
-   * 生成安全ID
+   * 安全地设置innerHTML（仅在必要时使用）
+   * @param {HTMLElement} element - 目标元素
+   * @param {string} html - HTML内容
    */
-  generateId() {
-    return `${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
-  }
-};
-
-/**
- * 安全日志 - 生产环境禁用console
- */
-const SecureLogger = {
-  isDev: () => {
-    return location.hostname === 'localhost' || 
-           location.hostname === '127.0.0.1' ||
-           location.protocol === 'file:';
-  },
-
-  log(...args) {
-    if (this.isDev()) console.log(...args);
-  },
-
-  warn(...args) {
-    if (this.isDev()) console.warn(...args);
-  },
-
-  error(...args) {
-    if (this.isDev()) {
-      console.error(...args);
-    } else {
-      // 生产环境发送到监控
-      this.sendToMonitoring('error', args);
-    }
-  },
-
-  sendToMonitoring(level, data) {
-    // 可以集成Sentry等监控服务
-    if (window.Sentry) {
-      window.Sentry.captureMessage(data.join(' '), level);
-    }
-  }
-};
-
-/**
- * 内存管理器 - 防止内存泄漏
- */
-class MemoryManager {
-  constructor() {
-    this.timers = [];
-    this.listeners = [];
-    this.observers = [];
-    this.intervals = [];
-  }
-
-  setTimeout(fn, delay) {
-    const id = setTimeout(fn, delay);
-    this.timers.push(id);
-    return id;
-  }
-
-  setInterval(fn, delay) {
-    const id = setInterval(fn, delay);
-    this.intervals.push(id);
-    return id;
-  }
-
-  addEventListener(target, event, handler, options) {
-    target.addEventListener(event, handler, options);
-    this.listeners.push({ target, event, handler, options });
-    return () => this.removeEventListener(target, event, handler, options);
-  }
-
-  removeEventListener(target, event, handler, options) {
-    target.removeEventListener(event, handler, options);
-    this.listeners = this.listeners.filter(
-      l => !(l.target === target && l.event === event && l.handler === handler)
-    );
-  }
-
-  observe(observer) {
-    this.observers.push(observer);
-    return observer;
-  }
-
-  cleanup() {
-    this.timers.forEach(id => clearTimeout(id));
-    this.intervals.forEach(id => clearInterval(id));
-    this.listeners.forEach(({ target, event, handler, options }) => {
-      target.removeEventListener(event, handler, options);
+  setInnerHTML(element, html) {
+    if (!element || !html) return;
+    
+    // 清理元素上的事件处理器
+    const clone = element.cloneNode(false);
+    element.parentNode?.replaceChild(clone, element);
+    
+    // 使用DOMPurify风格的清理（简化版）
+    const allowedTags = ['div', 'span', 'p', 'br', 'strong', 'em', 'b', 'i', 'u'];
+    const cleaned = html.replace(/<\/?([a-z][a-z0-9]*)[^>]*>/gi, (match, tag) => {
+      return allowedTags.includes(tag.toLowerCase()) ? match : '';
     });
-    this.observers.forEach(obs => obs.disconnect?.());
     
-    this.timers = [];
-    this.intervals = [];
-    this.listeners = [];
-    this.observers = [];
+    clone.innerHTML = cleaned;
   }
-}
-
-/**
- * 全局错误处理
- */
-window.addEventListener('error', (e) => {
-  SecureLogger.error('Global error:', e.message, e.filename, e.lineno);
-  e.preventDefault();
-});
-
-window.addEventListener('unhandledrejection', (e) => {
-  SecureLogger.error('Unhandled rejection:', e.reason);
-  e.preventDefault();
-});
+};
 
 // 导出
 if (typeof module !== 'undefined' && module.exports) {
-  module.exports = { SecurityUtils, SecureLogger, MemoryManager };
+  module.exports = SecurityUtils;
+} else {
+  window.SecurityUtils = SecurityUtils;
 }

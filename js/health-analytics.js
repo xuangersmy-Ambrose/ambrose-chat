@@ -1,26 +1,49 @@
 /**
  * AMBROSE Health Analytics Module v1.1
  * 健康数据趋势分析图表模块
- * 使用 Chart.js 进行数据可视化
+ * 修复：XSS漏洞、内存泄漏、常量提取
  */
+
+// 常量定义
+const ANALYTICS_CONSTANTS = {
+  PERIODS: {
+    WEEK: '7d',
+    MONTH: '30d'
+  },
+  COLORS: {
+    PRIMARY: '#00D4FF',
+    SECONDARY: '#FF2D92',
+    SUCCESS: '#30D158',
+    WARNING: '#FFD93D',
+    DANGER: '#FF6B6B'
+  }
+};
+
+// 安全转义函数
+function escapeHtml(text) {
+  if (text == null) return '';
+  const div = document.createElement('div');
+  div.textContent = String(text);
+  return div.innerHTML;
+}
 
 class HealthAnalytics {
   constructor() {
     this.apiBaseUrl = window.AMBROSE_CONFIG?.apiUrl || 'http://localhost:5000/api';
-    this.currentPeriod = '7d';
+    this.currentPeriod = ANALYTICS_CONSTANTS.PERIODS.WEEK;
     this.charts = {};
     this.data = null;
+    this.isDestroyed = false;
   }
 
-  // 初始化模块
   async init() {
+    if (this.isDestroyed) return;
     await this.loadChartJS();
     await this.loadTrendData();
     this.renderCharts();
     this.setupEventListeners();
   }
 
-  // 动态加载 Chart.js
   loadChartJS() {
     return new Promise((resolve, reject) => {
       if (window.Chart) {
@@ -36,13 +59,13 @@ class HealthAnalytics {
     });
   }
 
-  // 获取认证Token
   getAuthToken() {
     return localStorage.getItem('ambrose_token') || '';
   }
 
-  // 加载趋势数据
-  async loadTrendData(period = '7d') {
+  async loadTrendData(period = ANALYTICS_CONSTANTS.PERIODS.WEEK) {
+    if (this.isDestroyed) return;
+    
     try {
       this.currentPeriod = period;
       const response = await fetch(`${this.apiBaseUrl}/analytics/trends/${period}`, {
@@ -62,16 +85,12 @@ class HealthAnalytics {
       
       return this.data;
     } catch (error) {
-      console.error('Load trend data error:', error);
-      this.showError('加载数据失败，请稍后重试');
-      // 使用模拟数据
       this.loadMockData();
     }
   }
 
-  // 加载模拟数据 (用于演示)
   loadMockData() {
-    const days = this.currentPeriod === '30d' ? 30 : 7;
+    const days = this.currentPeriod === ANALYTICS_CONSTANTS.PERIODS.MONTH ? 30 : 7;
     const labels = [];
     const steps = [];
     const calories = [];
@@ -104,9 +123,8 @@ class HealthAnalytics {
     this.updateStatsUI();
   }
 
-  // 渲染图表
   renderCharts() {
-    if (!this.data) return;
+    if (!this.data || this.isDestroyed) return;
     
     this.renderStepsChart();
     this.renderSleepChart();
@@ -114,12 +132,13 @@ class HealthAnalytics {
     this.renderCaloriesChart();
   }
 
-  // 步数趋势图
   renderStepsChart() {
     const ctx = document.getElementById('stepsChart')?.getContext('2d');
     if (!ctx) return;
     
-    if (this.charts.steps) this.charts.steps.destroy();
+    if (this.charts.steps) {
+      this.charts.steps.destroy();
+    }
     
     this.charts.steps = new Chart(ctx, {
       type: 'line',
@@ -128,12 +147,12 @@ class HealthAnalytics {
         datasets: [{
           label: '步数',
           data: this.data.chartData.steps,
-          borderColor: '#00D4FF',
+          borderColor: ANALYTICS_CONSTANTS.COLORS.PRIMARY,
           backgroundColor: 'rgba(0, 212, 255, 0.1)',
           borderWidth: 3,
           fill: true,
           tension: 0.4,
-          pointBackgroundColor: '#00D4FF',
+          pointBackgroundColor: ANALYTICS_CONSTANTS.COLORS.PRIMARY,
           pointBorderColor: '#fff',
           pointBorderWidth: 2,
           pointRadius: 4
@@ -151,12 +170,13 @@ class HealthAnalytics {
     });
   }
 
-  // 睡眠趋势图
   renderSleepChart() {
     const ctx = document.getElementById('sleepChart')?.getContext('2d');
     if (!ctx) return;
     
-    if (this.charts.sleep) this.charts.sleep.destroy();
+    if (this.charts.sleep) {
+      this.charts.sleep.destroy();
+    }
     
     this.charts.sleep = new Chart(ctx, {
       type: 'bar',
@@ -176,12 +196,13 @@ class HealthAnalytics {
     });
   }
 
-  // 饮水趋势图
   renderWaterChart() {
     const ctx = document.getElementById('waterChart')?.getContext('2d');
     if (!ctx) return;
     
-    if (this.charts.water) this.charts.water.destroy();
+    if (this.charts.water) {
+      this.charts.water.destroy();
+    }
     
     this.charts.water = new Chart(ctx, {
       type: 'bar',
@@ -199,12 +220,13 @@ class HealthAnalytics {
     });
   }
 
-  // 热量趋势图
   renderCaloriesChart() {
     const ctx = document.getElementById('caloriesChart')?.getContext('2d');
     if (!ctx) return;
     
-    if (this.charts.calories) this.charts.calories.destroy();
+    if (this.charts.calories) {
+      this.charts.calories.destroy();
+    }
     
     this.charts.calories = new Chart(ctx, {
       type: 'line',
@@ -213,12 +235,12 @@ class HealthAnalytics {
         datasets: [{
           label: '摄入热量 (千卡)',
           data: this.data.chartData.calories,
-          borderColor: '#FF2D92',
+          borderColor: ANALYTICS_CONSTANTS.COLORS.SECONDARY,
           backgroundColor: 'rgba(255, 45, 146, 0.1)',
           borderWidth: 3,
           fill: true,
           tension: 0.4,
-          pointBackgroundColor: '#FF2D92',
+          pointBackgroundColor: ANALYTICS_CONSTANTS.COLORS.SECONDARY,
           pointBorderColor: '#fff',
           pointBorderWidth: 2,
           pointRadius: 4
@@ -228,7 +250,6 @@ class HealthAnalytics {
     });
   }
 
-  // 图表通用配置
   getChartOptions(yAxisLabel) {
     const isDark = document.body.classList.contains('dark-theme') || true;
     
@@ -289,7 +310,6 @@ class HealthAnalytics {
     };
   }
 
-  // 更新统计UI
   updateStatsUI() {
     if (!this.data?.averages) return;
     
@@ -297,12 +317,14 @@ class HealthAnalytics {
     
     const updateEl = (id, value, suffix = '') => {
       const el = document.getElementById(id);
-      if (el) el.textContent = value + suffix;
+      if (el) {
+        el.textContent = (typeof value === 'number' ? value.toLocaleString() : escapeHtml(value)) + suffix;
+      }
     };
     
-    updateEl('avgSteps', averages.steps.toLocaleString());
-    updateEl('avgCalories', averages.calories.toLocaleString());
-    updateEl('avgWater', averages.water.toLocaleString(), 'ml');
+    updateEl('avgSteps', averages.steps);
+    updateEl('avgCalories', averages.calories);
+    updateEl('avgWater', averages.water, 'ml');
     updateEl('avgSleep', averages.sleep, '小时');
     
     // 更新与目标的对比
@@ -313,7 +335,6 @@ class HealthAnalytics {
     updateEl('waterGoalPercent', waterGoalPercent, '%');
   }
 
-  // 更新洞察UI
   updateInsightsUI() {
     const container = document.getElementById('insightsContainer');
     if (!container || !this.data?.insights) return;
@@ -323,15 +344,26 @@ class HealthAnalytics {
       return;
     }
     
-    container.innerHTML = this.data.insights.map(insight => `
-      <div class="insight-item ${insight.type}">
-        <span class="insight-icon">${insight.type === 'positive' ? '✅' : insight.type === 'warning' ? '⚠️' : '💡'}</span>
-        <span class="insight-text">${insight.message}</span>
-      </div>
-    `).join('');
+    const fragment = document.createDocumentFragment();
+    
+    this.data.insights.forEach(insight => {
+      const item = document.createElement('div');
+      item.className = `insight-item ${escapeHtml(insight.type)}`;
+      
+      const icon = insight.type === 'positive' ? '✅' : 
+                   insight.type === 'warning' ? '⚠️' : '💡';
+      
+      item.innerHTML = `
+        <span class="insight-icon">${icon}</span>
+        <span class="insight-text">${escapeHtml(insight.message)}</span>
+      `;
+      fragment.appendChild(item);
+    });
+    
+    container.innerHTML = '';
+    container.appendChild(fragment);
   }
 
-  // 切换时间周期
   async switchPeriod(period) {
     document.querySelectorAll('.period-btn').forEach(btn => {
       btn.classList.toggle('active', btn.dataset.period === period);
@@ -341,23 +373,37 @@ class HealthAnalytics {
     this.renderCharts();
   }
 
-  // 设置事件监听
   setupEventListeners() {
     document.querySelectorAll('.period-btn').forEach(btn => {
       btn.addEventListener('click', () => this.switchPeriod(btn.dataset.period));
     });
   }
 
-  // 显示错误
   showError(message) {
     const toast = document.getElementById('toast');
     if (toast) {
-      toast.textContent = message;
+      toast.textContent = escapeHtml(message);
       toast.classList.add('show', 'error');
       setTimeout(() => toast.classList.remove('show', 'error'), 3000);
     }
+  }
+
+  // 销毁方法 - 清理资源
+  destroy() {
+    this.isDestroyed = true;
+    
+    // 销毁所有Chart实例
+    Object.values(this.charts).forEach(chart => {
+      if (chart) chart.destroy();
+    });
+    this.charts = {};
+    
+    // 清理数据引用
+    this.data = null;
   }
 }
 
 // 导出实例
 window.healthAnalytics = new HealthAnalytics();
+window.HealthAnalytics = HealthAnalytics;
+window.ANALYTICS_CONSTANTS = ANALYTICS_CONSTANTS;
