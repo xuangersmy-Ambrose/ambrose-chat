@@ -1,7 +1,49 @@
 /**
  * AMBROSE App 单元测试 - Day 2
  * DOM操作测试 + Mock技术
+ * 
+ * 运行方式:
+ * 1. 浏览器: 打开 test-runner.html
+ * 2. Node.js: node tests/day2-dom-mock.test.js
  */
+
+// 兼容Node.js和浏览器环境
+if (typeof window === 'undefined') {
+  global.window = {};
+  global.localStorage = {
+    _data: {},
+    getItem: function(key) { return this._data[key] || null; },
+    setItem: function(key, value) { this._data[key] = String(value); },
+    removeItem: function(key) { delete this._data[key]; }
+  };
+  global.document = { getElementById: function() { return { classList: { contains: function() { return true; } } }; } };
+  global.showPage = function() {};
+  global.getTodayString = function() {
+    var now = new Date();
+    return now.getFullYear() + '-' + String(now.getMonth() + 1).padStart(2, '0') + '-' + String(now.getDate()).padStart(2, '0');
+  };
+  global.isSignedToday = function() {
+    return localStorage.getItem('ambrose_last_signin') === getTodayString();
+  };
+  global.getStreakDays = function() {
+    return parseInt(localStorage.getItem('ambrose_streak') || '0');
+  };
+  global.getTodayReward = function(streak) {
+    var normal = [20, 25, 30, 35, 40, 45, 50];
+    var streakRewards = [30, 40, 55, 70, 90, 110, 150];
+    var milestone = { 7: 200, 14: 500, 30: 1000, 60: 2000, 100: 5000 };
+    
+    if (milestone[streak + 1]) return milestone[streak + 1];
+    if (streak >= 7) return streakRewards[Math.min(streak % 7, 6)];
+    return normal[Math.min(streak, 6)];
+  };
+  global.performance = { now: function() { return Date.now(); } };
+  global.foodDatabase = [
+    { name: '米饭', category: '主食', calories: 174 },
+    { name: '鸡胸肉', category: '蛋白质', calories: 165 },
+    { name: '鸡蛋', category: '蛋白质', calories: 70 }
+  ];
+}
 
 // ==================== Mock工具 ====================
 

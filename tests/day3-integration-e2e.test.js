@@ -1,7 +1,46 @@
 /**
  * AMBROSE App 单元测试 - Day 3
  * 集成测试 + E2E测试基础
+ * 
+ * 运行方式:
+ * 1. 浏览器: 打开 test-runner.html
+ * 2. Node.js: node tests/day3-integration-e2e.test.js
  */
+
+// 兼容Node.js和浏览器环境
+if (typeof window === 'undefined') {
+  global.window = {};
+  global.localStorage = {
+    _data: {},
+    getItem: function(key) { return this._data[key] || null; },
+    setItem: function(key, value) { this._data[key] = String(value); },
+    removeItem: function(key) { delete this._data[key]; }
+  };
+  global.document = { getElementById: function(id) { return { classList: { contains: function() { return true; } } }; } };
+  global.showPage = function() {};
+  global.getTodayString = function() {
+    var now = new Date();
+    return now.getFullYear() + '-' + String(now.getMonth() + 1).padStart(2, '0') + '-' + String(now.getDate()).padStart(2, '0');
+  };
+  global.isSignedToday = function() {
+    return localStorage.getItem('ambrose_last_signin') === getTodayString();
+  };
+  global.getStreakDays = function() {
+    return parseInt(localStorage.getItem('ambrose_streak') || '0');
+  };
+  global.checkAndResetStreak = function() {
+    // Mock实现
+  };
+  global.foodDatabase = [
+    { name: '米饭', category: '主食', calories: 174 },
+    { name: '鸡胸肉', category: '蛋白质', calories: 165 },
+    { name: '鸡蛋', category: '蛋白质', calories: 70 },
+    { name: '燕麦', category: '主食', calories: 150 }
+  ];
+  global.recipesData = [
+    { id: 1, name: '测试食谱', category: ['早餐'], calories: 300, time: '10分钟', difficulty: '简单', ingredients: ['鸡蛋'], steps: ['煮熟'] }
+  ];
+}
 
 // ==================== 集成测试 ====================
 // 测试多个组件协同工作
