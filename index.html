@@ -1614,10 +1614,20 @@ body {
 <div style="font-weight: 600; font-size: 14px;">动作库</div>
 <div style="font-size: 12px; color: var(--text-secondary); margin-top: 4px;">160+ 标准动作</div>
 </div>
+<div class="feature-card" onclick="showPage('videoLibraryPage')" style="background: var(--bg-card); border: 1px solid var(--border); border-radius: 16px; padding: 20px; text-align: center; cursor: pointer;">
+<div style="font-size: 32px; margin-bottom: 8px;">📺</div>
+<div style="font-weight: 600; font-size: 14px;">视频教程</div>
+<div style="font-size: 12px; color: var(--text-secondary); margin-top: 4px;">YouTube精选</div>
+</div>
 <div class="feature-card" onclick="showPage('coursePage')" style="background: var(--bg-card); border: 1px solid var(--border); border-radius: 16px; padding: 20px; text-align: center; cursor: pointer;">
 <div style="font-size: 32px; margin-bottom: 8px;">🎓</div>
 <div style="font-weight: 600; font-size: 14px;">课程中心</div>
 <div style="font-size: 12px; color: var(--text-secondary); margin-top: 4px;">24 精品课程</div>
+</div>
+<div class="feature-card" onclick="showPage('timerPage')" style="background: var(--bg-card); border: 1px solid var(--border); border-radius: 16px; padding: 20px; text-align: center; cursor: pointer;">
+<div style="font-size: 32px; margin-bottom: 8px;">⏱️</div>
+<div style="font-weight: 600; font-size: 14px;">训练计时</div>
+<div style="font-size: 12px; color: var(--text-secondary); margin-top: 4px;">计时器</div>
 </div>
 </div>
 </div>
@@ -2242,6 +2252,7 @@ function showPage(pageId) {
     if (pageId === 'profilePage' && typeof updateProfilePage === 'function') updateProfilePage();
     if (pageId === 'achievePage' && typeof renderBadges === 'function') renderBadges();
     if (pageId === 'weightPage' && typeof updateWeightPage === 'function') updateWeightPage();
+    if (pageId === 'videoLibraryPage' && typeof renderVideoLibraryPage === 'function') renderVideoLibraryPage();
   } catch (e) {
     console.error('页面切换失败:', e);
   }
@@ -4808,6 +4819,57 @@ window.onload = function() {
 <!-- 成就列表将在这里动态生成 -->
 </div>
 </div>
+
+<!-- ========== 视频库页面 ========== -->
+<div class="page" id="videoLibraryPage">
+<div class="page-header">
+<button class="back-btn" onclick="showPage('workoutPage')">←</button>
+<h1>视频教程</h1>
+</div>
+<div class="video-search" style="padding: 16px 24px;">
+<div class="search-box">
+<input type="text" id="videoSearchInput" placeholder="搜索视频..." oninput="searchVideos(this.value)">
+<button onclick="searchVideos(document.getElementById('videoSearchInput').value)">🔍</button>
+</div>
+</div>
+<div class="video-categories" id="videoCategorySelector" style="padding: 0 24px 16px; display: flex; gap: 8px; overflow-x: auto;">
+<!-- 分类按钮将在这里动态生成 -->
+</div>
+<div class="video-grid" id="videoGrid" style="padding: 0 24px 100px; display: grid; grid-template-columns: repeat(2, 1fr); gap: 16px;">
+<!-- 视频列表将在这里动态生成 -->
+</div>
+</div>
+
+<!-- ========== 视频播放器页面 ========== -->
+<div class="page" id="videoPlayerPage">
+<div class="page-header">
+<button class="back-btn" onclick="showPage('videoLibraryPage')">←</button>
+<h1>视频播放</h1>
+</div>
+<div style="padding: 0 24px;">
+<!-- 视频播放器 -->
+<div id="videoPlayerContainer" style="width: 100%; aspect-ratio: 16/9; background: #000; border-radius: 12px; overflow: hidden; margin-bottom: 20px;">
+<!-- iframe将在这里插入 -->
+</div>
+
+<!-- 视频信息 -->
+<div id="videoPlayerInfo" style="margin-bottom: 24px;">
+<!-- 视频信息将在这里插入 -->
+</div>
+
+<!-- 相关推荐 -->
+<div class="related-videos">
+<h3 style="font-size: 16px; margin-bottom: 12px;">相关推荐</h3>
+<div id="relatedVideosList">
+<!-- 相关视频将在这里插入 -->
+</div>
+</div>
+</div>
+</div>
+
+<!-- AMBROSE Health - YouTube视频 -->
+<script src="data/youtube-videos.js"></script>
+<script src="js/youtube-player.js"></script>
 
 <!-- AMBROSE Health - 核心功能模块 -->
 <script src="js/smart-plan-generator.js"></script>
