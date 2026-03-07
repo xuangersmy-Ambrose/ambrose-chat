@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>🧪 AMBROSE App 测试运行器</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body { 
+      font-family: 'Courier New', monospace; 
+      background: #0a0a0a; 
+      color: #fff; 
+      padding: 20px;
+      line-height: 1.6;
+    }
+    h1 { 
+      color: #00D4FF; 
+      margin-bottom: 20px;
+      font-size: 24px;
+    }
+    .controls {
+      margin-bottom: 20px;
+      padding: 15px;
+      background: rgba(255,255,255,0.05);
+      border-radius: 8px;
+    }
+    button {
+      background: #00D4FF;
+      color: #000;
+      border: none;
+      padding: 10px 20px;
+      border-radius: 6px;
+      cursor: pointer;
+      font-weight: bold;
+      margin-right: 10px;
+    }
+    button:hover {
+      background: #33DDFF;
+    }
+    #output {
+      background: rgba(0,0,0,0.5);
+      padding: 20px;
+      border-radius: 8px;
+      white-space: pre-wrap;
+      font-size: 14px;
+      max-height: 70vh;
+      overflow-y: auto;
+      border: 1px solid #333;
+    }
+    .log { margin: 2px 0; }
+    .pass { color: #4CAF50; }
+    .fail { color: #f44336; }
+    .info { color: #FFC107; }
+    .header { 
+      color: #00D4FF; 
+      font-weight: bold;
+      margin-top: 10px;
+    }
+    .summary {
+      margin-top: 20px;
+      padding: 15px;
+      background: rgba(255,255,255,0.05);
+      border-radius: 8px;
+    }
+    .summary.success { border-left: 4px solid #4CAF50; }
+    .summary.fail { border-left: 4px solid #f44336; }
+  </style>
+</head>
+<body>
+  <h1>🧪 AMBROSE App 测试运行器</h1>
+  
+  <div class="controls">
+    <button onclick="runTests()">▶️ 运行所有测试</button>
+    <button onclick="clearOutput()">🗑️ 清空输出</button>
+    <button onclick="location.href='index.html'">🏠 返回App</button>
+  </div>
+  
+  <div id="output">点击"运行所有测试"开始测试...</div>
+  
+  <!-- 加载App核心代码 -->
+  <script>
+    // 模拟App中的关键函数
+    window.showPage = function(pageId) {
+      document.querySelectorAll('.page').forEach(function(p) { 
+        p.classList.remove('active'); 
+      });
+      var target = document.getElementById(pageId);
+      if (target) target.classList.add('active');
+    };
+    
+    window.getTodayString = function() {
+      var now = new Date();
+      var year = now.getFullYear();
+      var month = String(now.getMonth() + 1).padStart(2, '0');
+      var day = String(now.getDate()).padStart(2, '0');
+      return year + '-' + month + '-' + day;
+    };
+    
+    window.isSignedToday = function() {
+      var lastSignin = localStorage.getItem('ambrose_last_signin');
+      return lastSignin === getTodayString();
+    };
+  </script>
+  
+  <!-- 加载测试文件 -->
+  <script src="tests/utils.test.js"></script>
+  
+  <script>
+    var output = document.getElementById('output');
+    var originalLog = console.log;
+    
+    // 重定向console.log到页面
+    console.log = function(...args) {
+      originalLog.apply(console, args);
+      
+      var text = args.join(' ');
+      var div = document.createElement('div');
+      div.className = 'log';
+      div.textContent = text;
+      
+      if (text.includes('✅')) div.className += ' pass';
+      if (text.includes('❌')) div.className += ' fail';
+      if (text.includes('ℹ️') || text.includes('🧪')) div.className += ' info';
+      if (text.includes('══')) div.className += ' header';
+      
+      output.appendChild(div);
+      output.scrollTop = output.scrollHeight;
+    };
+    
+    function runTests() {
+      output.innerHTML = '';
+      console.log('正在初始化测试环境...');
+      
+      setTimeout(function() {
+        if (typeof runAllTests === 'function') {
+          var result = runAllTests();
+          
+          // 显示总结
+          var summary = document.createElement('div');
+          summary.className = 'summary ' + (result.success ? 'success' : 'fail');
+          summary.innerHTML = result.success 
+            ? '🎉 所有测试通过！代码质量良好。' 
+            : '⚠️ 有' + result.failed + '个测试失败，请检查。';
+          output.appendChild(summary);
+        } else {
+          console.log('❌ 测试框架未加载，请刷新页面重试');
+        }
+      }, 100);
+    }
+    
+    function clearOutput() {
+      output.innerHTML = '输出已清空，点击"运行所有测试"重新开始...';
+    }
+    
+    // 页面加载后显示提示
+    window.onload = function() {
+      console.log('测试运行器已就绪');
+      console.log('点击"运行所有测试"按钮开始');
+    };
+  </script>
+</body>
+</html>
