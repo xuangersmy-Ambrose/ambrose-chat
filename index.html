@@ -1597,23 +1597,27 @@ var badgeData = [
   { id: 'balanced_diet', name: '均衡饮食', desc: '一周营养均衡', icon: '🥗', unlocked: false }
 ];
 
-// ==================== 页面切换 ====================
+// ==================== 页面切换（简化版） ====================
 function showPage(pageId) {
-  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
-  document.getElementById(pageId).classList.add('active');
-  window.scrollTo(0, 0);
-  
-  var navPages = ['homePage', 'workoutPage', 'dietPage', 'profilePage', 'achievePage'];
-  var bottomNav = document.getElementById('bottomNav');
-  if (bottomNav) bottomNav.style.display = navPages.includes(pageId) ? 'flex' : 'none';
-  
-  if (pageId === 'homePage') updateNav('navHome');
-  if (pageId === 'workoutPage') updateNav('navWorkout');
-  if (pageId === 'dietPage') updateNav('navDiet');
-  if (pageId === 'chatPage') updateNav('navChat');
-  if (pageId === 'profilePage') updateNav('navProfile');
-  if (pageId === 'achievePage') { updateNav('navHome'); renderBadges(); }
-  if (pageId === 'weightPage') { updateWeightPage(); }
+  try {
+    document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+    var targetPage = document.getElementById(pageId);
+    if (targetPage) {
+      targetPage.classList.add('active');
+    }
+    window.scrollTo(0, 0);
+    
+    var navPages = ['homePage', 'workoutPage', 'dietPage', 'chatPage', 'profilePage', 'communityPage', 'reportPage', 'coursePage'];
+    var bottomNav = document.getElementById('bottomNav');
+    if (bottomNav) bottomNav.style.display = navPages.includes(pageId) ? 'flex' : 'none';
+    
+    if (pageId === 'homePage' && typeof updateHomePage === 'function') updateHomePage();
+    if (pageId === 'profilePage' && typeof updateProfilePage === 'function') updateProfilePage();
+    if (pageId === 'achievePage' && typeof renderBadges === 'function') renderBadges();
+    if (pageId === 'weightPage' && typeof updateWeightPage === 'function') updateWeightPage();
+  } catch (e) {
+    console.error('页面切换失败:', e);
+  }
 }
 
 function updateNav(activeId) {
@@ -3727,29 +3731,6 @@ function saveChatHistory(userMsg, botMsg) {
     userData.chatHistory.shift();
   }
   saveData();
-}
-
-// ==================== 页面切换（简化版） ====================
-function showPage(pageId) {
-  try {
-    document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
-    var targetPage = document.getElementById(pageId);
-    if (targetPage) {
-      targetPage.classList.add('active');
-    }
-    window.scrollTo(0, 0);
-    
-    var navPages = ['homePage', 'workoutPage', 'dietPage', 'chatPage', 'profilePage', 'communityPage', 'reportPage', 'coursePage'];
-    var bottomNav = document.getElementById('bottomNav');
-    if (bottomNav) bottomNav.style.display = navPages.includes(pageId) ? 'flex' : 'none';
-    
-    if (pageId === 'homePage' && typeof updateHomePage === 'function') updateHomePage();
-    if (pageId === 'profilePage' && typeof updateProfilePage === 'function') updateProfilePage();
-    if (pageId === 'achievePage' && typeof renderBadges === 'function') renderBadges();
-    if (pageId === 'weightPage' && typeof updateWeightPage === 'function') updateWeightPage();
-  } catch (e) {
-    console.error('页面切换失败:', e);
-  }
 }
 
 // ==================== Push 通知功能 ====================
