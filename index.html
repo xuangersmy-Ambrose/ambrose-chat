@@ -2132,6 +2132,21 @@ body {
 <div class="menu-text">我的成就</div>
 <div class="menu-arrow">›</div>
 </div>
+<div class="menu-item" onclick="showPage('smartPlanPage')">
+<div class="menu-icon">📋</div>
+<div class="menu-text">智能计划</div>
+<div class="menu-arrow">›</div>
+</div>
+<div class="menu-item" onclick="showPage('healthReportPage')">
+<div class="menu-icon">📊</div>
+<div class="menu-text">健康报告</div>
+<div class="menu-arrow">›</div>
+</div>
+<div class="menu-item" onclick="showPage('communityPage')">
+<div class="menu-icon">👥</div>
+<div class="menu-text">社区</div>
+<div class="menu-arrow">›</div>
+</div>
 <div class="menu-item" onclick="showPage('weightPage')">
 <div class="menu-icon">⚖️</div>
 <div class="menu-text">体重记录</div>
@@ -2253,6 +2268,9 @@ function showPage(pageId) {
     if (pageId === 'achievePage' && typeof renderBadges === 'function') renderBadges();
     if (pageId === 'weightPage' && typeof updateWeightPage === 'function') updateWeightPage();
     if (pageId === 'videoLibraryPage' && typeof renderVideoLibraryPage === 'function') renderVideoLibraryPage();
+    if (pageId === 'smartPlanPage' && typeof renderSmartPlanPage === 'function') renderSmartPlanPage();
+    if (pageId === 'healthReportPage' && typeof renderHealthReportPage === 'function') renderHealthReportPage();
+    if (pageId === 'communityPage' && typeof renderCommunityPage === 'function') renderCommunityPage();
   } catch (e) {
     console.error('页面切换失败:', e);
   }
@@ -4820,6 +4838,47 @@ window.onload = function() {
 </div>
 </div>
 
+<!-- ========== 智能计划页面 ========== -->
+<div class="page" id="smartPlanPage">
+<div class="page-header">
+<button class="back-btn" onclick="showPage('profilePage')">←</button>
+<h1>智能计划</h1>
+</div>
+<div id="smartPlanContainer" style="padding-bottom: 100px;">
+<!-- 动态生成内容 -->
+</div>
+</div>
+
+<!-- ========== 健康报告页面 ========== -->
+<div class="page" id="healthReportPage">
+<div class="page-header">
+<button class="back-btn" onclick="showPage('profilePage')">←</button>
+<h1>健康报告</h1>
+</div>
+<div id="healthReportContainer" style="padding-bottom: 100px;">
+<!-- 动态生成内容 -->
+</div>
+</div>
+
+<!-- ========== 社区页面 ========== -->
+<div class="page" id="communityPage">
+<div class="page-header">
+<h1>社区</h1>
+</div>
+<div style="padding: 0 24px 16px;">
+<div style="display: flex; gap: 8px; overflow-x: auto;">
+<button class="feed-type-btn active" onclick="switchFeedType('all', this)" style="padding: 8px 16px; background: var(--primary); border: none; border-radius: 20px; color: #000; font-size: 14px; cursor: pointer; white-space: nowrap;">全部</button>
+<button class="feed-type-btn" onclick="switchFeedType('workout', this)" style="padding: 8px 16px; background: rgba(255,255,255,0.05); border: 1px solid var(--border); border-radius: 20px; color: var(--text-secondary); font-size: 14px; cursor: pointer; white-space: nowrap;">训练</button>
+<button class="feed-type-btn" onclick="switchFeedType('diet', this)" style="padding: 8px 16px; background: rgba(255,255,255,0.05); border: 1px solid var(--border); border-radius: 20px; color: var(--text-secondary); font-size: 14px; cursor: pointer; white-space: nowrap;">饮食</button>
+</div>
+</div>
+<div id="communityFeed" style="padding: 0 24px 100px;">
+<!-- 动态生成内容 -->
+</div>
+<!-- 发布按钮 -->
+<button onclick="showPostCreator()" style="position: fixed; bottom: 100px; right: 24px; width: 56px; height: 56px; background: var(--primary); border: none; border-radius: 50%; color: #000; font-size: 24px; cursor: pointer; box-shadow: 0 4px 12px rgba(0,212,255,0.3); z-index: 100;">+</button>
+</div>
+
 <!-- ========== 视频库页面 ========== -->
 <div class="page" id="videoLibraryPage">
 <div class="page-header">
@@ -4880,6 +4939,11 @@ window.onload = function() {
 <script src="js/community.js"></script>
 <script src="js/ai-coach.js"></script>
 <script src="js/ui-features.js"></script>
+
+<!-- AMBROSE Health - UI页面模块 -->
+<script src="js/smart-plan-ui.js"></script>
+<script src="js/health-report-ui.js"></script>
+<script src="js/community-ui.js"></script>
 
 <!-- AMBROSE Health v1.2 - 课程系统 -->
 <link rel="stylesheet" href="css/course-system.css">
