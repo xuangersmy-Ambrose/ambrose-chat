@@ -547,61 +547,487 @@ window.registerBackgroundSync = window.registerBackgroundSync || function(tag) {
 // 初始化
 document.addEventListener('DOMContentLoaded', function() {
   console.log('AMBROSE App initialized');
+  
+  // 初始化粒子系统
+  initParticles();
+  
+  // 初始化扫描线
+  initScanLine();
+  
+  // 初始化3D网格背景
+  initCyberGrid();
 });
-</script>
-<style>
-:root {
-  --primary: #00D4FF;
-  --primary-dark: #0099CC;
-  --secondary: #FF2D92;
-  --bg-dark: #0a0a0a;
-  --bg-card: rgba(255,255,255,0.03);
-  --border: rgba(255,255,255,0.1);
-  --text-primary: #fff;
-  --text-secondary: rgba(255,255,255,0.5);
+
+// ==================== 赛博朋克视觉效果 ====================
+
+// 粒子系统
+function initParticles() {
+  var container = document.createElement('div');
+  container.className = 'particles-container';
+  container.id = 'particlesContainer';
+  document.body.appendChild(container);
+  
+  // 创建30个粒子
+  for (var i = 0; i < 30; i++) {
+    createParticle(container);
+  }
 }
 
-* { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
-html, body { height: 100%; }
+function createParticle(container) {
+  var particle = document.createElement('div');
+  particle.className = 'particle';
+  
+  // 随机位置
+  particle.style.left = Math.random() * 100 + '%';
+  particle.style.top = '100%';
+  
+  // 随机动画时长
+  var duration = 10 + Math.random() * 10;
+  particle.style.animationDuration = duration + 's';
+  
+  // 随机延迟
+  particle.style.animationDelay = Math.random() * 5 + 's';
+  
+  // 随机大小
+  var size = 2 + Math.random() * 4;
+  particle.style.width = size + 'px';
+  particle.style.height = size + 'px';
+  
+  // 随机颜色（青色/品红/金色）
+  var colors = ['#00f3ff', '#ff00ff', '#FFD700'];
+  var color = colors[Math.floor(Math.random() * colors.length)];
+  particle.style.background = color;
+  particle.style.boxShadow = '0 0 10px ' + color;
+  
+  container.appendChild(particle);
+  
+  // 动画结束后重新创建
+  setTimeout(function() {
+    particle.remove();
+    createParticle(container);
+  }, duration * 1000);
+}
+
+// 扫描线效果
+function initScanLine() {
+  var scanLine = document.createElement('div');
+  scanLine.className = 'scan-line';
+  document.body.appendChild(scanLine);
+}
+
+// 3D网格背景
+function initCyberGrid() {
+  var grid = document.createElement('div');
+  grid.className = 'cyber-grid';
+  document.body.appendChild(grid);
+}
+
+// 页面切换动画增强
+window.showPage = function(pageId) {
+  try {
+    // 添加退出动画
+    var currentPage = document.querySelector('.page.active');
+    if (currentPage) {
+      currentPage.style.animation = 'pageExit 0.3s ease forwards';
+      setTimeout(function() {
+        currentPage.classList.remove('active');
+        currentPage.style.animation = '';
+      }, 300);
+    }
+    
+    // 显示新页面
+    setTimeout(function() {
+      document.querySelectorAll('.page').forEach(function(p) { 
+        p.classList.remove('active'); 
+      });
+      var target = document.getElementById(pageId);
+      if (target) {
+        target.classList.add('active');
+        target.style.animation = 'pageEnter 0.4s cubic-bezier(0.4, 0, 0.2, 1)';
+      }
+      window.scrollTo(0, 0);
+    }, currentPage ? 300 : 0);
+    
+  } catch(e) { 
+    console.error(e); 
+  }
+};
+
+// 添加页面退出动画样式
+var pageExitStyle = document.createElement('style');
+pageExitStyle.textContent = `
+  @keyframes pageExit {
+    from { opacity: 1; transform: translateX(0); }
+    to { opacity: 0; transform: translateX(-20px); }
+  }
+`;
+document.head.appendChild(pageExitStyle);
+
+// 按钮点击波纹效果
+document.addEventListener('click', function(e) {
+  var btn = e.target.closest('.btn-primary, .btn-secondary, .action-item, .goal-card');
+  if (btn) {
+    createRipple(e, btn);
+  }
+});
+
+function createRipple(e, btn) {
+  var ripple = document.createElement('span');
+  var rect = btn.getBoundingClientRect();
+  var size = Math.max(rect.width, rect.height);
+  var x = e.clientX - rect.left - size / 2;
+  var y = e.clientY - rect.top - size / 2;
+  
+  ripple.style.cssText = `
+    position: absolute;
+    border-radius: 50%;
+    background: rgba(255,255,255,0.3);
+    width: ${size}px;
+    height: ${size}px;
+    left: ${x}px;
+    top: ${y}px;
+    animation: rippleEffect 0.6s ease-out;
+    pointer-events: none;
+  `;
+  
+  btn.style.position = 'relative';
+  btn.style.overflow = 'hidden';
+  btn.appendChild(ripple);
+  
+  setTimeout(function() {
+    ripple.remove();
+  }, 600);
+}
+
+// 添加波纹动画
+var rippleStyle = document.createElement('style');
+rippleStyle.textContent = `
+  @keyframes rippleEffect {
+    to {
+      transform: scale(2);
+      opacity: 0;
+    }
+  }
+`;
+document.head.appendChild(rippleStyle);
+
+// 数字滚动动画
+function animateNumber(element, target, duration) {
+  var start = parseInt(element.textContent.replace(/[^0-9]/g, '')) || 0;
+  var range = target - start;
+  var startTime = null;
+  
+  function step(timestamp) {
+    if (!startTime) startTime = timestamp;
+    var progress = Math.min((timestamp - startTime) / duration, 1);
+    var easeProgress = 1 - Math.pow(1 - progress, 3); // easeOutCubic
+    var current = Math.floor(start + range * easeProgress);
+    element.textContent = current.toLocaleString();
+    
+    if (progress < 1) {
+      requestAnimationFrame(step);
+    }
+  }
+  
+  requestAnimationFrame(step);
+}
+
+// 暴露到全局
+window.animateNumber = animateNumber;
+
+</script>
+<style>
+/* ===== 赛博朋克设计系统 v2.0 ===== */
+:root {
+  --primary: #00f3ff;
+  --primary-dark: #00c4cc;
+  --primary-glow: rgba(0, 243, 255, 0.5);
+  --secondary: #ff00ff;
+  --secondary-glow: rgba(255, 0, 255, 0.5);
+  --accent: #ff2d92;
+  --accent-glow: rgba(255, 45, 146, 0.5);
+  --bg-dark: #0a0a0f;
+  --bg-card: rgba(26, 26, 37, 0.8);
+  --border: rgba(255, 255, 255, 0.1);
+  --text-primary: #ffffff;
+  --text-secondary: rgba(255, 255, 255, 0.7);
+  --text-muted: rgba(255, 255, 255, 0.4);
+}
+
+* { 
+  margin: 0; 
+  padding: 0; 
+  box-sizing: border-box; 
+  -webkit-tap-highlight-color: transparent;
+}
+
+html, body { 
+  height: 100%; 
+  overflow-x: hidden;
+}
+
 body {
   font-family: -apple-system, BlinkMacSystemFont, 'PingFang SC', 'Hiragino Sans GB', 'Microsoft YaHei', sans-serif;
   background: var(--bg-dark);
   color: #fff;
-  overflow-x: hidden;
   -webkit-overflow-scrolling: touch;
+  position: relative;
 }
-::-webkit-scrollbar { width: 0; height: 0; }
 
-.page { display: none; min-height: 100vh; padding-bottom: 100px; }
-.page.active { display: block; animation: fadeIn 0.3s ease; }
-@keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+/* ===== 3D网格背景 ===== */
+.cyber-grid {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  z-index: 0;
+  background-image: 
+    linear-gradient(rgba(0, 243, 255, 0.03) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(0, 243, 255, 0.03) 1px, transparent 1px);
+  background-size: 50px 50px;
+  perspective: 1000px;
+  transform-style: preserve-3d;
+  animation: gridMove 20s linear infinite;
+}
 
-/* ========== 通用组件 ========== */
+@keyframes gridMove {
+  0% { 
+    transform: perspective(500px) rotateX(60deg) translateY(0);
+  }
+  100% { 
+    transform: perspective(500px) rotateX(60deg) translateY(50px);
+  }
+}
+
+/* ===== 扫描线效果 ===== */
+.scan-line {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 2px;
+  background: linear-gradient(90deg, transparent, var(--primary), transparent);
+  opacity: 0.5;
+  animation: scanMove 8s linear infinite;
+  pointer-events: none;
+  z-index: 9999;
+}
+
+@keyframes scanMove {
+  0% { transform: translateY(-100vh); }
+  100% { transform: translateY(100vh); }
+}
+
+/* ===== 粒子容器 ===== */
+.particles-container {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  z-index: 1;
+  overflow: hidden;
+}
+
+.particle {
+  position: absolute;
+  width: 4px;
+  height: 4px;
+  background: var(--primary);
+  border-radius: 50%;
+  box-shadow: 0 0 10px var(--primary);
+  opacity: 0.6;
+  animation: float 15s infinite;
+}
+
+@keyframes float {
+  0% {
+    transform: translateY(100vh) translateX(0) rotate(0deg);
+    opacity: 0;
+  }
+  10% { opacity: 0.6; }
+  90% { opacity: 0.6; }
+  100% {
+    transform: translateY(-100vh) translateX(100px) rotate(720deg);
+    opacity: 0;
+  }
+}
+
+/* ===== 页面结构 ===== */
+.page { 
+  display: none; 
+  min-height: 100vh; 
+  padding-bottom: 100px;
+  position: relative;
+  z-index: 2;
+}
+.page.active { 
+  display: block; 
+  animation: pageEnter 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+@keyframes pageEnter {
+  from { 
+    opacity: 0; 
+    transform: translateX(20px);
+  }
+  to { 
+    opacity: 1; 
+    transform: translateX(0);
+  }
+}
+
+/* ===== 霓虹按钮 ===== */
 .btn-primary {
-  width: 100%; padding: 18px;
-  background: var(--primary); color: #000;
-  border: none; border-radius: 16px;
-  font-size: 17px; font-weight: 600;
-  cursor: pointer; transition: all 0.3s;
+  width: 100%; 
+  padding: 18px;
+  background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+  color: #000;
+  border: none; 
+  border-radius: 16px;
+  font-size: 17px; 
+  font-weight: 600;
+  cursor: pointer; 
+  transition: all 0.3s;
+  position: relative;
+  overflow: hidden;
 }
-.btn-primary:active { transform: scale(0.98); background: var(--primary-dark); }
+
+.btn-primary::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent);
+  transition: left 0.5s;
+}
+
+.btn-primary:hover::before {
+  left: 100%;
+}
+
+.btn-primary:active { 
+  transform: scale(0.98); 
+  box-shadow: 0 0 20px var(--primary-glow);
+}
 
 .btn-secondary {
-  width: 100%; padding: 18px;
-  background: transparent; color: var(--primary);
-  border: 1px solid var(--primary); border-radius: 16px;
-  font-size: 17px; font-weight: 600; cursor: pointer;
+  width: 100%; 
+  padding: 18px;
+  background: transparent; 
+  color: var(--primary);
+  border: 2px solid var(--primary); 
+  border-radius: 16px;
+  font-size: 17px; 
+  font-weight: 600; 
+  cursor: pointer;
+  transition: all 0.3s;
 }
-.btn-secondary:active { background: rgba(0,212,255,0.1); }
 
-.input-field {
-  width: 100%; padding: 18px 20px;
-  background: rgba(255,255,255,0.05);
-  border: 1px solid var(--border); border-radius: 16px;
-  color: #fff; font-size: 16px; transition: all 0.3s;
+.btn-secondary:hover {
+  background: rgba(0, 243, 255, 0.1);
+  box-shadow: 0 0 20px var(--primary-glow);
 }
-.input-field:focus { outline: none; border-color: var(--primary); background: rgba(0,212,255,0.05); }
-.input-field::placeholder { color: var(--text-secondary); }
+
+/* ===== 玻璃拟态卡片 ===== */
+.glass-card {
+  background: rgba(26, 26, 37, 0.8);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 20px;
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  transition: all 0.3s;
+}
+
+.glass-card:hover {
+  border-color: rgba(0, 243, 255, 0.3);
+  box-shadow: 0 0 30px rgba(0, 243, 255, 0.1);
+  transform: translateY(-2px);
+}
+
+/* ===== 发光效果 ===== */
+.glow-text {
+  text-shadow: 
+    0 0 5px var(--primary-glow),
+    0 0 10px var(--primary-glow),
+    0 0 20px var(--primary-glow);
+}
+
+.glow-border {
+  border-color: var(--primary);
+  box-shadow: 
+    0 0 5px var(--primary-glow),
+    inset 0 0 5px var(--primary-glow);
+}
+
+/* ===== 输入框 ===== */
+.input-field {
+  width: 100%; 
+  padding: 18px 20px;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid var(--border); 
+  border-radius: 16px;
+  color: #fff; 
+  font-size: 16px; 
+  transition: all 0.3s;
+}
+
+.input-field:focus { 
+  outline: none; 
+  border-color: var(--primary); 
+  background: rgba(0, 243, 255, 0.05);
+  box-shadow: 0 0 15px var(--primary-glow);
+}
+
+.input-field::placeholder { 
+  color: var(--text-secondary); 
+}
+
+/* ===== 滚动条美化 ===== */
+::-webkit-scrollbar { 
+  width: 6px; 
+  height: 6px; 
+}
+
+::-webkit-scrollbar-track { 
+  background: transparent; 
+}
+
+::-webkit-scrollbar-thumb { 
+  background: rgba(0, 243, 255, 0.3); 
+  border-radius: 3px;
+}
+
+::-webkit-scrollbar-thumb:hover { 
+  background: var(--primary); 
+}
+
+/* ===== 加载动画 ===== */
+.loading-pulse {
+  animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+}
+
+@keyframes pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.5; }
+}
+
+/* ===== 进度条动画 ===== */
+.progress-bar-animated {
+  background: linear-gradient(90deg, var(--primary), var(--secondary));
+  background-size: 200% 100%;
+  animation: shimmer 2s linear infinite;
+}
+
+@keyframes shimmer {
+  0% { background-position: -200% 0; }
+  100% { background-position: 200% 0; }
+}
 
 /* ========== 欢迎页 ========== */
 .welcome-page {
