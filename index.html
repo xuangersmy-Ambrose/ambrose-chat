@@ -109,11 +109,360 @@ window.saveUserAndGoHome = window.saveUserAndGoHome || function() {
 
 window.showToast = window.showToast || function(msg) {
   console.log('Toast:', msg);
-  // 简单的alert作为fallback
-  if (msg && msg.indexOf('错误') === -1 && msg.indexOf('请') === -1) {
-    // 成功消息才显示
-  }
 };
+
+// 主页功能函数预定义
+window.showQuickActions = window.showQuickActions || function() { showToast('功能加载中...'); };
+window.showSigninModal = window.showSigninModal || function() { 
+  try {
+    var modal = document.getElementById('signinModal');
+    if (modal) modal.style.display = 'flex';
+  } catch(e) {}
+};
+window.closeSignin = window.closeSignin || function() {
+  try {
+    var modal = document.getElementById('signinModal');
+    if (modal) modal.style.display = 'none';
+  } catch(e) {}
+};
+window.doSignin = window.doSignin || function() {
+  try {
+    closeSignin();
+    showToast('✅ 签到成功！');
+    if (typeof addPoints === 'function') addPoints(10);
+  } catch(e) {}
+};
+
+// 训练功能函数预定义
+window.filterWorkout = window.filterWorkout || function(type, el) {
+  try {
+    document.querySelectorAll('.category-tab').forEach(t => t.classList.remove('active'));
+    if (el) el.classList.add('active');
+    showToast('筛选: ' + type);
+  } catch(e) {}
+};
+window.startWorkout = window.startWorkout || function() {
+  try {
+    workoutRunning = true;
+    workoutSeconds = 0;
+    showPage('timerPage');
+    showToast('🚀 训练开始！');
+  } catch(e) {}
+};
+window.finishWorkout = window.finishWorkout || function() {
+  try {
+    workoutRunning = false;
+    var minutes = Math.floor(workoutSeconds / 60);
+    var points = Math.floor(minutes * 10);
+    addPoints(points);
+    showToast('🎉 训练完成！获得 ' + points + ' 积分');
+    showPage('homePage');
+  } catch(e) {}
+};
+window.resetTimer = window.resetTimer || function() {
+  try {
+    workoutSeconds = 0;
+    workoutRunning = false;
+    showToast('⏱️ 计时器已重置');
+  } catch(e) {}
+};
+window.toggleTimer = window.toggleTimer || function() {
+  try {
+    workoutRunning = !workoutRunning;
+    showToast(workoutRunning ? '▶️ 继续' : '⏸️ 暂停');
+  } catch(e) {}
+};
+
+// 饮食功能函数预定义
+window.showFoodDetail = window.showFoodDetail || function(id) {
+  showToast('查看食物详情: ' + id);
+};
+window.closeFoodDetail = window.closeFoodDetail || function() {
+  try {
+    var modal = document.getElementById('foodDetailModal');
+    if (modal) modal.style.display = 'none';
+  } catch(e) {}
+};
+window.selectFoodQuantity = window.selectFoodQuantity || function(qty, el) {
+  try {
+    document.querySelectorAll('.quantity-btn').forEach(b => b.classList.remove('active'));
+    if (el) el.classList.add('active');
+  } catch(e) {}
+};
+window.addFoodRecord = window.addFoodRecord || function() {
+  try {
+    closeFoodDetail();
+    showToast('✅ 已添加饮食记录');
+  } catch(e) {}
+};
+window.filterFoodCategory = window.filterFoodCategory || function(cat, el) {
+  try {
+    document.querySelectorAll('#dietPage .category-tab').forEach(t => t.classList.remove('active'));
+    if (el) el.classList.add('active');
+    showToast('筛选: ' + cat);
+  } catch(e) {}
+};
+window.showFoodSelector = window.showFoodSelector || function() {
+  showToast('选择食物');
+};
+window.closeFoodSelector = window.closeFoodSelector || function() {
+  try {
+    var modal = document.getElementById('foodSelectorModal');
+    if (modal) modal.remove();
+  } catch(e) {}
+};
+window.addMeal = window.addMeal || function() {
+  showToast('✅ 已添加餐食');
+  closeFoodSelector();
+};
+
+// 体重和睡眠功能预定义
+window.recordWeight = window.recordWeight || function() {
+  try {
+    var weight = document.getElementById('newWeightInput')?.value;
+    if (weight) {
+      showToast('✅ 体重记录: ' + weight + 'kg');
+      showPage('homePage');
+    }
+  } catch(e) {}
+};
+window.recordSleep = window.recordSleep || function() {
+  try {
+    showToast('✅ 睡眠记录已保存');
+    showPage('homePage');
+  } catch(e) {}
+};
+window.selectSleepQuality = window.selectSleepQuality || function(quality) {
+  try {
+    selectedQuality = quality;
+    document.querySelectorAll('#qualityGood, #qualityNormal, #qualityBad').forEach(el => el.classList.remove('selected'));
+    var el = document.getElementById('quality' + quality.charAt(0).toUpperCase() + quality.slice(1));
+    if (el) el.classList.add('selected');
+  } catch(e) {}
+};
+
+// 饮水功能预定义
+window.showWaterSelector = window.showWaterSelector || function() {
+  try {
+    var existing = document.getElementById('waterSelectorModal');
+    if (existing) existing.remove();
+    showToast('💧 饮水记录');
+  } catch(e) {}
+};
+window.closeWaterSelector = window.closeWaterSelector || function() {
+  try {
+    var modal = document.getElementById('waterSelectorModal');
+    if (modal) modal.remove();
+  } catch(e) {}
+};
+window.addWaterAmount = window.addWaterAmount || function(amount) {
+  try {
+    showToast('💧 已添加 ' + amount + 'ml');
+    closeWaterSelector();
+  } catch(e) {}
+};
+window.addWater = window.addWater || function() {
+  showToast('💧 饮水记录已添加');
+};
+window.addCustomWater = window.addCustomWater || function() {
+  showToast('💧 自定义饮水量');
+};
+
+// 步数和卡路里预定义
+window.addSteps = window.addSteps || function() {
+  showToast('👟 步数已记录');
+};
+window.addSleep = window.addSleep || function() {
+  showToast('😴 睡眠已记录');
+};
+
+// 社区和排行榜预定义
+window.showCommunity = window.showCommunity || function() {
+  showPage('communityPage');
+};
+window.showLeaderboard = window.showLeaderboard || function() {
+  showPage('communityPage');
+  showToast('🏆 排行榜');
+};
+window.switchLeaderboard = window.switchLeaderboard || function(type, el) {
+  try {
+    document.querySelectorAll('#communityPage .tab').forEach(t => t.classList.remove('active'));
+    if (el) el.classList.add('active');
+  } catch(e) {}
+};
+window.joinChallenge = window.joinChallenge || function(id) {
+  showToast('✅ 已参加挑战！');
+};
+
+// 报告功能预定义
+window.showReport = window.showReport || function() {
+  showPage('communityPage');
+  showToast('📊 数据报告');
+};
+window.switchEnhancedReport = window.switchEnhancedReport || function(type) {
+  showToast('切换报告: ' + type);
+};
+
+// 计划生成器预定义
+window.showPlanGenerator = window.showPlanGenerator || function() {
+  showToast('🎯 生成专属计划');
+};
+window.selectPlanGoal = window.selectPlanGoal || function(goal, el) {
+  try {
+    document.querySelectorAll('#planModal .goal-option').forEach(o => o.classList.remove('selected'));
+    if (el) el.classList.add('selected');
+  } catch(e) {}
+};
+window.selectPlanLevel = window.selectPlanLevel || function(level, el) {
+  try {
+    document.querySelectorAll('#planModal .level-option').forEach(o => o.classList.remove('selected'));
+    if (el) el.classList.add('selected');
+  } catch(e) {}
+};
+window.generatePlan = window.generatePlan || function() {
+  showToast('🎯 正在生成计划...');
+  setTimeout(() => {
+    showToast('✅ 专属计划已生成！');
+  }, 1000);
+};
+window.startPlan = window.startPlan || function() {
+  showToast('🚀 开始执行计划！');
+  showPage('homePage');
+};
+
+// 个人中心功能预定义
+window.logout = window.logout || function() {
+  try {
+    localStorage.removeItem('ambroseUser');
+    localStorage.removeItem('ambroseData');
+    showToast('已退出登录');
+    location.reload();
+  } catch(e) {}
+};
+window.toggleSetting = window.toggleSetting || function(key) {
+  showToast('设置已更新: ' + key);
+};
+window.toggleReminder = window.toggleReminder || function(type) {
+  showToast('提醒设置: ' + type);
+};
+
+// 任务完成功能预定义
+window.completeTask = window.completeTask || function(taskId) {
+  try {
+    showToast('🎉 任务完成！');
+    addPoints(50);
+  } catch(e) {}
+};
+
+// 徽章功能预定义
+window.renderBadges = window.renderBadges || function() {
+  console.log('render badges');
+};
+
+// 更新页面函数预定义
+window.updateHomePage = window.updateHomePage || function() {
+  console.log('update home page');
+};
+window.updateProfilePage = window.updateProfilePage || function() {
+  console.log('update profile page');
+};
+window.updateWeightPage = window.updateWeightPage || function() {
+  console.log('update weight page');
+};
+
+// 积分和等级功能预定义
+window.addPoints = window.addPoints || function(points) {
+  try {
+    if (typeof userData !== 'undefined') {
+      userData.points += points;
+      userData.totalPoints += points;
+    }
+    console.log('Added points:', points);
+  } catch(e) {}
+};
+window.checkLevelUp = window.checkLevelUp || function() {
+  console.log('check level up');
+};
+window.saveData = window.saveData || function() {
+  try {
+    if (typeof userData !== 'undefined') {
+      localStorage.setItem('ambroseData', JSON.stringify(userData));
+    }
+  } catch(e) {}
+};
+
+// 加载数据函数预定义
+window.loadData = window.loadData || function() {
+  try {
+    var saved = localStorage.getItem('ambroseData');
+    if (saved) {
+      var data = JSON.parse(saved);
+      if (typeof userData !== 'undefined') {
+        Object.assign(userData, data);
+      }
+    }
+  } catch(e) {}
+};
+
+// 引导功能预定义
+window.nextOnboardingStep = window.nextOnboardingStep || function() {
+  console.log('next onboarding step');
+};
+window.completeOnboarding = window.completeOnboarding || function() {
+  try {
+    localStorage.setItem('hasSeenOnboarding', 'true');
+    var modal = document.getElementById('onboardingModal');
+    if (modal) modal.style.display = 'none';
+    showToast('🎉 欢迎开始您的健康之旅！');
+  } catch(e) {}
+};
+window.checkOnboarding = window.checkOnboarding || function() {
+  try {
+    var hasSeen = localStorage.getItem('hasSeenOnboarding');
+    if (!hasSeen) {
+      var modal = document.getElementById('onboardingModal');
+      if (modal) modal.style.display = 'flex';
+    }
+  } catch(e) {}
+};
+
+// 聊天功能预定义
+window.sendChatMessage = window.sendChatMessage || function() {
+  try {
+    var input = document.getElementById('chatInput');
+    if (input && input.value.trim()) {
+      showToast('💬 消息已发送');
+      input.value = '';
+    }
+  } catch(e) {}
+};
+window.sendQuickMessage = window.sendQuickMessage || function(msg) {
+  showToast('💬 ' + msg);
+};
+
+// 骨架屏预定义
+window.showSkeletonLoader = window.showSkeletonLoader || function() {
+  try {
+    var loader = document.getElementById('skeletonLoader');
+    if (loader) loader.style.display = 'block';
+  } catch(e) {}
+};
+window.hideSkeletonLoader = window.hideSkeletonLoader || function() {
+  try {
+    var loader = document.getElementById('skeletonLoader');
+    if (loader) loader.style.display = 'none';
+  } catch(e) {}
+};
+
+// 后台同步预定义
+window.registerBackgroundSync = window.registerBackgroundSync || function(tag) {
+  console.log('Background sync:', tag);
+};
+
+// 初始化
+document.addEventListener('DOMContentLoaded', function() {
+  console.log('AMBROSE App initialized');
+});
 </script>
 <style>
 :root {
@@ -1758,11 +2107,6 @@ function switchTab(tab) {
   if (navEl) navEl.classList.add('active');
 }
 
-function selectSleepQuality(quality) {
-  document.querySelectorAll('#qualityGood, #qualityNormal, #qualityBad').forEach(el => el.classList.remove('selected'));
-  document.getElementById('quality' + quality.charAt(0).toUpperCase() + quality.slice(1)).classList.add('selected');
-}
-
 var selectedQuality = '';
 function selectSleepQuality(quality) {
   selectedQuality = quality;
@@ -1888,15 +2232,20 @@ function doSignin() {
 }
 
 // ==================== 登录系统 ====================
+// 注意: switchMode 已在 head 中定义，此处使用 body 中的完整实现覆盖
 function switchMode(mode) {
   document.querySelectorAll('.mode-btn').forEach(b => b.classList.remove('active'));
   document.querySelectorAll('.login-form').forEach(f => f.classList.remove('active'));
+  var bossBtn = document.getElementById('bossModeBtn');
+  var bossForm = document.getElementById('bossForm');
+  var userBtn = document.getElementById('userModeBtn');
+  var userForm = document.getElementById('userForm');
   if (mode === 'boss') {
-    document.getElementById('bossModeBtn').classList.add('active');
-    document.getElementById('bossForm').classList.add('active');
+    if (bossBtn) bossBtn.classList.add('active');
+    if (bossForm) bossForm.classList.add('active');
   } else {
-    document.getElementById('userModeBtn').classList.add('active');
-    document.getElementById('userForm').classList.add('active');
+    if (userBtn) userBtn.classList.add('active');
+    if (userForm) userForm.classList.add('active');
   }
 }
 
@@ -2819,60 +3168,46 @@ function showReport() {
   // v1.1: 使用新的分析页面替代旧版报告
   window.location.href = '/analysis.html';
 }
-  html += '<div class="point-item"><div class="point-value" style="color: var(--secondary);">125</div><div class="point-label">训练分钟</div></div>';
-  html += '<div class="point-item"><div class="point-value" style="color: #FFD700;">680</div><div class="point-label">消耗千卡</div></div>';
-  html += '</div>';
+
+// ==================== 健康课程页面 ====================
+function showCoursePage() {
+  // 创建课程页面
+  var existing = document.getElementById('coursePage');
+  if (existing) existing.remove();
   
-  // 趋势图表
-  html += '<div style="margin: 0 24px 24px; padding: 20px; background: var(--bg-card); border: 1px solid var(--border); border-radius: 16px;">';
-  html += '<div style="font-weight: 600; margin-bottom: 16px;">📈 本周运动趋势</div>';
-  html += '<div style="display: flex; align-items: flex-end; justify-content: space-around; height: 150px; gap: 8px;">';
-  var data = [30, 45, 60, 40, 80, 55, 70];
-  var days = ['周一', '周二', '周三', '周四', '周五', '周六', '周日'];
-  data.forEach(function(val, i) {
-    html += '<div style="flex: 1; text-align: center;">';
-    html += '<div style="height: ' + (val * 1.5) + 'px; background: linear-gradient(to top, var(--primary), var(--secondary)); border-radius: 4px 4px 0 0; margin-bottom: 8px;"></div>';
-    html += '<div style="font-size: 11px; color: var(--text-secondary);">' + days[i] + '</div>';
-    html += '</div>';
-  });
-  html += '</div></div>';
+  var html = '<div class="page" id="coursePage"><div class="workout-page">';
+  html += '<div class="page-header"><div class="page-title">📚 健康课程</div><div class="page-subtitle">系统学习健康知识</div></div>';
   
-  // 运动分布
-  html += '<div style="margin: 0 24px 24px; padding: 20px; background: var(--bg-card); border: 1px solid var(--border); border-radius: 16px;">';
-  html += '<div style="font-weight: 600; margin-bottom: 16px;">🎯 运动类型分布</div>';
-  html += '<div style="display: flex; flex-direction: column; gap: 12px;">';
-  var types = [
-    { name: '力量训练', percent: 40, color: '#00D4FF' },
-    { name: '有氧燃脂', percent: 30, color: '#FF2D92' },
-    { name: '瑜伽拉伸', percent: 20, color: '#30D158' },
-    { name: '其他', percent: 10, color: '#FFD93D' }
+  html += '<div style="padding: 0 24px;">';
+  
+  // 课程分类
+  var categories = [
+    { name: '减脂课程', icon: '🔥', desc: '科学减脂，健康瘦身', count: 12 },
+    { name: '增肌课程', icon: '💪', desc: '力量训练，塑造体型', count: 15 },
+    { name: '瑜伽课程', icon: '🧘', desc: '柔韧身心，平衡生活', count: 8 },
+    { name: '饮食课程', icon: '🥗', desc: '营养搭配，健康饮食', count: 6 },
+    { name: '康复课程', icon: '🏥', desc: '运动康复，预防损伤', count: 5 }
   ];
-  types.forEach(t => {
-    html += `<div>
-      <div style="display: flex; justify-content: space-between; margin-bottom: 6px; font-size: 14px;">
-        <span>${t.name}</span><span>${t.percent}%</span>
-      </div>
-      <div style="height: 8px; background: rgba(255,255,255,0.1); border-radius: 4px; overflow: hidden;">
-        <div style="width: ${t.percent}%; height: 100%; background: ${t.color}; border-radius: 4px;"></div>
-      </div>
-    </div>`;
+  
+  categories.forEach(function(cat) {
+    html += '<div style="background: var(--bg-card); border: 1px solid var(--border); border-radius: 20px; padding: 24px; margin-bottom: 16px; cursor: pointer;" onclick="showToast(\'课程详情开发中\')">';
+    html += '<div style="display: flex; align-items: center; gap: 16px;">';
+    html += '<div style="font-size: 48px;">' + cat.icon + '</div>';
+    html += '<div style="flex: 1;">';
+    html += '<div style="font-size: 18px; font-weight: 600; margin-bottom: 4px;">' + cat.name + '</div>';
+    html += '<div style="color: var(--text-secondary); font-size: 14px; margin-bottom: 8px;">' + cat.desc + '</div>';
+    html += '<div style="color: var(--primary); font-size: 13px;">' + cat.count + ' 节课程</div>';
+    html += '</div>';
+    html += '<div style="font-size: 24px; color: var(--text-secondary);">›</div>';
+    html += '</div></div>';
   });
-  html += '</div></div>';
   
-  // 成就总结
-  html += '<div style="margin: 0 24px 40px; padding: 20px; background: linear-gradient(135deg, rgba(255,215,0,0.1), rgba(255,140,0,0.1)); border: 1px solid rgba(255,215,0,0.3); border-radius: 16px;">';
-  html += '<div style="font-weight: 600; margin-bottom: 12px; color: #FFD700;">🏆 本周成就</div>';
-  html += '<div style="display: flex; flex-wrap: wrap; gap: 12px;">';
-  html += '<span style="padding: 6px 12px; background: rgba(255,255,255,0.1); border-radius: 12px; font-size: 13px;">🔥 连续3天运动</span>';
-  html += '<span style="padding: 6px 12px; background: rgba(255,255,255,0.1); border-radius: 12px; font-size: 13px;">💪 力量训练达人</span>';
-  html += '<span style="padding: 6px 12px; background: rgba(255,255,255,0.1); border-radius: 12px; font-size: 13px;">⏱️ 单次最长45分钟</span>';
-  html += '</div></div>';
-  
-  html += '<button class="btn-secondary" onclick="showPage(\'homePage\')" style="margin: 0 24px 40px;">← 返回首页</button>';
+  html += '</div>';
+  html += '<button class="btn-secondary" onclick="showPage(\'homePage\')" style="margin: 40px 24px;">← 返回首页</button>';
   html += '</div></div>';
   
   document.body.insertAdjacentHTML('beforeend', html);
-  showPage('reportPage');
+  showPage('coursePage');
 }
 
 function switchReport(type, el) {
