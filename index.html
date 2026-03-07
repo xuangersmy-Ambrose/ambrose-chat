@@ -1577,6 +1577,21 @@ body {
 <div class="workout-play-btn">▶️</div>
 </div>
 </div>
+
+<!-- 新增功能入口 -->
+<div class="section-title" style="padding: 0 24px; margin-top: 32px; margin-bottom: 16px;">💪 更多功能</div>
+<div style="padding: 0 24px 100px; display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px;">
+<div class="feature-card" onclick="showPage('exerciseLibraryPage')" style="background: var(--bg-card); border: 1px solid var(--border); border-radius: 16px; padding: 20px; text-align: center; cursor: pointer;">
+<div style="font-size: 32px; margin-bottom: 8px;">📚</div>
+<div style="font-weight: 600; font-size: 14px;">动作库</div>
+<div style="font-size: 12px; color: var(--text-secondary); margin-top: 4px;">160+ 标准动作</div>
+</div>
+<div class="feature-card" onclick="showPage('coursePage')" style="background: var(--bg-card); border: 1px solid var(--border); border-radius: 16px; padding: 20px; text-align: center; cursor: pointer;">
+<div style="font-size: 32px; margin-bottom: 8px;">🎓</div>
+<div style="font-weight: 600; font-size: 14px;">课程中心</div>
+<div style="font-size: 12px; color: var(--text-secondary); margin-top: 4px;">24 精品课程</div>
+</div>
+</div>
 </div>
 </div>
 
@@ -1666,6 +1681,21 @@ body {
 </div>
 <div class="meal-add" onclick="addMeal('snack')">+</div>
 </div>
+</div>
+</div>
+
+<!-- 新增功能入口 -->
+<div class="section-title" style="padding: 0 24px; margin-top: 32px;">🍎 更多功能</div>
+<div style="padding: 0 24px; display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; margin-bottom: 100px;">
+<div class="feature-card" onclick="showPage('foodSearchPage')" style="background: var(--bg-card); border: 1px solid var(--border); border-radius: 16px; padding: 20px; text-align: center; cursor: pointer;">
+<div style="font-size: 32px; margin-bottom: 8px;">🔍</div>
+<div style="font-weight: 600; font-size: 14px;">食物查询</div>
+<div style="font-size: 12px; color: var(--text-secondary); margin-top: 4px;">230+ 食物热量</div>
+</div>
+<div class="feature-card" onclick="showPage('recipesPage')" style="background: var(--bg-card); border: 1px solid var(--border); border-radius: 16px; padding: 20px; text-align: center; cursor: pointer;">
+<div style="font-size: 32px; margin-bottom: 8px;">📖</div>
+<div style="font-weight: 600; font-size: 14px;">健康食谱</div>
+<div style="font-size: 12px; color: var(--text-secondary); margin-top: 4px;">26 道营养餐</div>
 </div>
 </div>
 </div>
@@ -2059,6 +2089,11 @@ body {
 </div>
 
 <div class="menu-list">
+<div class="menu-item" onclick="showPage('achievementsPage')">
+<div class="menu-icon">🏆</div>
+<div class="menu-text">我的成就</div>
+<div class="menu-arrow">›</div>
+</div>
 <div class="menu-item" onclick="showPage('weightPage')">
 <div class="menu-icon">⚖️</div>
 <div class="menu-text">体重记录</div>
@@ -4437,7 +4472,219 @@ window.onload = function() {
 
 <!-- AMBROSE Health - 认证系统 -->
 <link rel="stylesheet" href="css/auth-system.css">
+<link rel="stylesheet" href="css/ui-features.css">
 <script src="js/auth-system.js"></script>
+
+<!-- ========== 食物搜索页面 ========== -->
+<div class="page" id="foodSearchPage">
+<div class="page-header">
+<button class="back-btn" onclick="showPage('dietPage')">←</button>
+<h1>食物查询</h1>
+</div>
+<div class="search-container" style="padding: 16px 24px;">
+<div class="search-box">
+<input type="text" id="foodSearchInput" placeholder="搜索食物名称..." oninput="searchFoodsUI()">
+<button onclick="searchFoodsUI()">🔍</button>
+</div>
+<div class="food-categories" style="display: flex; gap: 8px; overflow-x: auto; margin-top: 12px; padding-bottom: 8px;">
+<button class="category-chip active" onclick="filterFoodCategoryUI('all', this)">全部</button>
+<button class="category-chip" onclick="filterFoodCategoryUI('staples', this)">主食</button>
+<button class="category-chip" onclick="filterFoodCategoryUI('meat', this)">肉类</button>
+<button class="category-chip" onclick="filterFoodCategoryUI('vegetables', this)">蔬菜</button>
+<button class="category-chip" onclick="filterFoodCategoryUI('fruits', this)">水果</button>
+<button class="category-chip" onclick="filterFoodCategoryUI('dairy', this)">乳制品</button>
+<button class="category-chip" onclick="filterFoodCategoryUI('nuts', this)">坚果</button>
+<button class="category-chip" onclick="filterFoodCategoryUI('drinks', this)">饮品</button>
+</div>
+</div>
+<div class="food-list" id="foodList" style="padding: 0 24px 100px;">
+<!-- 食物列表将在这里动态生成 -->
+</div>
+</div>
+
+<!-- ========== 食物详情弹窗 ========== -->
+<div class="modal" id="foodDetailModal" style="display: none;">
+<div class="modal-content" style="max-height: 80vh; overflow-y: auto;">
+<div class="food-detail-header" style="text-align: center; padding: 24px;">
+<div class="food-emoji" style="font-size: 64px; margin-bottom: 12px;">🍎</div>
+<h2 id="foodDetailName" style="margin-bottom: 8px;">苹果</h2>
+<p id="foodDetailCalories" style="color: var(--primary); font-size: 24px; font-weight: 700;">52 千卡/100g</p>
+</div>
+<div class="nutrition-grid" style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; padding: 0 24px 24px;">
+<div class="nutrition-item" style="background: var(--bg-card); padding: 16px; border-radius: 12px; text-align: center;">
+<div style="color: var(--text-secondary); font-size: 12px;">蛋白质</div>
+<div id="foodDetailProtein" style="font-size: 20px; font-weight: 600; margin-top: 4px;">0.3g</div>
+</div>
+<div class="nutrition-item" style="background: var(--bg-card); padding: 16px; border-radius: 12px; text-align: center;">
+<div style="color: var(--text-secondary); font-size: 12px;">脂肪</div>
+<div id="foodDetailFat" style="font-size: 20px; font-weight: 600; margin-top: 4px;">0.2g</div>
+</div>
+<div class="nutrition-item" style="background: var(--bg-card); padding: 16px; border-radius: 12px; text-align: center;">
+<div style="color: var(--text-secondary); font-size: 12px;">碳水</div>
+<div id="foodDetailCarbs" style="font-size: 20px; font-weight: 600; margin-top: 4px;">14g</div>
+</div>
+<div class="nutrition-item" style="background: var(--bg-card); padding: 16px; border-radius: 12px; text-align: center;">
+<div style="color: var(--text-secondary); font-size: 12px;">膳食纤维</div>
+<div id="foodDetailFiber" style="font-size: 20px; font-weight: 600; margin-top: 4px;">2.4g</div>
+</div>
+</div>
+<div class="food-tags" id="foodDetailTags" style="padding: 0 24px 24px; display: flex; flex-wrap: wrap; gap: 8px;">
+<span style="background: rgba(0,212,255,0.1); color: var(--primary); padding: 4px 12px; border-radius: 12px; font-size: 12px;">低GI</span>
+</div>
+<div style="padding: 0 24px 24px;">
+<button class="btn-primary" onclick="addFoodToDiary()">添加到饮食记录</button>
+<button class="btn-secondary" onclick="closeFoodDetail()" style="margin-top: 12px;">关闭</button>
+</div>
+</div>
+</div>
+
+<!-- ========== 动作库页面 ========== -->
+<div class="page" id="exerciseLibraryPage">
+<div class="page-header">
+<button class="back-btn" onclick="showPage('workoutPage')">←</button>
+<h1>动作库</h1>
+</div>
+<div class="exercise-filter" style="padding: 16px 24px;">
+<div class="search-box">
+<input type="text" id="exerciseSearchInput" placeholder="搜索动作名称..." oninput="searchExercisesUI()">
+</div>
+<div class="exercise-categories" style="display: flex; gap: 8px; overflow-x: auto; margin-top: 12px; padding-bottom: 8px;">
+<button class="category-chip active" onclick="filterExerciseCategoryUI('all', this)">全部</button>
+<button class="category-chip" onclick="filterExerciseCategoryUI('warmup', this)">热身</button>
+<button class="category-chip" onclick="filterExerciseCategoryUI('cardio', this)">有氧</button>
+<button class="category-chip" onclick="filterExerciseCategoryUI('chest', this)">胸部</button>
+<button class="category-chip" onclick="filterExerciseCategoryUI('back', this)">背部</button>
+<button class="category-chip" onclick="filterExerciseCategoryUI('shoulders', this)">肩部</button>
+<button class="category-chip" onclick="filterExerciseCategoryUI('arms', this)">手臂</button>
+<button class="category-chip" onclick="filterExerciseCategoryUI('abs', this)">腹肌</button>
+<button class="category-chip" onclick="filterExerciseCategoryUI('legs', this)">腿部</button>
+<button class="category-chip" onclick="filterExerciseCategoryUI('yoga', this)">瑜伽</button>
+<button class="category-chip" onclick="filterExerciseCategoryUI('hiit', this)">HIIT</button>
+</div>
+<div class="difficulty-filter" style="display: flex; gap: 8px; margin-top: 12px;">
+<button class="difficulty-btn active" onclick="filterExerciseDifficultyUI('all', this)">全部难度</button>
+<button class="difficulty-btn" onclick="filterExerciseDifficultyUI('初级', this)">初级</button>
+<button class="difficulty-btn" onclick="filterExerciseDifficultyUI('中级', this)">中级</button>
+<button class="difficulty-btn" onclick="filterExerciseDifficultyUI('高级', this)">高级</button>
+</div>
+</div>
+<div class="exercise-list" id="exerciseList" style="padding: 0 24px 100px;">
+<!-- 动作列表将在这里动态生成 -->
+</div>
+</div>
+
+<!-- ========== 食谱页面 ========== -->
+<div class="page" id="recipesPage">
+<div class="page-header">
+<button class="back-btn" onclick="showPage('dietPage')">←</button>
+<h1>健康食谱</h1>
+</div>
+<div class="recipes-filter" style="padding: 16px 24px;">
+<div class="recipe-categories" style="display: flex; gap: 8px; overflow-x: auto; padding-bottom: 8px;">
+<button class="category-chip active" onclick="filterRecipeCategoryUI('all', this)">全部</button>
+<button class="category-chip" onclick="filterRecipeCategoryUI('早餐', this)">早餐</button>
+<button class="category-chip" onclick="filterRecipeCategoryUI('午餐', this)">午餐</button>
+<button class="category-chip" onclick="filterRecipeCategoryUI('晚餐', this)">晚餐</button>
+<button class="category-chip" onclick="filterRecipeCategoryUI('加餐', this)">加餐</button>
+<button class="category-chip" onclick="filterRecipeCategoryUI('减脂', this)">减脂餐</button>
+<button class="category-chip" onclick="filterRecipeCategoryUI('增肌', this)">增肌餐</button>
+<button class="category-chip" onclick="filterRecipeCategoryUI('素食', this)">素食</button>
+<button class="category-chip" onclick="filterRecipeCategoryUI('饮品', this)">饮品</button>
+</div>
+</div>
+<div class="recipes-grid" id="recipesGrid" style="padding: 0 24px 100px; display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px;">
+<!-- 食谱卡片将在这里动态生成 -->
+</div>
+</div>
+
+<!-- ========== 食谱详情弹窗 ========== -->
+<div class="modal" id="recipeDetailModal" style="display: none;">
+<div class="modal-content" style="max-height: 85vh; overflow-y: auto;">
+<div class="recipe-detail-header" style="text-align: center; padding: 24px;">
+<div class="recipe-emoji" style="font-size: 64px; margin-bottom: 12px;">🥗</div>
+<h2 id="recipeDetailTitle" style="margin-bottom: 8px;">食谱标题</h2>
+<p id="recipeDetailSubtitle" style="color: var(--text-secondary); font-size: 14px;">食谱简介</p>
+</div>
+<div class="recipe-meta" style="display: flex; justify-content: space-around; padding: 0 24px 24px;">
+<div style="text-align: center;">
+<div style="color: var(--primary); font-size: 20px; font-weight: 700;" id="recipeDetailCalories">350</div>
+<div style="color: var(--text-secondary); font-size: 12px;">千卡</div>
+</div>
+<div style="text-align: center;">
+<div style="font-size: 20px; font-weight: 700;" id="recipeDetailTime">20</div>
+<div style="color: var(--text-secondary); font-size: 12px;">分钟</div>
+</div>
+<div style="text-align: center;">
+<div style="font-size: 20px; font-weight: 700;" id="recipeDetailDifficulty">简单</div>
+<div style="color: var(--text-secondary); font-size: 12px;">难度</div>
+</div>
+</div>
+<div class="recipe-section" style="padding: 0 24px 24px;">
+<h3 style="margin-bottom: 12px; font-size: 16px;">📝 食材清单</h3>
+<div id="recipeDetailIngredients" style="background: var(--bg-card); border-radius: 12px; padding: 16px;">
+<!-- 食材列表 -->
+</div>
+</div>
+<div class="recipe-section" style="padding: 0 24px 24px;">
+<h3 style="margin-bottom: 12px; font-size: 16px;">👨‍🍳 制作步骤</h3>
+<div id="recipeDetailSteps" style="background: var(--bg-card); border-radius: 12px; padding: 16px;">
+<!-- 步骤列表 -->
+</div>
+</div>
+<div class="recipe-tips" style="padding: 0 24px 24px;">
+<div style="background: rgba(0,212,255,0.1); border-left: 3px solid var(--primary); padding: 12px 16px; border-radius: 0 8px 8px 0;">
+<div style="font-size: 12px; color: var(--primary); margin-bottom: 4px;">💡 小贴士</div>
+<div id="recipeDetailTips" style="font-size: 14px;">食谱小贴士</div>
+</div>
+</div>
+<div style="padding: 0 24px 24px;">
+<button class="btn-secondary" onclick="closeRecipeDetail()">关闭</button>
+</div>
+</div>
+</div>
+
+<!-- ========== 成就页面 ========== -->
+<div class="page" id="achievementsPage">
+<div class="page-header">
+<button class="back-btn" onclick="showPage('profilePage')">←</button>
+<h1>我的成就</h1>
+</div>
+<div class="achievements-summary" style="padding: 24px; text-align: center;">
+<div class="level-badge-large" style="display: inline-block; background: linear-gradient(135deg, var(--primary), var(--secondary)); padding: 24px 48px; border-radius: 20px; margin-bottom: 16px;">
+<div style="font-size: 48px; margin-bottom: 8px;">🥉</div>
+<div style="font-size: 24px; font-weight: 700;">LV.<span id="achievementLevel">1</span></div>
+<div style="font-size: 14px; opacity: 0.9;">健身新手</div>
+</div>
+<div class="achievement-stats" style="display: flex; justify-content: center; gap: 32px; margin-top: 16px;">
+<div>
+<div style="font-size: 28px; font-weight: 700; color: var(--primary);" id="achievementsUnlocked">3</div>
+<div style="color: var(--text-secondary); font-size: 12px;">已解锁</div>
+</div>
+<div>
+<div style="font-size: 28px; font-weight: 700; color: var(--secondary);" id="achievementsTotal">35</div>
+<div style="color: var(--text-secondary); font-size: 12px;">总成就</div>
+</div>
+<div>
+<div style="font-size: 28px; font-weight: 700; color: #FFD700;" id="achievementPoints">450</div>
+<div style="color: var(--text-secondary); font-size: 12px;">积分</div>
+</div>
+</div>
+</div>
+<div class="achievements-categories" style="padding: 0 24px 16px; display: flex; gap: 8px; overflow-x: auto;">
+<button class="category-chip active" onclick="filterAchievementsUI('all', this)">全部</button>
+<button class="category-chip" onclick="filterAchievementsUI('workout', this)">运动</button>
+<button class="category-chip" onclick="filterAchievementsUI('diet', this)">饮食</button>
+<button class="category-chip" onclick="filterAchievementsUI('sleep', this)">睡眠</button>
+<button class="category-chip" onclick="filterAchievementsUI('social', this)">社交</button>
+<button class="category-chip" onclick="filterAchievementsUI('special', this)">特殊</button>
+</div>
+<div class="achievements-list" id="achievementsList" style="padding: 0 24px 100px;">
+<!-- 成就列表将在这里动态生成 -->
+</div>
+</div>
+
+<!-- AMBROSE Health - UI功能模块 -->
+<script src="js/ui-features.js"></script>
 
 <!-- AMBROSE Health v1.2 - 课程系统 -->
 <link rel="stylesheet" href="css/course-system.css">
