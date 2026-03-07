@@ -18,13 +18,19 @@ class AuthManager {
   }
 
   init() {
+    // 始终先显示欢迎页，让用户点击"开始使用"后再进入
+    this.showWelcome();
+  }
+
+  // 处理"开始使用"按钮点击
+  handleStart() {
     // 检查是否已登录
     const saved = localStorage.getItem('ambroseUser');
     if (saved) {
       this.currentUser = JSON.parse(saved);
       this.showHome();
     } else {
-      this.showWelcome();
+      this.showLogin();
     }
   }
 
@@ -247,6 +253,7 @@ window.authSelectGender = (gender) => authManager.selectGender(gender);
 window.authSendCode = (btnId, inputId) => authManager.sendVerifyCode(btnId, inputId);
 window.authShowLogin = () => authManager.showLogin();
 window.authLogout = () => authManager.logout();
+window.authHandleStart = () => authManager.handleStart();
 
 // 页面加载时初始化
 document.addEventListener('DOMContentLoaded', () => {
