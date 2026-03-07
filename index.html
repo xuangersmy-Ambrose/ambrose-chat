@@ -37,9 +37,9 @@ window.switchMode = function(mode) {
 window.loginBoss = window.loginBoss || function() {
   try {
     var code = document.getElementById('bossCode').value;
-    if (code !== '0812') { 
-      if (window.showToast) showToast('识别码错误'); 
-      return; 
+    if (code !== '0812') {
+      if (window.showToast) showToast('识别码错误');
+      return;
     }
     currentUser = { type: 'boss', name: 'BOSS Shao', gender: 'male', age: 25, height: 175, weight: 70 };
     if (window.saveUserAndGoHome) saveUserAndGoHome();
@@ -50,9 +50,9 @@ window.loginBoss = window.loginBoss || function() {
 window.sendVerifyCode = window.sendVerifyCode || function() {
   try {
     var phone = document.getElementById('phoneInput').value;
-    if (phone.length !== 11) { 
-      if (window.showToast) showToast('请输入正确的手机号'); 
-      return; 
+    if (phone.length !== 11) {
+      if (window.showToast) showToast('请输入正确的手机号');
+      return;
     }
     if (window.showToast) showToast('验证码已发送: 123456');
     var btn = document.getElementById('sendCodeBtn');
@@ -76,13 +76,13 @@ window.registerUser = window.registerUser || function() {
     var age = parseInt(document.getElementById('userAge').value);
     var height = parseInt(document.getElementById('userHeight').value);
     var weight = parseInt(document.getElementById('userWeight').value);
-    if (code !== '123456') { 
-      if (window.showToast) showToast('验证码错误'); 
-      return; 
+    if (code !== '123456') {
+      if (window.showToast) showToast('验证码错误');
+      return;
     }
-    if (!name || !window.selectedGender || !age || !height || !weight) { 
-      if (window.showToast) showToast('请完善信息'); 
-      return; 
+    if (!name || !window.selectedGender || !age || !height || !weight) {
+      if (window.showToast) showToast('请完善信息');
+      return;
     }
     currentUser = { type: 'user', name: name, gender: window.selectedGender, age: age, height: height, weight: weight };
     if (window.saveUserAndGoHome) saveUserAndGoHome();
@@ -113,7 +113,8 @@ window.showToast = window.showToast || function(msg) {
 
 // 主页功能函数预定义
 window.showQuickActions = window.showQuickActions || function() { showToast('功能加载中...'); };
-window.showSigninModal = window.showSigninModal || function() { 
+// 签到功能预定义
+window.showSigninModal = window.showSigninModal || function() {
   try {
     var modal = document.getElementById('signinModal');
     if (modal) modal.style.display = 'flex';
@@ -127,10 +128,37 @@ window.closeSignin = window.closeSignin || function() {
 };
 window.doSignin = window.doSignin || function() {
   try {
-    closeSignin();
-    showToast('✅ 签到成功！');
-    if (typeof addPoints === 'function') addPoints(10);
+    // 检查今天是否已签到
+    var today = new Date().toISOString().split('T')[0];
+    var lastSignin = localStorage.getItem('ambrose_last_signin');
+    if (lastSignin === today) {
+      showToast('今日已签到，明天再来吧！');
+      return;
+    }
+    
+    // 保存签到日期
+    localStorage.setItem('ambrose_last_signin', today);
+    
+    // 更新连续天数
+    var streak = parseInt(localStorage.getItem('ambrose_streak') || '0');
+    localStorage.setItem('ambrose_streak', String(streak + 1));
+    
+    showToast('🎉 签到成功！+50积分');
+    if (typeof addPoints === 'function') addPoints(50);
+    if (typeof closeSignin === 'function') closeSignin();
   } catch(e) {}
+};
+window.isSignedToday = window.isSignedToday || function() {
+  try {
+    var today = new Date().toISOString().split('T')[0];
+    return localStorage.getItem('ambrose_last_signin') === today;
+  } catch(e) { return false; }
+};
+window.getTodayString = window.getTodayString || function() {
+  try {
+    var now = new Date();
+    return now.getFullYear() + '-' + String(now.getMonth() + 1).padStart(2, '0') + '-' + String(now.getDate()).padStart(2, '0');
+  } catch(e) { return ''; }
 };
 
 // 训练功能函数预定义
@@ -433,14 +461,14 @@ window.sendChatMessage = window.sendChatMessage || function() {
     if (!input) return;
     var message = input.value.trim();
     if (!message) return;
-    
+
     // 添加用户消息
     if (window.addMessage) addMessage(message, true);
     input.value = '';
-    
+
     // 显示打字指示器
     var typingIndicator = window.addTypingIndicator ? addTypingIndicator() : null;
-    
+
     // 调用AI
     setTimeout(function() {
       if (window.removeTypingIndicator) removeTypingIndicator();
@@ -535,10 +563,10 @@ document.addEventListener('DOMContentLoaded', function() {
 
 * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
 html, body { height: 100%; }
-body { 
-  font-family: -apple-system, BlinkMacSystemFont, 'PingFang SC', 'Hiragino Sans GB', 'Microsoft YaHei', sans-serif; 
-  background: var(--bg-dark); 
-  color: #fff; 
+body {
+  font-family: -apple-system, BlinkMacSystemFont, 'PingFang SC', 'Hiragino Sans GB', 'Microsoft YaHei', sans-serif;
+  background: var(--bg-dark);
+  color: #fff;
   overflow-x: hidden;
   -webkit-overflow-scrolling: touch;
 }
@@ -1145,7 +1173,7 @@ body {
     <button class="user-form-tab active" onclick="authSwitchUserForm('login')" id="tabLogin">登录</button>
     <button class="user-form-tab" onclick="authSwitchUserForm('register')" id="tabRegister">注册</button>
   </div>
-  
+
   <!-- 登录表单 -->
   <div class="user-form-content active" id="loginContent">
     <div class="form-group">
@@ -1162,7 +1190,7 @@ body {
     <button class="btn-primary" onclick="authUserLogin()" style="margin-top: 32px;">登录</button>
     <p class="form-hint" style="text-align: center; margin-top: 16px; color: var(--text-secondary); font-size: 13px;">首次使用？点击上方"注册"创建账户</p>
   </div>
-  
+
   <!-- 注册表单 -->
   <div class="user-form-content" id="registerContent">
     <div class="form-group">
@@ -2193,10 +2221,10 @@ function showPage(pageId) {
     var pages = document.querySelectorAll('.page');
     console.log('[DEBUG] Found pages:', pages.length);
     pages.forEach(p => p.classList.remove('active'));
-    
+
     var targetPage = document.getElementById(pageId);
     console.log('[DEBUG] Target page:', targetPage ? 'found' : 'NOT FOUND');
-    
+
     if (targetPage) {
       targetPage.classList.add('active');
       console.log('[DEBUG] Page activated:', pageId);
@@ -2205,11 +2233,11 @@ function showPage(pageId) {
       alert('页面加载失败，请刷新重试');
     }
     window.scrollTo(0, 0);
-    
+
     var navPages = ['homePage', 'workoutPage', 'dietPage', 'chatPage', 'profilePage', 'communityPage', 'reportPage', 'coursePage'];
     var bottomNav = document.getElementById('bottomNav');
     if (bottomNav) bottomNav.style.display = navPages.includes(pageId) ? 'flex' : 'none';
-    
+
     if (pageId === 'homePage' && typeof updateHomePage === 'function') updateHomePage();
     if (pageId === 'profilePage' && typeof updateProfilePage === 'function') updateProfilePage();
     if (pageId === 'achievePage' && typeof renderBadges === 'function') renderBadges();
@@ -2231,7 +2259,7 @@ function switchTab(tab) {
   if (tab === 'diet') showPage('dietPage');
   if (tab === 'chat') showPage('chatPage');
   if (tab === 'profile') showPage('profilePage');
-  
+
   // 更新导航状态
   document.querySelectorAll('.nav-item').forEach(el => el.classList.remove('active'));
   var navMap = { 'home': 'navHome', 'workout': 'navWorkout', 'diet': 'navDiet', 'chat': 'navChat', 'profile': 'navProfile' };
@@ -2320,10 +2348,48 @@ function showToast(msg) {
 }
 
 // ==================== 签到系统 ====================
+// ==================== 签到系统 ====================
+// 获取今天的日期字符串 (YYYY-MM-DD)
+function getTodayString() {
+  var now = new Date();
+  var year = now.getFullYear();
+  var month = String(now.getMonth() + 1).padStart(2, '0');
+  var day = String(now.getDate()).padStart(2, '0');
+  return year + '-' + month + '-' + day;
+}
+
+// 检查今天是否已签到
+function isSignedToday() {
+  var lastSigninDate = localStorage.getItem('ambrose_last_signin');
+  var today = getTodayString();
+  return lastSigninDate === today;
+}
+
+// 获取连续签到天数
+function getStreakDays() {
+  var streak = parseInt(localStorage.getItem('ambrose_streak') || '0');
+  var lastSigninDate = localStorage.getItem('ambrose_last_signin');
+
+  if (!lastSigninDate) return 0;
+
+  var lastDate = new Date(lastSigninDate);
+  var today = new Date(getTodayString());
+  var diffDays = Math.floor((today - lastDate) / (1000 * 60 * 60 * 24));
+
+  // 如果断签超过1天，重置连续天数
+  if (diffDays > 1) {
+    localStorage.setItem('ambrose_streak', '0');
+    return 0;
+  }
+
+  return streak;
+}
+
 function showSigninModal() {
   var modal = document.getElementById('signinModal');
   modal.classList.add('show');
   renderSigninGrid();
+  updateSigninButton();
 }
 
 function closeSignin() {
@@ -2334,33 +2400,92 @@ function renderSigninGrid() {
   var grid = document.getElementById('signinGrid');
   var rewards = [20, 30, 40, 50, 60, 80, 100];
   var days = ['周一', '周二', '周三', '周四', '周五', '周六', '周日'];
+  var streak = getStreakDays();
+  var signedToday = isSignedToday();
+
   var html = '';
   for (var i = 0; i < 7; i++) {
-    var cls = userData.signinDays[i] ? 'completed' : (i === userData.streak ? 'active' : '');
+    var dayStreak = i + 1;
+    var isCompleted = dayStreak <= streak;
+    var isToday = dayStreak === streak + (signedToday ? 0 : 1);
+    var cls = isCompleted ? 'completed' : (isToday ? 'active' : '');
     html += `
       <div class="signin-day ${cls}">
         <div class="day-label">${days[i]}</div>
-        <div class="day-icon">${userData.signinDays[i] ? '✅' : '🎁'}</div>
+        <div class="day-icon">${isCompleted ? '✅' : '🎁'}</div>
         <div class="day-points">+${rewards[i]}</div>
       </div>
     `;
   }
   grid.innerHTML = html;
+
+  // 更新连续打卡显示
+  document.getElementById('streakCount').textContent = streak;
+}
+
+// 更新签到按钮状态
+function updateSigninButton() {
+  var rewardDiv = document.getElementById('todayReward');
+  var signedToday = isSignedToday();
+  var streak = getStreakDays();
+  var rewards = [20, 30, 40, 50, 60, 80, 100];
+  var todayReward = rewards[streak] || 50;
+
+  if (signedToday) {
+    rewardDiv.innerHTML = `
+      <div class="signin-reward-icon">✅</div>
+      <div class="signin-reward-text">今日已签到</div>
+      <div style="font-size: 14px; color: var(--text-secondary); margin-top: 8px;">连续打卡 ${streak} 天，明天见！</div>
+      <button class="btn-secondary" disabled style="margin-top: 16px; opacity: 0.5; cursor: not-allowed;">已签到</button>
+    `;
+  } else {
+    rewardDiv.innerHTML = `
+      <div class="signin-reward-icon">🎁</div>
+      <div class="signin-reward-text">今日奖励: +${todayReward} 积分</div>
+      <div style="font-size: 14px; color: var(--text-secondary); margin-top: 8px;">连续签到可获得更多奖励</div>
+      <button class="btn-primary" onclick="doSignin()" style="margin-top: 16px;">立即签到</button>
+    `;
+  }
 }
 
 function doSignin() {
-  if (userData.signinDays[userData.streak]) {
-    showToast('今日已签到');
+  // 再次检查是否已签到（防重复）
+  if (isSignedToday()) {
+    showToast('今日已签到，明天再来吧！');
+    updateSigninButton();
     return;
   }
-  userData.signinDays[userData.streak] = true;
-  userData.streak++;
+
+  var streak = getStreakDays();
   var rewards = [20, 30, 40, 50, 60, 80, 100];
-  var points = rewards[userData.streak - 1] || 50;
+  var points = rewards[streak] || 50;
+
+  // 保存签到信息
+  localStorage.setItem('ambrose_last_signin', getTodayString());
+  localStorage.setItem('ambrose_streak', String(streak + 1));
+
+  // 添加积分
   addPoints(points);
+
+  // 显示成功提示
   showToast('🎉 签到成功！+' + points + '积分');
-  closeSignin();
+
+  // 更新UI
+  renderSigninGrid();
+  updateSigninButton();
   updateHomePage();
+
+  // 延迟关闭弹窗，让用户看到更新后的状态
+  setTimeout(function() {
+    closeSignin();
+  }, 1500);
+}
+
+// 页面加载时更新连续打卡显示
+function updateStreakDisplay() {
+  var streak = getStreakDays();
+  var streakEl = document.getElementById('streakCount');
+  if (streakEl) streakEl.textContent = streak;
 }
 
 // ==================== 登录系统 ====================
@@ -2478,7 +2603,7 @@ function updateHomePage() {
   var hour = now.getHours();
   var greet = hour < 12 ? '早上好' : (hour < 18 ? '下午好' : '晚上好');
   document.getElementById('homeGreeting').textContent = greet + '，' + currentUser.name;
-  
+
   // 等级
   document.getElementById('levelBadge').textContent = 'LV.' + userData.level;
   document.getElementById('levelName').textContent = userData.levelName;
@@ -2486,12 +2611,12 @@ function updateHomePage() {
   var levels = ['健身新手', '健身达人', '运动高手', '健身专家', '健身大师'];
   document.getElementById('nextLevel').textContent = levels[userData.level] || '满级';
   document.getElementById('pointsNeeded').textContent = Math.max(0, [1000, 3000, 6000, 10000, 99999][userData.level - 1] - userData.totalPoints);
-  
+
   // 积分
   document.getElementById('totalPoints').textContent = userData.totalPoints;
   document.getElementById('badgeCount').textContent = userData.badges.length;
   document.getElementById('streakCount').textContent = userData.streak;
-  
+
   // 目标
   var weight = currentUser.weight;
   document.getElementById('waterTarget').textContent = '/' + Math.round(weight * 35) + 'ml';
@@ -2504,7 +2629,7 @@ function updateHomePage() {
   document.getElementById('stepProgress').style.width = Math.min(userData.todayData.steps / 10000 * 100, 100) + '%';
   document.getElementById('calProgress').style.width = Math.min(userData.todayData.calories / (weight * 7) * 100, 100) + '%';
   document.getElementById('sleepProgress').style.width = Math.min(userData.todayData.sleep / 8 * 100, 100) + '%';
-  
+
   // 任务
   renderTasks();
 }
@@ -2533,16 +2658,16 @@ function renderTasks() {
 function completeTask(taskId) {
   // 首先检查是否需要重置每日数据
   checkAndResetDaily();
-  
+
   var task = userData.tasks.find(t => t.id === taskId);
   if (!task) return;
-  
+
   // 检查今天是否已完成过此任务
   if (task.completed) {
     showToast('⚠️ 今日已完成此任务，明天再来吧！');
     return;
   }
-  
+
   task.completed = true;
   var points = parseInt(task.reward.replace(/\D/g, ''));
   addPoints(points);
@@ -2559,7 +2684,7 @@ function showWaterSelector() {
   if (existing) {
     existing.remove();
   }
-  
+
   var html = '<div id="waterSelectorModal" style="position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.9); z-index: 100000; display: flex; align-items: center; justify-content: center; padding: 24px;">';
   html += '<div style="background: var(--bg-card); border: 1px solid var(--border); border-radius: 24px; padding: 32px 24px; width: 100%; max-width: 400px;">';
   html += '<div style="text-align: center; margin-bottom: 24px;">';
@@ -2567,7 +2692,7 @@ function showWaterSelector() {
   html += '<h3 style="font-size: 20px; margin-bottom: 4px;">记录饮水</h3>';
   html += '<p style="color: var(--text-secondary); font-size: 14px;">今日已饮水: ' + (userData.todayData.water || 0) + 'ml</p>';
   html += '</div>';
-  
+
   // 快速选择按钮
   html += '<div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin-bottom: 20px;">';
   [100, 200, 250, 300, 350, 500].forEach(amount => {
@@ -2577,7 +2702,7 @@ function showWaterSelector() {
     </button>`;
   });
   html += '</div>';
-  
+
   // 手动输入
   html += '<div style="margin-bottom: 20px;">';
   html += '<label style="display: block; color: var(--text-secondary); font-size: 14px; margin-bottom: 8px;">自定义水量 (ml)</label>';
@@ -2586,16 +2711,16 @@ function showWaterSelector() {
   html += '<button onclick="addCustomWater()" style="padding: 16px 24px; background: var(--primary); border: none; border-radius: 12px; color: #000; font-weight: 600; cursor: pointer;">添加</button>';
   html += '</div>';
   html += '</div>';
-  
+
   // 滑块选择
   html += '<div style="margin-bottom: 24px;">';
   html += '<label style="display: block; color: var(--text-secondary); font-size: 14px; margin-bottom: 8px;">滑动选择: <span id="sliderValue">250</span>ml</label>';
   html += '<input type="range" min="10" max="500" value="250" step="10" oninput="document.getElementById(\'sliderValue\').textContent = this.value" onchange="addWaterAmount(this.value)" style="width: 100%; height: 8px; background: rgba(255,255,255,0.1); border-radius: 4px; outline: none; -webkit-appearance: none;">';
   html += '</div>';
-  
+
   html += '<button onclick="closeWaterSelector()" style="width: 100%; padding: 16px; background: transparent; border: 1px solid var(--border); border-radius: 12px; color: var(--text-secondary); font-size: 16px; cursor: pointer;">取消</button>';
   html += '</div></div>';
-  
+
   document.body.insertAdjacentHTML('beforeend', html);
 }
 
@@ -2649,7 +2774,7 @@ function addSleep() {
 function filterWorkout(category, el) {
   document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
   if (el) el.classList.add('active');
-  
+
   var items = document.querySelectorAll('.workout-item');
   items.forEach(item => {
     if (category === 'all') {
@@ -2676,7 +2801,7 @@ function startWorkout(name, duration, calories) {
 function updateTimerDisplay() {
   var m = Math.floor(workoutSeconds / 60);
   var s = workoutSeconds % 60;
-  document.getElementById('timerDisplay').textContent = 
+  document.getElementById('timerDisplay').textContent =
     (m < 10 ? '0' : '') + m + ':' + (s < 10 ? '0' : '') + s;
 }
 
@@ -2710,20 +2835,20 @@ function finishWorkout() {
   if (hasCheckedInToday()) {
     showToast('⚠️ 今日已打卡，明天继续加油！');
   }
-  
+
   clearInterval(workoutTimer);
   workoutRunning = false;
   var minutes = Math.floor(workoutSeconds / 60) || 1;
   var calories = Math.round(minutes * (currentWorkout.calories / currentWorkout.duration));
   userData.todayData.calories += calories;
   userData.todayData.steps += Math.round(minutes * 100);
-  
+
   // 记录打卡日期
   var now = new Date();
   var beijingTime = new Date(now.getTime() + (8 * 60 * 60 * 1000));
   var today = beijingTime.toISOString().split('T')[0];
   userData.lastCheckDate = today;
-  
+
   // 添加到训练历史
   if (!userData.workoutHistory) {
     userData.workoutHistory = [];
@@ -2735,17 +2860,17 @@ function finishWorkout() {
     calories: calories,
     feeling: '很棒'
   });
-  
+
   // 完成任务
   var task = userData.tasks.find(t => t.id === 1);
   if (task && !task.completed) completeTask(1);
-  
+
   // 徽章检查
   if (!userData.badges.includes('first_workout')) {
     userData.badges.push('first_workout');
     showToast('🏅 解锁徽章：初次训练！');
   }
-  
+
   addPoints(50);
   saveData();
   updateHomePage();
@@ -2767,7 +2892,7 @@ var foodDatabase = [
   { name: '紫薯', unit: '个(150g)', calories: 133, category: '主食', icon: '🍠' },
   { name: '小米粥', unit: '碗(250g)', calories: 120, category: '主食', icon: '🥣' },
   { name: '包子', unit: '个(100g)', calories: 220, category: '主食', icon: '🥟' },
-  
+
   // 蛋白质类
   { name: '鸡蛋', unit: '个(50g)', calories: 70, category: '蛋白质', icon: '🥚' },
   { name: '鸡胸肉', unit: '100g', calories: 165, category: '蛋白质', icon: '🍗' },
@@ -2780,7 +2905,7 @@ var foodDatabase = [
   { name: '酸奶', unit: '杯(200g)', calories: 140, category: '蛋白质', icon: '🥛' },
   { name: '豆浆', unit: '杯(250ml)', calories: 120, category: '蛋白质', icon: '🥛' },
   { name: '火腿肠', unit: '根(40g)', calories: 80, category: '蛋白质', icon: '🌭' },
-  
+
   // 蔬菜类
   { name: '西兰花', unit: '100g', calories: 34, category: '蔬菜', icon: '🥦' },
   { name: '菠菜', unit: '100g', calories: 23, category: '蔬菜', icon: '🥬' },
@@ -2792,7 +2917,7 @@ var foodDatabase = [
   { name: '洋葱', unit: '个(150g)', calories: 60, category: '蔬菜', icon: '🧅' },
   { name: '芹菜', unit: '100g', calories: 14, category: '蔬菜', icon: '🥬' },
   { name: '白菜', unit: '100g', calories: 18, category: '蔬菜', icon: '🥬' },
-  
+
   // 水果类
   { name: '苹果', unit: '个(200g)', calories: 104, category: '水果', icon: '🍎' },
   { name: '香蕉', unit: '根(120g)', calories: 105, category: '水果', icon: '🍌' },
@@ -2804,7 +2929,7 @@ var foodDatabase = [
   { name: '蓝莓', unit: '盒(125g)', calories: 71, category: '水果', icon: '🫐' },
   { name: '梨', unit: '个(150g)', calories: 77, category: '水果', icon: '🍐' },
   { name: '桃子', unit: '个(150g)', calories: 58, category: '水果', icon: '🍑' },
-  
+
   // 坚果零食
   { name: '杏仁', unit: '10颗(15g)', calories: 90, category: '坚果', icon: '🌰' },
   { name: '核桃', unit: '2个(20g)', calories: 130, category: '坚果', icon: '🌰' },
@@ -2813,7 +2938,7 @@ var foodDatabase = [
   { name: '饼干', unit: '片(10g)', calories: 50, category: '零食', icon: '🍪' },
   { name: '薯片', unit: '包(30g)', calories: 160, category: '零食', icon: '🥔' },
   { name: '蛋糕', unit: '块(100g)', calories: 350, category: '零食', icon: '🍰' },
-  
+
   // 饮品类
   { name: '咖啡', unit: '杯(300ml)', calories: 5, category: '饮品', icon: '☕' },
   { name: '奶茶', unit: '杯(500ml)', calories: 300, category: '饮品', icon: '🧋' },
@@ -2831,19 +2956,19 @@ function showFoodSelector(mealType) {
   currentMealType = mealType || 'breakfast';
   var existing = document.getElementById('foodSelectorModal');
   if (existing) existing.remove();
-  
+
   var totalCalories = userData.todayData.meals ? userData.todayData.meals.reduce(function(sum, m) { return sum + (m.calories || 0); }, 0) : 0;
-  
+
   var html = '<div id="foodSelectorModal" style="position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.95); z-index: 100000; overflow-y: auto;">';
   html += '<div style="max-width: 500px; margin: 0 auto; padding: 24px;">';
-  
+
   // 头部
   html += '<div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 24px;">';
   html += '<div><h3 style="font-size: 20px; margin-bottom: 4px;">🍽️ 记录饮食</h3>';
   html += '<p style="color: var(--text-secondary); font-size: 14px;">今日已摄入: ' + totalCalories + '千卡</p></div>';
   html += '<button onclick="closeFoodSelector()" style="background: none; border: none; color: var(--text-secondary); font-size: 24px; cursor: pointer;">✕</button>';
   html += '</div>';
-  
+
   // 分类标签
   var categories = ['全部', '主食', '蛋白质', '蔬菜', '水果', '坚果', '零食', '饮品'];
   html += '<div style="display: flex; gap: 8px; overflow-x: auto; margin-bottom: 20px; padding-bottom: 8px;">';
@@ -2852,19 +2977,19 @@ function showFoodSelector(mealType) {
     html += '<button onclick="filterFoodCategory(this, \'' + cat + '\')" style="padding: 8px 16px; border: none; border-radius: 20px; font-size: 14px; cursor: pointer; white-space: nowrap; ' + activeStyle + '">' + cat + '</button>';
   });
   html += '</div>';
-  
+
   // 搜索框
   html += '<div style="margin-bottom: 20px;">';
   html += '<input type="text" id="foodSearchInput" placeholder="🔍 搜索食物..." oninput="searchFood(this.value)" style="width: 100%; padding: 16px; background: rgba(255,255,255,0.05); border: 1px solid var(--border); border-radius: 12px; color: #fff; font-size: 16px;">';
   html += '</div>';
-  
+
   // 食物列表
   html += '<div id="foodListContainer">';
   html += renderFoodList(foodDatabase);
   html += '</div>';
-  
+
   html += '</div></div>';
-  
+
   document.body.insertAdjacentHTML('beforeend', html);
 }
 
@@ -2895,7 +3020,7 @@ function filterFoodCategory(btn, category) {
   });
   btn.style.background = 'var(--primary)';
   btn.style.color = '#000';
-  
+
   // 过滤食物
   var filtered = category === '全部' ? foodDatabase : foodDatabase.filter(function(f) { return f.category === category; });
   document.getElementById('foodListContainer').innerHTML = renderFoodList(filtered);
@@ -2913,10 +3038,10 @@ function searchFood(keyword) {
 function showFoodDetail(index) {
   selectedFood = foodDatabase[index];
   selectedQuantity = 1;
-  
+
   var html = '<div id="foodDetailModal" style="position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.95); z-index: 100001; display: flex; align-items: center; justify-content: center; padding: 24px;">';
   html += '<div style="background: var(--bg-card); border: 1px solid var(--border); border-radius: 24px; padding: 32px 24px; width: 100%; max-width: 400px;">';
-  
+
   // 食物信息
   html += '<div style="text-align: center; margin-bottom: 32px;">';
   html += '<div style="font-size: 64px; margin-bottom: 8px;">' + selectedFood.icon + '</div>';
@@ -2924,7 +3049,7 @@ function showFoodDetail(index) {
   html += '<p style="color: var(--text-secondary);">' + selectedFood.unit + '</p>';
   html += '<div style="font-size: 48px; font-weight: 700; color: var(--primary); margin-top: 16px;">' + selectedFood.calories + '<span style="font-size: 16px; color: var(--text-secondary);"> 千卡</span></div>';
   html += '</div>';
-  
+
   // 数量选择
   html += '<div style="margin-bottom: 24px;">';
   html += '<label style="display: block; color: var(--text-secondary); font-size: 14px; margin-bottom: 12px; text-align: center;">选择数量</label>';
@@ -2935,24 +3060,24 @@ function showFoodDetail(index) {
   });
   html += '</div>';
   html += '</div>';
-  
+
   // 自定义数量
   html += '<div style="margin-bottom: 24px;">';
   html += '<label style="display: block; color: var(--text-secondary); font-size: 14px; margin-bottom: 8px;">自定义数量</label>';
   html += '<input type="number" id="customFoodQty" placeholder="输入数量" min="0.1" max="10" step="0.1" oninput="updateFoodCalories(this.value)" style="width: 100%; padding: 16px; background: rgba(255,255,255,0.05); border: 1px solid var(--border); border-radius: 12px; color: #fff; font-size: 16px; text-align: center;">';
   html += '</div>';
-  
+
   // 预估热量
   html += '<div id="estimatedCalories" style="text-align: center; padding: 16px; background: rgba(0,212,255,0.1); border-radius: 12px; margin-bottom: 24px; font-size: 18px; font-weight: 600;">预计: ' + selectedFood.calories + ' 千卡</div>';
-  
+
   // 按钮
   html += '<div style="display: flex; gap: 12px;">';
   html += '<button onclick="closeFoodDetail()" style="flex: 1; padding: 16px; background: transparent; border: 1px solid var(--border); border-radius: 12px; color: var(--text-secondary); font-size: 16px; cursor: pointer;">取消</button>';
   html += '<button onclick="addFoodRecord()" style="flex: 1; padding: 16px; background: var(--primary); border: none; border-radius: 12px; color: #000; font-weight: 600; font-size: 16px; cursor: pointer;">添加记录</button>';
   html += '</div>';
-  
+
   html += '</div></div>';
-  
+
   document.body.insertAdjacentHTML('beforeend', html);
 }
 
@@ -2966,7 +3091,7 @@ function selectFoodQuantity(btn, qty) {
   btn.style.background = 'var(--primary)';
   btn.style.color = '#000';
   btn.style.borderColor = 'var(--primary)';
-  
+
   document.getElementById('customFoodQty').value = '';
   updateFoodCaloriesDisplay();
 }
@@ -2991,7 +3116,7 @@ function addFoodRecord() {
   var customQty = document.getElementById('customFoodQty');
   var quantity = customQty && customQty.value ? parseFloat(customQty.value) : selectedQuantity;
   var calories = Math.round(selectedFood.calories * quantity);
-  
+
   var meal = {
     type: currentMealType,
     food: selectedFood.name,
@@ -3000,20 +3125,20 @@ function addFoodRecord() {
     calories: calories,
     time: new Date().toLocaleTimeString('zh-CN', { hour: '2-digit', minute: '2-digit' })
   };
-  
+
   if (!userData.todayData.meals) userData.todayData.meals = [];
   userData.todayData.meals.push(meal);
   userData.todayData.calories = (userData.todayData.calories || 0) + calories;
-  
+
   addPoints(30);
   saveData();
   updateHomePage();
   if (typeof updateDietPage === 'function') updateDietPage();
-  
+
   // 检查任务完成
   var task = userData.tasks.find(function(t) { return t.id === 2; });
   if (task && !task.completed) completeTask(2);
-  
+
   closeFoodDetail();
   closeFoodSelector();
   showToast('🍽️ 已添加 ' + selectedFood.name + ' +' + calories + '千卡 +30积分');
@@ -3047,7 +3172,7 @@ function renderBadges() {
   var grid = document.getElementById('badgeGrid');
   var unlocked = badgeData.filter(b => userData.badges.includes(b.id)).length;
   document.getElementById('unlockedBadges').textContent = unlocked;
-  
+
   var html = '';
   badgeData.forEach(badge => {
     var unlocked = userData.badges.includes(badge.id);
@@ -3067,12 +3192,12 @@ function renderBadges() {
 function updateProfilePage() {
   if (!currentUser) return;
   document.getElementById('profileName').textContent = currentUser.name;
-  document.getElementById('profileInfo').textContent = 
+  document.getElementById('profileInfo').textContent =
     currentUser.age + '岁 | ' + currentUser.height + 'cm | ' + currentUser.weight + 'kg';
   document.getElementById('profileAvatar').textContent = currentUser.gender === 'male' ? '👨' : '👩';
   var bmi = (currentUser.weight / Math.pow(currentUser.height/100, 2)).toFixed(1);
   document.getElementById('profileBMI').textContent = bmi;
-  var bmr = currentUser.gender === 'male' 
+  var bmr = currentUser.gender === 'male'
     ? Math.round(10 * currentUser.weight + 6.25 * currentUser.height - 5 * currentUser.age + 5)
     : Math.round(10 * currentUser.weight + 6.25 * currentUser.height - 5 * currentUser.age - 161);
   document.getElementById('profileBMR').textContent = bmr;
@@ -3178,19 +3303,19 @@ function showLeaderboard() {
   // 移除旧页面（如果存在）
   var oldPage = document.getElementById('leaderboardPage');
   if (oldPage) oldPage.remove();
-  
+
   // 确保数据存在
   var currentUserData = (typeof currentUser !== 'undefined' && currentUser) ? currentUser : { gender: 'male' };
   var userPoints = (typeof userData !== 'undefined' && userData.totalPoints) ? userData.totalPoints : 0;
   var userStreak = (typeof userData !== 'undefined' && userData.streak) ? userData.streak : 0;
-  
+
   var html = '<div class="page" id="leaderboardPage"><div class="workout-page">';
   html += '<div class="page-header"><div class="page-title">🏆 排行榜</div><div class="page-subtitle">本周运动达人</div></div>';
-  
+
   html += '<div class="category-tabs"><div class="tab active" onclick="switchLeaderboard(\'points\', this)">总积分</div><div class="tab" onclick="switchLeaderboard(\'workouts\', this)">训练次数</div><div class="tab" onclick="switchLeaderboard(\'streak\', this)">连续打卡</div></div>';
-  
+
   html += '<div style="padding: 0 24px;" id="leaderboardList">';
-  
+
   // 直接渲染排行榜数据
   var leaderboardData = [
     { rank: 1, name: '健身达人小李', avatar: '👨', points: 12580, workouts: 156, streak: 45 },
@@ -3204,7 +3329,7 @@ function showLeaderboard() {
     { rank: 9, name: 'HIIT战士', avatar: '👨', points: 7420, workouts: 92, streak: 30 },
     { rank: 10, name: '瑜伽小白', avatar: '👩', points: 6980, workouts: 85, streak: 18 }
   ];
-  
+
   leaderboardData.forEach(function(user) {
     var isMe = user.isMe ? 'style="background: rgba(0,212,255,0.1); border-color: var(--primary);"' : '';
     var rankIcon = user.rank <= 3 ? ['🥇','🥈','🥉'][user.rank-1] : user.rank;
@@ -3216,11 +3341,11 @@ function showLeaderboard() {
     html += '<div class="workout-meta"><span>💎 ' + user.points + '积分</span><span>💪 ' + user.workouts + '次训练</span><span>🔥 ' + user.streak + '天连续</span></div>';
     html += '</div></div>';
   });
-  
+
   html += '</div>';
   html += '<button class="btn-secondary" onclick="showPage(\'homePage\')" style="margin: 40px 24px;">← 返回首页</button>';
   html += '</div></div>';
-  
+
   document.body.insertAdjacentHTML('beforeend', html);
   showPage('leaderboardPage');
 }
@@ -3244,14 +3369,14 @@ function showCommunity() {
   // 移除旧页面（如果存在）
   var oldPage = document.getElementById('communityPage');
   if (oldPage) oldPage.remove();
-  
+
   var html = '<div class="page" id="communityPage"><div class="workout-page">';
   html += '<div class="page-header"><div class="page-title">👥 社区</div><div class="page-subtitle">分享你的运动时刻</div></div>';
-  
+
   html += '<div class="category-tabs"><div class="tab active">推荐</div><div class="tab">关注</div><div class="tab">热门</div><div class="tab">附近</div></div>';
-  
+
   html += '<div style="padding: 0 24px;" id="postList">';
-  
+
   // 社区帖子数据
   var communityPosts = [
     { id: 1, user: '健身达人小李', avatar: '👨', time: '2小时前', content: '今天完成了30天腹肌挑战！感觉棒极了！💪🔥', image: '💪', likes: 128, comments: 23, liked: false },
@@ -3260,7 +3385,7 @@ function showCommunity() {
     { id: 4, user: '力量举铁', avatar: '👨', time: '昨天', content: '深蹲突破100kg，继续加油！🏋️💯', image: '🏋️', likes: 189, comments: 34, liked: false },
     { id: 5, user: '早起鸟', avatar: '👩', time: '昨天', content: '坚持早起的第30天，感觉整个人都精神了 🌅✨', image: '🌅', likes: 345, comments: 56, liked: true }
   ];
-  
+
   communityPosts.forEach(function(post) {
     var likeClass = post.liked ? 'style="color: #FF2D92;"' : '';
     html += '<div style="background: var(--bg-card); border: 1px solid var(--border); border-radius: 16px; padding: 16px; margin-bottom: 16px;">';
@@ -3276,11 +3401,11 @@ function showCommunity() {
     html += '<span>↗️ 分享</span>';
     html += '</div></div>';
   });
-  
+
   html += '</div>';
   html += '<button class="btn-secondary" onclick="showPage(\'homePage\')" style="margin: 40px 24px;">← 返回首页</button>';
   html += '</div></div>';
-  
+
   document.body.insertAdjacentHTML('beforeend', html);
   showPage('communityPage');
 }
@@ -3306,12 +3431,12 @@ function showCoursePage() {
   // 创建课程页面
   var existing = document.getElementById('coursePage');
   if (existing) existing.remove();
-  
+
   var html = '<div class="page" id="coursePage"><div class="workout-page">';
   html += '<div class="page-header"><div class="page-title">📚 健康课程</div><div class="page-subtitle">系统学习健康知识</div></div>';
-  
+
   html += '<div style="padding: 0 24px;">';
-  
+
   // 课程分类
   var categories = [
     { name: '减脂课程', icon: '🔥', desc: '科学减脂，健康瘦身', count: 12 },
@@ -3320,7 +3445,7 @@ function showCoursePage() {
     { name: '饮食课程', icon: '🥗', desc: '营养搭配，健康饮食', count: 6 },
     { name: '康复课程', icon: '🏥', desc: '运动康复，预防损伤', count: 5 }
   ];
-  
+
   categories.forEach(function(cat) {
     html += '<div style="background: var(--bg-card); border: 1px solid var(--border); border-radius: 20px; padding: 24px; margin-bottom: 16px; cursor: pointer;" onclick="showToast(\'课程详情开发中\')">';
     html += '<div style="display: flex; align-items: center; gap: 16px;">';
@@ -3333,11 +3458,11 @@ function showCoursePage() {
     html += '<div style="font-size: 24px; color: var(--text-secondary);">›</div>';
     html += '</div></div>';
   });
-  
+
   html += '</div>';
   html += '<button class="btn-secondary" onclick="showPage(\'homePage\')" style="margin: 40px 24px;">← 返回首页</button>';
   html += '</div></div>';
-  
+
   document.body.insertAdjacentHTML('beforeend', html);
   showPage('coursePage');
 }
@@ -3360,7 +3485,7 @@ var challenges = [
 function showChallenges() {
   var html = '<div class="page" id="challengePage"><div class="workout-page">';
   html += '<div class="page-header"><div class="page-title">⚔️ 挑战赛</div><div class="page-subtitle">参与挑战，突破自我</div></div>';
-  
+
   html += '<div style="padding: 0 24px;">';
   challenges.forEach(c => {
     var btnClass = c.joined ? 'btn-secondary' : 'btn-primary';
@@ -3380,10 +3505,10 @@ function showChallenges() {
     </div>`;
   });
   html += '</div>';
-  
+
   html += '<button class="btn-secondary" onclick="showPage(\'homePage\')" style="margin: 40px 24px;">← 返回首页</button>';
   html += '</div></div>';
-  
+
   document.body.insertAdjacentHTML('beforeend', html);
   showPage('challengePage');
 }
@@ -3478,13 +3603,13 @@ function showQuickActions() {
     existing.remove();
     return;
   }
-  
+
   var html = '<div id="quickActionsMenu" style="position: fixed; bottom: 170px; right: 20px; background: rgba(20,20,20,0.98); border: 1px solid rgba(255,255,255,0.1); border-radius: 16px; padding: 12px; z-index: 10000; backdrop-filter: blur(20px);">';
   html += '<div onclick="showPage(\'workoutPage\'); closeQuickActions();" style="display: flex; align-items: center; gap: 12px; padding: 12px 16px; cursor: pointer; border-radius: 12px; margin-bottom: 4px;"><span style="font-size: 20px;">💪</span><span style="font-size: 14px;">开始训练</span></div>';
   html += '<div onclick="showPage(\'dietPage\'); closeQuickActions();" style="display: flex; align-items: center; gap: 12px; padding: 12px 16px; cursor: pointer; border-radius: 12px; margin-bottom: 4px;"><span style="font-size: 20px;">🍽️</span><span style="font-size: 14px;">记录饮食</span></div>';
   html += '<div onclick="showToast(\'AI教练即将开放\'); closeQuickActions();" style="display: flex; align-items: center; gap: 12px; padding: 12px 16px; cursor: pointer; border-radius: 12px;"><span style="font-size: 20px;">🤖</span><span style="font-size: 14px;">AI教练</span></div>';
   html += '</div>';
-  
+
   var div = document.createElement('div');
   div.innerHTML = html;
   document.body.appendChild(div);
@@ -3507,7 +3632,7 @@ var workoutHistory = [
 function showDetailedWorkoutRecords() {
   var html = '<div class="page" id="detailedRecordsPage"><div class="workout-page">';
   html += '<div class="page-header"><div class="page-title">📝 训练打卡</div><div class="page-subtitle">详细记录每一次进步</div></div>';
-  
+
   // 统计卡片
   html += '<div style="padding: 0 24px; margin-bottom: 24px;">';
   html += '<div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px;">';
@@ -3521,11 +3646,11 @@ function showDetailedWorkoutRecords() {
   html += '<div style="font-size: 24px; font-weight: 700; color: #FFD700;">' + workoutHistory.reduce((sum, r) => sum + r.calories, 0) + '</div>';
   html += '<div style="font-size: 12px; color: var(--text-secondary);">总消耗</div></div>';
   html += '</div></div>';
-  
+
   // 记录列表
   html += '<div style="padding: 0 24px;">';
   html += '<div style="font-weight: 600; margin-bottom: 16px;">📅 打卡记录</div>';
-  
+
   workoutHistory.forEach((record, idx) => {
     html += '<div style="background: var(--bg-card); border: 1px solid var(--border); border-radius: 16px; padding: 16px; margin-bottom: 12px;">';
     html += '<div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">';
@@ -3538,11 +3663,11 @@ function showDetailedWorkoutRecords() {
     html += '<span>😊 ' + record.feeling + '</span>';
     html += '</div></div>';
   });
-  
+
   html += '</div>';
   html += '<button class="btn-secondary" onclick="showPage(\'profilePage\')" style="margin: 40px 24px;">← 返回我的</button>';
   html += '</div></div>';
-  
+
   document.body.insertAdjacentHTML('beforeend', html);
   showPage('detailedRecordsPage');
 }
@@ -3551,14 +3676,14 @@ function showDetailedWorkoutRecords() {
 function showEnhancedReport() {
   var html = '<div class="page" id="enhancedReportPage"><div class="workout-page">';
   html += '<div class="page-header"><div class="page-title">📊 运动报告</div><div class="page-subtitle">全面的数据分析</div></div>';
-  
+
   // 周期切换
   html += '<div class="category-tabs">';
   html += '<div class="tab active" onclick="switchEnhancedReport(\'week\', this)">本周</div>';
   html += '<div class="tab" onclick="switchEnhancedReport(\'month\', this)">本月</div>';
   html += '<div class="tab" onclick="switchEnhancedReport(\'year\', this)">全年</div>';
   html += '</div>';
-  
+
   // 核心数据
   html += '<div style="padding: 0 24px; margin-bottom: 24px;">';
   html += '<div style="background: linear-gradient(135deg, rgba(0,212,255,0.1), rgba(255,45,146,0.1)); border: 1px solid rgba(0,212,255,0.2); border-radius: 20px; padding: 24px;">';
@@ -3568,7 +3693,7 @@ function showEnhancedReport() {
   html += '<div style="text-align: center;"><div style="font-size: 32px; font-weight: 800; background: linear-gradient(135deg, #FFD700, #FF8C00); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">900</div><div style="font-size: 12px; color: var(--text-secondary);">消耗千卡</div></div>';
   html += '<div style="text-align: center;"><div style="font-size: 32px; font-weight: 800; background: linear-gradient(135deg, #30D158, #00D4FF); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">3</div><div style="font-size: 12px; color: var(--text-secondary);">连续天数</div></div>';
   html += '</div></div></div>';
-  
+
   // 趋势图
   html += '<div style="padding: 0 24px; margin-bottom: 24px;">';
   html += '<div style="background: var(--bg-card); border: 1px solid var(--border); border-radius: 16px; padding: 20px;">';
@@ -3580,7 +3705,7 @@ function showEnhancedReport() {
     html += '<div style="flex: 1; text-align: center;"><div style="height: ' + (val * 2) + 'px; background: linear-gradient(to top, var(--primary), var(--secondary)); border-radius: 4px 4px 0 0; margin-bottom: 8px;"></div><div style="font-size: 11px; color: var(--text-secondary);">' + labels[i] + '</div></div>';
   });
   html += '</div></div></div>';
-  
+
   // 身体变化
   html += '<div style="padding: 0 24px; margin-bottom: 40px;">';
   html += '<div style="background: var(--bg-card); border: 1px solid var(--border); border-radius: 16px; padding: 20px;">';
@@ -3589,10 +3714,10 @@ function showEnhancedReport() {
   html += '<div style="padding: 16px; background: rgba(48,209,88,0.1); border-radius: 12px; text-align: center;"><div style="font-size: 20px; font-weight: 700; color: #30D158;">70.5→69.8kg</div><div style="font-size: 12px; color: var(--text-secondary);">体重 ↓0.7kg</div></div>';
   html += '<div style="padding: 16px; background: rgba(48,209,88,0.1); border-radius: 12px; text-align: center;"><div style="font-size: 20px; font-weight: 700; color: #30D158;">23.2→22.8</div><div style="font-size: 12px; color: var(--text-secondary);">BMI ↓0.4</div></div>';
   html += '</div></div></div>';
-  
+
   html += '<button class="btn-secondary" onclick="showPage(\'profilePage\')" style="margin: 0 24px 40px;">← 返回我的</button>';
   html += '</div></div>';
-  
+
   document.body.insertAdjacentHTML('beforeend', html);
   showPage('enhancedReportPage');
 }
@@ -3617,38 +3742,38 @@ var bodyMeasurements = {
 function showBodyMeasurements() {
   var html = '<div class="page" id="bodyMeasurementsPage"><div class="workout-page">';
   html += '<div class="page-header"><div class="page-title">📏 身体数据</div><div class="page-subtitle">记录每一次变化</div></div>';
-  
+
   html += '<div style="padding: 0 24px;">';
-  
+
   // 体重体脂卡片
   html += '<div style="background: var(--bg-card); border: 1px solid var(--border); border-radius: 20px; padding: 24px; margin-bottom: 20px;">';
   html += '<div style="font-weight: 600; margin-bottom: 20px;">⚖️ 基础数据</div>';
   html += '<div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 16px;">';
-  
+
   var weightChange = bodyMeasurements.weight.last - bodyMeasurements.weight.current;
   var fatChange = bodyMeasurements.bodyFat.last - bodyMeasurements.bodyFat.current;
-  
+
   html += '<div style="background: rgba(0,212,255,0.1); border-radius: 16px; padding: 20px; text-align: center;">';
   html += '<div style="font-size: 32px; font-weight: 800; color: var(--primary);">' + bodyMeasurements.weight.current + '</div>';
   html += '<div style="font-size: 12px; color: var(--text-secondary); margin-bottom: 4px;">体重(kg)</div>';
   html += '<div style="font-size: 12px; color: #30D158;">↓' + weightChange.toFixed(1) + 'kg</div>';
   html += '<div style="font-size: 11px; color: var(--text-secondary); margin-top: 4px;">目标: ' + bodyMeasurements.weight.target + 'kg</div>';
   html += '</div>';
-  
+
   html += '<div style="background: rgba(255,45,146,0.1); border-radius: 16px; padding: 20px; text-align: center;">';
   html += '<div style="font-size: 32px; font-weight: 800; color: var(--secondary);">' + bodyMeasurements.bodyFat.current + '%</div>';
   html += '<div style="font-size: 12px; color: var(--text-secondary); margin-bottom: 4px;">体脂率</div>';
   html += '<div style="font-size: 12px; color: #30D158;">↓' + fatChange.toFixed(1) + '%</div>';
   html += '<div style="font-size: 11px; color: var(--text-secondary); margin-top: 4px;">目标: ' + bodyMeasurements.bodyFat.target + '%</div>';
   html += '</div>';
-  
+
   html += '</div></div>';
-  
+
   // 围度数据
   html += '<div style="background: var(--bg-card); border: 1px solid var(--border); border-radius: 20px; padding: 24px; margin-bottom: 20px;">';
   html += '<div style="font-weight: 600; margin-bottom: 20px;">📐 围度数据(cm)</div>';
   html += '<div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px;">';
-  
+
   var parts = [
     { key: 'chest', name: '胸围' },
     { key: 'waist', name: '腰围' },
@@ -3656,28 +3781,28 @@ function showBodyMeasurements() {
     { key: 'arm', name: '臂围' },
     { key: 'thigh', name: '腿围' }
   ];
-  
+
   parts.forEach(part => {
     var data = bodyMeasurements[part.key];
     var change = data.current - data.last;
     var changeText = change > 0 ? '+' + change : change;
     var changeColor = part.key === 'waist' ? (change < 0 ? '#30D158' : '#FF6B6B') : (change > 0 ? '#30D158' : '#FF6B6B');
-    
+
     html += '<div style="background: rgba(255,255,255,0.05); border-radius: 12px; padding: 16px; text-align: center;">';
     html += '<div style="font-size: 20px; font-weight: 700;">' + data.current + '</div>';
     html += '<div style="font-size: 11px; color: var(--text-secondary); margin-bottom: 4px;">' + part.name + '</div>';
     html += '<div style="font-size: 11px; color: ' + changeColor + ';">' + (change > 0 ? '↑' : '↓') + Math.abs(change) + '</div>';
     html += '</div>';
   });
-  
+
   html += '</div></div>';
-  
+
   // 记录按钮
   html += '<button class="btn-primary" onclick="showToast(\'✅ 今日数据已记录\')">记录今日数据</button>';
   html += '<button class="btn-secondary" onclick="showPage(\'profilePage\')" style="margin-top: 12px;">← 返回我的</button>';
-  
+
   html += '</div></div></div>';
-  
+
   document.body.insertAdjacentHTML('beforeend', html);
   showPage('bodyMeasurementsPage');
 }
@@ -3686,20 +3811,20 @@ function showBodyMeasurements() {
 function showReminderSettings() {
   var html = '<div class="page" id="reminderSettingsPage"><div class="profile-page">';
   html += '<div class="page-header" style="padding-top: 60px;"><div class="page-title">🔔 提醒设置</div><div class="page-subtitle">定制你的训练提醒</div></div>';
-  
+
   html += '<div style="padding: 0 24px;">';
-  
+
   // 提醒开关
   html += '<div style="background: var(--bg-card); border: 1px solid var(--border); border-radius: 16px; padding: 20px; margin-bottom: 20px;">';
   html += '<div style="font-weight: 600; margin-bottom: 16px;">提醒开关</div>';
-  
+
   var reminders = [
     { icon: '💪', name: '每日训练提醒', time: '19:00', enabled: true },
     { icon: '💧', name: '喝水提醒', time: '每小时', enabled: true },
     { icon: '😴', name: '睡眠提醒', time: '22:30', enabled: false },
     { icon: '🥗', name: '饮食记录提醒', time: '12:00', enabled: true }
   ];
-  
+
   reminders.forEach((r, idx) => {
     var bg = r.enabled ? 'var(--primary)' : 'var(--border)';
     var pos = r.enabled ? 'right: 2px;' : 'left: 2px;';
@@ -3708,9 +3833,9 @@ function showReminderSettings() {
     html += '<div style="width: 48px; height: 28px; background: ' + bg + '; border-radius: 14px; position: relative; cursor: pointer;" onclick="toggleReminder(' + idx + ')"><div style="width: 24px; height: 24px; background: #fff; border-radius: 50%; position: absolute; top: 2px; ' + pos + ' transition: all 0.3s;"></div></div>';
     html += '</div>';
   });
-  
+
   html += '</div>';
-  
+
   // 提醒方式
   html += '<div style="background: var(--bg-card); border: 1px solid var(--border); border-radius: 16px; padding: 20px; margin-bottom: 40px;">';
   html += '<div style="font-weight: 600; margin-bottom: 16px;">提醒方式</div>';
@@ -3718,10 +3843,10 @@ function showReminderSettings() {
   html += '<div style="flex: 1; padding: 16px; background: rgba(0,212,255,0.1); border: 1px solid var(--primary); border-radius: 12px; text-align: center;"><div style="font-size: 24px; margin-bottom: 8px;">📱</div><div style="font-size: 13px;">推送通知</div></div>';
   html += '<div style="flex: 1; padding: 16px; background: rgba(255,255,255,0.05); border-radius: 12px; text-align: center;"><div style="font-size: 24px; margin-bottom: 8px;">📧</div><div style="font-size: 13px;">邮件提醒</div></div>';
   html += '</div></div>';
-  
+
   html += '<button class="btn-secondary" onclick="showPage(\'settingsPage\')">← 返回设置</button>';
   html += '</div></div></div>';
-  
+
   document.body.insertAdjacentHTML('beforeend', html);
   showPage('reminderSettingsPage');
 }
@@ -3751,20 +3876,20 @@ function checkAndResetDaily() {
   var now = new Date();
   var beijingTime = new Date(now.getTime() + (8 * 60 * 60 * 1000)); // 转换为北京时间
   var today = beijingTime.toISOString().split('T')[0];
-  
+
   // 检查是否需要重置
   if (userData.lastCheckDate !== today) {
     // 新的一天，重置所有每日数据
     userData.lastCheckDate = today;
     userData.todayData = { water: 0, steps: 0, calories: 0, sleep: 0, meals: [] };
-    
+
     // 重置任务状态
     if (userData.tasks) {
       userData.tasks.forEach(task => {
         task.completed = false;
       });
     }
-    
+
     // 保存重置后的数据
     saveData();
     console.log('✅ 已重置每日数据:', today);
@@ -3776,7 +3901,7 @@ function hasCheckedInToday() {
   var now = new Date();
   var beijingTime = new Date(now.getTime() + (8 * 60 * 60 * 1000));
   var today = beijingTime.toISOString().split('T')[0];
-  
+
   // 检查今日是否有训练记录
   if (userData.workoutHistory && userData.workoutHistory.length > 0) {
     var lastWorkout = userData.workoutHistory[userData.workoutHistory.length - 1];
@@ -3792,12 +3917,12 @@ function hasCheckedInToday() {
 function showProgressBar(title, percent) {
   var container = document.getElementById('globalProgress');
   if (!container) return;
-  
+
   container.style.display = 'block';
   container.innerHTML = `
     <div style="
-      position: fixed; top: 0; left: 0; right: 0; 
-      background: rgba(10,10,10,0.98); 
+      position: fixed; top: 0; left: 0; right: 0;
+      background: rgba(10,10,10,0.98);
       backdrop-filter: blur(20px);
       border-bottom: 1px solid rgba(255,255,255,0.1);
       padding: 16px 24px; z-index: 100000;
@@ -3808,7 +3933,7 @@ function showProgressBar(title, percent) {
       </div>
       <div style="height: 6px; background: rgba(255,255,255,0.1); border-radius: 3px; overflow: hidden;">
         <div style="
-          height: 100%; width: ${percent}%; 
+          height: 100%; width: ${percent}%;
           background: ${percent === 100 ? '#30D158' : 'linear-gradient(90deg, #00D4FF, #FF2D92)'};
           border-radius: 3px; transition: all 0.5s ease;
         "></div>
@@ -3863,7 +3988,7 @@ var trainingPlans = {
 function showPlanGenerator() {
   var html = '<div class="page" id="planGeneratorPage"><div class="workout-page">';
   html += '<div class="page-header"><div class="page-title">🎯 生成训练计划</div><div class="page-subtitle">选择适合你的专属计划</div></div>';
-  
+
   // 问卷调查
   html += '<div style="padding: 0 24px;">';
   html += '<div style="background: var(--bg-card); border: 1px solid var(--border); border-radius: 20px; padding: 20px; margin-bottom: 16px;">';
@@ -3873,7 +3998,7 @@ function showPlanGenerator() {
   html += '<div class="gender-option" onclick="selectPlanGoal(\'muscle\')" id="goalMuscle"><div class="icon">💪</div><div class="text">增肌</div></div>';
   html += '<div class="gender-option" onclick="selectPlanGoal(\'yoga\')" id="goalYoga"><div class="icon">🧘</div><div class="text">瑜伽</div></div>';
   html += '</div></div>';
-  
+
   html += '<div style="background: var(--bg-card); border: 1px solid var(--border); border-radius: 20px; padding: 20px; margin-bottom: 16px;">';
   html += '<div style="font-weight: 600; margin-bottom: 16px;">2. 你的运动基础？</div>';
   html += '<div class="gender-selector">';
@@ -3881,13 +4006,13 @@ function showPlanGenerator() {
   html += '<div class="gender-option" onclick="selectPlanLevel(\'intermediate\')" id="levelIntermediate"><div class="icon">⭐</div><div class="text">进阶</div></div>';
   html += '<div class="gender-option" onclick="selectPlanLevel(\'advanced\')" id="levelAdvanced"><div class="icon">🔥</div><div class="text">高级</div></div>';
   html += '</div></div>';
-  
+
   html += '<button class="btn-primary" onclick="generatePlan()" style="margin-top: 24px;">生成我的专属计划</button>';
   html += '</div>';
-  
+
   html += '<button class="btn-secondary" onclick="showPage(\'homePage\')" style="margin: 40px 24px;">← 返回首页</button>';
   html += '</div></div>';
-  
+
   document.body.insertAdjacentHTML('beforeend', html);
   showPage('planGeneratorPage');
 }
@@ -3916,13 +4041,13 @@ function selectPlanLevel(level) {
 function generatePlan() {
   if (!selectedPlanGoal) { showToast('请选择健身目标'); return; }
   if (!selectedPlanLevel) { showToast('请选择运动基础'); return; }
-  
+
   var planKey = selectedPlanLevel === 'beginner' ? 'beginner' : selectedPlanGoal;
   var plan = trainingPlans[planKey];
-  
+
   var html = '<div class="page" id="planResultPage"><div class="workout-page">';
   html += '<div class="page-header"><div class="page-title">🎉 你的专属计划</div><div class="page-subtitle">' + plan.name + '</div></div>';
-  
+
   html += '<div style="padding: 0 24px;">';
   html += '<div style="background: linear-gradient(135deg, rgba(0,212,255,0.1), rgba(255,45,146,0.1)); border: 1px solid rgba(0,212,255,0.3); border-radius: 20px; padding: 24px; margin-bottom: 20px;">';
   html += '<div style="text-align: center; margin-bottom: 20px;">';
@@ -3930,12 +4055,12 @@ function generatePlan() {
   html += '<div style="font-size: 24px; font-weight: 700; margin-bottom: 8px;">' + plan.name + '</div>';
   html += '<div style="color: var(--text-secondary);">' + plan.description + '</div>';
   html += '</div>';
-  
+
   html += '<div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 16px; margin-bottom: 20px;">';
   html += '<div style="text-align: center; padding: 16px; background: rgba(255,255,255,0.05); border-radius: 12px;"><div style="font-size: 20px; font-weight: 700; color: var(--primary);">' + plan.duration + '</div><div style="font-size: 12px; color: var(--text-secondary);">计划周期</div></div>';
   html += '<div style="text-align: center; padding: 16px; background: rgba(255,255,255,0.05); border-radius: 12px;"><div style="font-size: 20px; font-weight: 700; color: var(--secondary);">' + plan.frequency + '</div><div style="font-size: 12px; color: var(--text-secondary);">训练频率</div></div>';
   html += '</div>';
-  
+
   html += '<div style="font-weight: 600; margin-bottom: 12px;">📋 训练课程</div>';
   html += '<div style="display: flex; flex-direction: column; gap: 8px;">';
   plan.workouts.forEach((w, i) => {
@@ -3943,13 +4068,13 @@ function generatePlan() {
   });
   html += '</div>';
   html += '</div>';
-  
+
   html += '<button class="btn-primary" onclick="startPlan()">开始执行计划</button>';
   html += '<button class="btn-secondary" onclick="showPlanGenerator()" style="margin-top: 12px;">重新生成</button>';
   html += '</div>';
-  
+
   html += '</div></div>';
-  
+
   document.body.insertAdjacentHTML('beforeend', html);
   showPage('planResultPage');
   showToast('🎉 专属计划已生成！');
@@ -3984,7 +4109,7 @@ function validateInput(value, type) {
   if (value === null || value === undefined || value === '') {
     return { valid: false, msg: '输入不能为空' };
   }
-  
+
   if (type === 'number') {
     var num = parseFloat(value);
     if (isNaN(num) || num <= 0) {
@@ -3994,13 +4119,13 @@ function validateInput(value, type) {
       return { valid: false, msg: '数值过大，请检查' };
     }
   }
-  
+
   if (type === 'phone') {
     if (!/^1[3-9]\d{9}$/.test(value)) {
       return { valid: false, msg: '手机号格式不正确' };
     }
   }
-  
+
   return { valid: true, msg: '' };
 }
 
@@ -4123,7 +4248,7 @@ var healthAdvice = {
 function analyzeEmotion(text) {
   text = text.toLowerCase();
   var scores = {};
-  
+
   for (var emotion in emotionKeywords) {
     scores[emotion] = 0;
     var keywords = emotionKeywords[emotion];
@@ -4133,7 +4258,7 @@ function analyzeEmotion(text) {
       }
     }
   }
-  
+
   // 标点符号分析
   if (text.indexOf('!') !== -1 || text.indexOf('！') !== -1) {
     scores.happy += 0.5;
@@ -4144,7 +4269,7 @@ function analyzeEmotion(text) {
   if (text.indexOf('...') !== -1 || text.indexOf('。。。') !== -1) {
     scores.sad += 0.3;
   }
-  
+
   // 找到最高分
   var maxEmotion = 'neutral';
   var maxScore = 0;
@@ -4154,7 +4279,7 @@ function analyzeEmotion(text) {
       maxEmotion = emotion;
     }
   }
-  
+
   return maxEmotion;
 }
 
@@ -4163,7 +4288,7 @@ function generateResponse(userMessage) {
   var emotion = analyzeEmotion(userMessage);
   var responses = emotionResponses[emotion];
   var response = responses[Math.floor(Math.random() * responses.length)];
-  
+
   // 个性化建议
   if (userMessage.indexOf('运动') !== -1 || userMessage.indexOf('步数') !== -1) {
     var steps = userData.todayData.steps || 0;
@@ -4182,7 +4307,7 @@ function generateResponse(userMessage) {
     var water = userData.todayData.water || 0;
     response += "\n\n" + healthAdvice.water[0].replace('{water}', water);
   }
-  
+
   return { text: response, emotion: emotion };
 }
 
@@ -4212,13 +4337,13 @@ function updateEmotionIndicator(emotion) {
 function addMessage(text, isUser) {
   var container = document.getElementById('chatContainer');
   if (!container) return;
-  
+
   var messageDiv = document.createElement('div');
   messageDiv.className = 'chat-message ' + (isUser ? 'user-message' : 'bot-message');
-  
+
   var avatar = isUser ? (currentUser ? (currentUser.gender === 'female' ? '👩' : '👨') : '👤') : '🦞';
   var time = new Date().toLocaleTimeString('zh-CN', { hour: '2-digit', minute: '2-digit' });
-  
+
   messageDiv.innerHTML = `
     <div class="message-avatar">${avatar}</div>
     <div class="message-content">
@@ -4226,7 +4351,7 @@ function addMessage(text, isUser) {
       <div class="message-time">${time}</div>
     </div>
   `;
-  
+
   container.appendChild(messageDiv);
   container.scrollTop = container.scrollHeight;
 }
@@ -4235,7 +4360,7 @@ function addMessage(text, isUser) {
 function addTypingIndicator() {
   var container = document.getElementById('chatContainer');
   if (!container) return null;
-  
+
   var indicatorDiv = document.createElement('div');
   indicatorDiv.className = 'chat-message bot-message typing-message';
   indicatorDiv.innerHTML = `
@@ -4246,7 +4371,7 @@ function addTypingIndicator() {
       </div>
     </div>
   `;
-  
+
   container.appendChild(indicatorDiv);
   container.scrollTop = container.scrollHeight;
   return indicatorDiv;
@@ -4264,17 +4389,17 @@ function removeTypingIndicator() {
 function sendChatMessage() {
   var input = document.getElementById('chatInput');
   if (!input) return;
-  
+
   var message = input.value.trim();
   if (!message) return;
-  
+
   // 添加用户消息
   addMessage(message, true);
   input.value = '';
-  
+
   // 显示打字指示器
   var typingIndicator = addTypingIndicator();
-  
+
   // 调用AI API
   callAIAPI(message, function(response) {
     removeTypingIndicator();
@@ -4291,7 +4416,7 @@ function sendChatMessage() {
 function callAIAPI(message, callback) {
   // 检查是否有后端配置
   var apiUrl = window.AMBROSE_CONFIG?.apiUrl;
-  
+
   if (!apiUrl || apiUrl.includes('localhost')) {
     // 无后端，使用本地模拟
     setTimeout(function() {
@@ -4300,7 +4425,7 @@ function callAIAPI(message, callback) {
     }, 1000 + Math.random() * 1000);
     return;
   }
-  
+
   // 有后端，调用API
   fetch(apiUrl + '/chat', {
     method: 'POST',
@@ -4371,7 +4496,7 @@ async function requestNotificationPermission() {
     showToast('❌ 浏览器不支持通知');
     return false;
   }
-  
+
   const permission = await Notification.requestPermission();
   if (permission === 'granted') {
     showToast('✅ 通知权限已开启');
@@ -4385,17 +4510,17 @@ async function subscribeToPushNotifications() {
   try {
     const hasPermission = await requestNotificationPermission();
     if (!hasPermission) return;
-    
+
     const registration = await navigator.serviceWorker.ready;
     const subscription = await registration.pushManager.subscribe({
       userVisibleOnly: true,
       applicationServerKey: urlBase64ToUint8Array(VAPID_PUBLIC_KEY)
     });
-    
+
     // 保存到本地存储（实际应发送到服务器）
     localStorage.setItem('pushSubscription', JSON.stringify(subscription));
     showToast('✅ 推送订阅成功');
-    
+
   } catch (error) {
     console.error('Push subscription failed:', error);
     showToast('❌ 订阅失败');
@@ -4438,13 +4563,13 @@ window.onload = function() {
         console.log('[App] SW registration failed:', error);
       });
   }
-  
+
   // 显示骨架屏
   showSkeletonLoader();
-  
+
   setTimeout(function() {
     hideSkeletonLoader();
-    
+
     var saved = localStorage.getItem('ambroseUser');
     if (saved) {
       currentUser = JSON.parse(saved);
@@ -4452,6 +4577,7 @@ window.onload = function() {
       showPage('homePage');
       if (typeof updateHomePage === 'function') updateHomePage();
       if (typeof updateProfilePage === 'function') updateProfilePage();
+      if (typeof updateStreakDisplay === 'function') updateStreakDisplay();
       // 检查是否显示新手引导
       setTimeout(checkOnboarding, 1000);
     } else {
