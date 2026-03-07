@@ -9,8 +9,70 @@
 <link rel="apple-touch-icon" href="/icon-192.png">
 <title>AMBROSE - AI健康教练</title>
 <script>
-// 核心函数预定义（确保按钮点击可用）
-window.switchMode = function(mode) {
+// ==========================================
+// AMBROSE 防御性编程核心基础设施 v1.0
+// ==========================================
+
+// 1. 全局命名空间管理器
+window.__AMBROSE__ = window.__AMBROSE__ || {
+  version: '1.0',
+  definedFunctions: new Set(),
+  errors: [],
+  logs: []
+};
+
+// 2. 函数只定义一次机制 (防止重复定义)
+window.defineOnce = function(name, fn, context) {
+  if (window.__AMBROSE__.definedFunctions.has(name)) {
+    console.warn('[AMBROSE] 函数 "' + name + '" 已定义，跳过重复定义');
+    return false;
+  }
+  window.__AMBROSE__.definedFunctions.add(name);
+  (context || window)[name] = fn;
+  console.log('[AMBROSE] 函数 "' + name + '" 已注册');
+  return true;
+};
+
+// 3. 安全执行包装器 (错误边界)
+window.safe = function(fn, errorHandler) {
+  return function() {
+    try {
+      return fn.apply(this, arguments);
+    } catch (e) {
+      console.error('[AMBROSE Error]', fn.name || 'anonymous', e);
+      window.__AMBROSE__.errors.push({
+        time: new Date().toISOString(),
+        func: fn.name,
+        error: e.message,
+        stack: e.stack
+      });
+      if (errorHandler) errorHandler(e);
+      if (window.showToast) window.showToast('操作失败，请重试');
+      return null;
+    }
+  };
+};
+
+// 4. 全局冲突检测
+window.checkGlobalConflicts = function() {
+  var conflicts = [];
+  var reserved = ['showPage', 'switchMode', 'loginBoss', 'sendVerifyCode', 'showToast'];
+  reserved.forEach(function(name) {
+    if (window[name] && !window.__AMBROSE__.definedFunctions.has(name)) {
+      conflicts.push(name);
+    }
+  });
+  if (conflicts.length > 0) {
+    console.warn('[AMBROSE] 检测到潜在冲突:', conflicts);
+  }
+  return conflicts;
+};
+
+// ==========================================
+// 核心函数预定义（使用防御性机制）
+// ==========================================
+
+defineOnce('switchMode', function(mode) {
   try {
     document.querySelectorAll('.mode-btn').forEach(function(b) { b.classList.remove('active'); });
     document.querySelectorAll('.login-form').forEach(function(f) { f.classList.remove('active'); });
@@ -22,10 +84,9 @@ window.switchMode = function(mode) {
       document.getElementById('userForm').classList.add('active');
     }
   } catch(e) { console.error(e); }
-};
+});
 
-// 登录注册相关函数预定义
-window.loginBoss = window.loginBoss || function() {
+defineOnce('loginBoss', function() {
   try {
     var code = document.getElementById('bossCode').value;
     if (code !== '0812') {
@@ -36,9 +97,9 @@ window.loginBoss = window.loginBoss || function() {
     if (window.saveUserAndGoHome) saveUserAndGoHome();
     if (window.showToast) showToast('👑 欢迎BOSS');
   } catch(e) { console.error(e); }
-};
+});
 
-window.sendVerifyCode = window.sendVerifyCode || function() {
+defineOnce('sendVerifyCode', function() {
   try {
     var phone = document.getElementById('phoneInput').value;
     if (phone.length !== 11) {
@@ -614,7 +675,7 @@ function initCyberGrid() {
 }
 
 // 页面切换动画增强
-window.showPage = function(pageId) {
+defineOnce('showPage', function(pageId) {
   try {
     // 隐藏所有页面
     document.querySelectorAll('.page').forEach(function(p) { 
@@ -657,7 +718,7 @@ window.showPage = function(pageId) {
   } catch(e) { 
     console.error('[showPage] Error:', e); 
   }
-};
+});
 
 // 按钮点击波纹效果
 document.addEventListener('click', function(e) {
@@ -5827,6 +5888,72 @@ if (typeof initCourseSystem !== 'function') {
   window.initCourseSystem = function() {
     console.log('课程系统未加载，使用备用模式');
   };
+}
+
+// ==========================================
+// AMBROSE 防御性编程 - 全局冲突检测 & 调试面板
+// ==========================================
+
+// 页面加载完成后检测冲突
+document.addEventListener('DOMContentLoaded', function() {
+  var conflicts = window.checkGlobalConflicts ? window.checkGlobalConflicts() : [];
+  if (conflicts.length > 0) {
+    console.error('[AMBROSE] ⚠️ 检测到 ' + conflicts.length + ' 个函数冲突:', conflicts);
+  } else {
+    console.log('[AMBROSE] ✅ 未检测到函数冲突');
+  }
+  
+  // 输出已定义函数列表
+  if (window.__AMBROSE__ && window.__AMBROSE__.definedFunctions) {
+    console.log('[AMBROSE] 已注册函数:', Array.from(window.__AMBROSE__.definedFunctions));
+  }
+});
+
+// 调试面板 (按 Ctrl+Shift+D 打开)
+document.addEventListener('keydown', function(e) {
+  if (e.ctrlKey && e.shiftKey && e.key === 'D') {
+    e.preventDefault();
+    toggleDebugPanel();
+  }
+});
+
+function toggleDebugPanel() {
+  var existing = document.getElementById('ambrose-debug-panel');
+  if (existing) {
+    existing.remove();
+    return;
+  }
+  
+  var panel = document.createElement('div');
+  panel.id = 'ambrose-debug-panel';
+  panel.style.cssText = 'position:fixed;top:60px;right:10px;width:320px;max-height:400px;background:rgba(10,10,20,0.95);border:1px solid #00f3ff;border-radius:12px;padding:16px;z-index:99999;color:#00f3ff;font-family:monospace;font-size:12px;overflow:auto;backdrop-filter:blur(10px);';
+  
+  var html = '<h3 style="margin:0 0 12px 0;color:#ff00ff;">🔧 AMBROSE Debug</h3>';
+  
+  // 已定义函数
+  if (window.__AMBROSE__ && window.__AMBROSE__.definedFunctions) {
+    html += '<div style="margin-bottom:12px;"><strong>已注册函数 (' + window.__AMBROSE__.definedFunctions.size + '):</strong><br/>';
+    html += Array.from(window.__AMBROSE__.definedFunctions).join(', ');
+    html += '</div>';
+  }
+  
+  // 错误记录
+  if (window.__AMBROSE__ && window.__AMBROSE__.errors.length > 0) {
+    html += '<div style="margin-bottom:12px;color:#ff4444;"><strong>错误记录 (' + window.__AMBROSE__.errors.length + '):</strong><br/>';
+    window.__AMBROSE__.errors.slice(-5).forEach(function(err) {
+      html += err.func + ': ' + err.error + '<br/>';
+    });
+    html += '</div>';
+  }
+  
+  // 操作按钮
+  html += '<div style="display:flex;gap:8px;">';
+  html += '<button onclick="window.checkGlobalConflicts()" style="background:#00f3ff;color:#000;border:none;padding:6px 12px;border-radius:6px;cursor:pointer;">检测冲突</button>';
+  html += '<button onclick="document.getElementById(\'ambrose-debug-panel\').remove()" style="background:#ff00ff;color:#fff;border:none;padding:6px 12px;border-radius:6px;cursor:pointer;">关闭</button>';
+  html += '</div>';
+  
+  panel.innerHTML = html;
+  document.body.appendChild(panel);
 }
 </script>
 
