@@ -2269,7 +2269,7 @@ function showPage(pageId) {
     if (pageId === 'weightPage' && typeof updateWeightPage === 'function') updateWeightPage();
     if (pageId === 'videoLibraryPage' && typeof renderVideoLibraryPage === 'function') renderVideoLibraryPage();
     if (pageId === 'smartPlanPage' && typeof renderSmartPlanPage === 'function') renderSmartPlanPage();
-    if (pageId === 'healthReportPage' && typeof renderHealthReportPage === 'function') renderHealthReportPage();
+    if (pageId === 'reportPage' && typeof renderReportPage === 'function') renderReportPage();
     if (pageId === 'communityPage' && typeof renderCommunityPage === 'function') renderCommunityPage();
   } catch (e) {
     console.error('页面切换失败:', e);
@@ -4879,6 +4879,47 @@ window.onload = function() {
 <button onclick="showPostCreator()" style="position: fixed; bottom: 100px; right: 24px; width: 56px; height: 56px; background: var(--primary); border: none; border-radius: 50%; color: #000; font-size: 24px; cursor: pointer; box-shadow: 0 4px 12px rgba(0,212,255,0.3); z-index: 100;">+</button>
 </div>
 
+<!-- ========== 数据报告页面 ========== -->
+<div class="page" id="reportPage">
+<div class="report-page">
+<div class="page-header">
+<button class="back-btn" onclick="showPage('homePage')">←</button>
+<h1>数据报告</h1>
+</div>
+<div id="reportContainer">
+<!-- 报告内容将在这里动态生成 -->
+</div>
+</div>
+</div>
+
+<!-- ========== 社区页面 ========== -->
+<div class="page" id="communityPage">
+<div class="community-page">
+<div class="page-header">
+<div>
+<h1 style="font-size: 24px; font-weight: 700;">社区</h1>
+<p style="color: var(--text-secondary); font-size: 14px;">分享运动，互相激励</p>
+</div>
+</div>
+<div id="communityContainer">
+<!-- 社区内容将在这里动态生成 -->
+</div>
+</div>
+</div>
+
+<!-- ========== 智能计划页面 ========== -->
+<div class="page" id="smartPlanPage">
+<div class="smart-plan-page">
+<div class="page-header">
+<button class="back-btn" onclick="showPage('workoutPage')">←</button>
+<h1>智能计划</h1>
+</div>
+<div id="smartPlanContainer">
+<!-- 计划内容将在这里动态生成 -->
+</div>
+</div>
+</div>
+
 <!-- ========== 视频库页面 ========== -->
 <div class="page" id="videoLibraryPage">
 <div class="page-header">
@@ -4925,6 +4966,10 @@ window.onload = function() {
 </div>
 </div>
 </div>
+
+<!-- AMBROSE Health - 报告和社区页面 -->
+<script src="js/report-visualization.js"></script>
+<script src="js/community-page.js"></script>
 
 <!-- AMBROSE Health - Bug修复 -->
 <script src="js/bug-fixes.js"></script>
