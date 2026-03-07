@@ -19,6 +19,19 @@ window.showPage = function(pageId) {
   } catch(e) { console.error(e); }
 };
 
+// 预定义 authHandleStart，防止点击时未定义
+window.authHandleStart = window.authHandleStart || function() {
+  showToast('正在加载，请稍候...');
+  // 等待 auth-system.js 加载完成后重试
+  setTimeout(function() {
+    if (typeof authManager !== 'undefined' && authManager.handleStart) {
+      authManager.handleStart();
+    } else {
+      showToast('加载中，请再次点击');
+    }
+  }, 500);
+};
+
 window.switchMode = function(mode) {
   try {
     document.querySelectorAll('.mode-btn').forEach(function(b) { b.classList.remove('active'); });
@@ -5130,7 +5143,6 @@ window.onload = function() {
 <link rel="stylesheet" href="css/course-system.css">
 <script src="data/courses-data.js"></script>
 <script src="js/course-system.js"></script>
-<script src="js/auth-system.js"></script>
 
 <!-- AMBROSE Health - 饮食功能修复 -->
 <script src="js/diet-fixes.js"></script>
