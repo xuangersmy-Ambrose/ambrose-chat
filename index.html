@@ -430,14 +430,71 @@ window.checkOnboarding = window.checkOnboarding || function() {
 window.sendChatMessage = window.sendChatMessage || function() {
   try {
     var input = document.getElementById('chatInput');
-    if (input && input.value.trim()) {
-      showToast('💬 消息已发送');
-      input.value = '';
-    }
+    if (!input) return;
+    var message = input.value.trim();
+    if (!message) return;
+    
+    // 添加用户消息
+    if (window.addMessage) addMessage(message, true);
+    input.value = '';
+    
+    // 显示打字指示器
+    var typingIndicator = window.addTypingIndicator ? addTypingIndicator() : null;
+    
+    // 调用AI
+    setTimeout(function() {
+      if (window.removeTypingIndicator) removeTypingIndicator();
+      var reply = '我是AMBROSE，你的AI健康教练！后端部署后，我将连接AI大脑为你提供专业建议。';
+      if (window.addMessage) addMessage(reply, false);
+    }, 1000);
   } catch(e) {}
 };
 window.sendQuickMessage = window.sendQuickMessage || function(msg) {
-  showToast('💬 ' + msg);
+  try {
+    var input = document.getElementById('chatInput');
+    if (input) {
+      input.value = msg;
+      if (window.sendChatMessage) sendChatMessage();
+    }
+  } catch(e) {}
+};
+window.addMessage = window.addMessage || function(text, isUser) {
+  try {
+    var container = document.getElementById('chatContainer');
+    if (!container) return;
+    var div = document.createElement('div');
+    div.className = 'chat-message ' + (isUser ? 'user-message' : 'bot-message');
+    div.innerHTML = '<div class="message-text">' + text + '</div>';
+    container.appendChild(div);
+    container.scrollTop = container.scrollHeight;
+  } catch(e) {}
+};
+window.addTypingIndicator = window.addTypingIndicator || function() {
+  try {
+    var container = document.getElementById('chatContainer');
+    if (!container) return null;
+    var div = document.createElement('div');
+    div.className = 'chat-message bot-message typing-message';
+    div.innerHTML = '<div class="typing-indicator"><span></span><span></span><span></span></div>';
+    container.appendChild(div);
+    container.scrollTop = container.scrollHeight;
+    return div;
+  } catch(e) { return null; }
+};
+window.removeTypingIndicator = window.removeTypingIndicator || function() {
+  try {
+    var indicator = document.querySelector('.typing-message');
+    if (indicator) indicator.remove();
+  } catch(e) {}
+};
+window.callAIAPI = window.callAIAPI || function(message, callback) {
+  // 模拟AI响应
+  setTimeout(function() {
+    callback('收到你的消息：' + message + '\n\n⚠️ 后端部署后，这里将显示AI智能回复。');
+  }, 1000);
+};
+window.getChatContext = window.getChatContext || function() {
+  return [];
 };
 
 // 骨架屏预定义
@@ -4128,7 +4185,7 @@ function removeTypingIndicator() {
   }
 }
 
-// 发送消息
+// 发送消息（连接到AI）
 function sendChatMessage() {
   var input = document.getElementById('chatInput');
   if (!input) return;
@@ -4140,23 +4197,69 @@ function sendChatMessage() {
   addMessage(message, true);
   input.value = '';
   
-  // 分析情感并更新指示器
-  var emotion = analyzeEmotion(message);
-  updateEmotionIndicator(emotion);
-  
   // 显示打字指示器
   var typingIndicator = addTypingIndicator();
   
-  // 延迟回复（模拟思考）
-  setTimeout(function() {
+  // 调用AI API
+  callAIAPI(message, function(response) {
     removeTypingIndicator();
-    var response = generateResponse(message);
-    addMessage(response.text, false);
-    updateEmotionIndicator(response.emotion);
-    
-    // 保存对话历史
-    saveChatHistory(message, response.text);
-  }, 1000 + Math.random() * 1000);
+    if (response) {
+      addMessage(response, false);
+      saveChatHistory(message, response);
+    } else {
+      addMessage('抱歉，我现在无法回应，请稍后再试。', false);
+    }
+  });
+}
+
+// 调用AI API
+function callAIAPI(message, callback) {
+  // 检查是否有后端配置
+  var apiUrl = window.AMBROSE_CONFIG?.apiUrl;
+  
+  if (!apiUrl || apiUrl.includes('localhost')) {
+    // 无后端，使用本地模拟
+    setTimeout(function() {
+      var localResponse = generateResponse(message);
+      callback(localResponse.text);
+    }, 1000 + Math.random() * 1000);
+    return;
+  }
+  
+  // 有后端，调用API
+  fetch(apiUrl + '/chat', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      'Authorization': 'Bearer ' + (localStorage.getItem('ambrose_token') || '')
+    },
+    body: JSON.stringify({
+      message: message,
+      userId: currentUser?.name || 'guest',
+      context: getChatContext()
+    })
+  })
+  .then(function(res) { return res.json(); })
+  .then(function(data) {
+    callback(data.reply || data.message || '收到！');
+  })
+  .catch(function(err) {
+    console.error('AI API error:', err);
+    // 失败时使用本地响应
+    var localResponse = generateResponse(message);
+    callback(localResponse.text);
+  });
+}
+
+// 获取聊天上下文
+function getChatContext() {
+  if (!userData.chatHistory || userData.chatHistory.length === 0) {
+    return [];
+  }
+  // 返回最近5条对话作为上下文
+  return userData.chatHistory.slice(-5).map(function(h) {
+    return { user: h.user, bot: h.bot };
+  });
 }
 
 // 快捷消息
