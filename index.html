@@ -4735,19 +4735,13 @@ window.onload = function() {
   setTimeout(function() {
     hideSkeletonLoader();
 
-    var saved = localStorage.getItem('ambroseUser');
-    if (saved) {
-      currentUser = JSON.parse(saved);
-      loadData();
-      showPage('homePage');
-      if (typeof updateHomePage === 'function') updateHomePage();
-      if (typeof updateProfilePage === 'function') updateProfilePage();
-      if (typeof updateStreakDisplay === 'function') updateStreakDisplay();
-      // 检查是否显示新手引导
-      setTimeout(checkOnboarding, 1000);
+    // 新的启动流程：由 auth-system.js 处理
+    // 它会显示主页并根据登录状态显示/隐藏提示层
+    if (typeof authManager !== 'undefined') {
+      authManager.init();
     } else {
-      showPage('loginPage');
-      if (typeof switchMode === 'function') switchMode('boss');
+      // 备用方案：直接显示主页
+      showPage('homePage');
     }
   }, 500);
 };

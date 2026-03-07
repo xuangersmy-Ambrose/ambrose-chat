@@ -69,9 +69,10 @@ class AuthManager {
     this.hideStartPrompt();
   }
 
-  // 显示欢迎页
+  // 显示欢迎页（实际是主页+提示层）
   showWelcome() {
-    showPage('welcomePage');
+    showPage('homePage');
+    this.showStartPrompt();
   }
 
   // 显示登录页
