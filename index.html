@@ -2,99 +2,61 @@
 <html lang="zh-CN">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-  <meta name="apple-mobile-web-app-capable" content="yes">
-  <meta name="theme-color" content="#0a0a0f">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>AMBROSE - AI健康教练</title>
   <style>
     * { margin: 0; padding: 0; box-sizing: border-box; }
-    html { font-size: 16px; }
     body { 
-      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'PingFang SC', sans-serif;
-      background: #0a0a0f;
-      color: #fff;
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      background: #0a0a0f; 
+      color: #fff; 
       min-height: 100vh;
-      overflow-x: hidden;
     }
     
-    /* 背景 */
-    .bg-grid {
-      position: fixed;
-      top: 0; left: 0; right: 0; bottom: 0;
-      background-image: 
-        linear-gradient(rgba(0, 243, 255, 0.03) 1px, transparent 1px),
-        linear-gradient(90deg, rgba(0, 243, 255, 0.03) 1px, transparent 1px);
-      background-size: 50px 50px;
-      pointer-events: none;
-      z-index: 0;
-    }
-    
-    /* 页面 */
-    .page {
-      display: none;
-      position: relative;
-      z-index: 1;
+    /* 页面容器 */
+    .page { 
+      display: none; 
       min-height: 100vh;
       padding-bottom: 80px;
     }
     .page.active { display: block; }
     
     /* 登录页 */
-    .login-page {
+    .login-container {
       display: flex;
       flex-direction: column;
       align-items: center;
       justify-content: center;
       min-height: 100vh;
-      padding: 24px;
+      padding: 20px;
     }
-    .logo {
-      text-align: center;
-      margin-bottom: 40px;
-    }
+    .logo { text-align: center; margin-bottom: 40px; }
     .logo h1 {
-      font-size: 42px;
-      font-weight: 800;
+      font-size: 48px;
       background: linear-gradient(135deg, #00f3ff, #ff00ff);
       -webkit-background-clip: text;
       -webkit-text-fill-color: transparent;
       margin-bottom: 8px;
     }
-    .logo p {
-      color: rgba(255,255,255,0.6);
-      font-size: 14px;
-    }
-    .login-card {
+    .login-box {
       width: 100%;
-      max-width: 360px;
-      background: rgba(26, 26, 37, 0.9);
+      max-width: 340px;
+      background: rgba(255,255,255,0.05);
       border: 1px solid rgba(255,255,255,0.1);
       border-radius: 16px;
-      padding: 28px;
+      padding: 24px;
     }
-    .input-group {
-      margin-bottom: 16px;
-    }
-    .input-group label {
-      display: block;
-      margin-bottom: 8px;
-      color: rgba(255,255,255,0.7);
-      font-size: 14px;
-    }
-    .input {
+    input {
       width: 100%;
-      padding: 14px 16px;
+      padding: 16px;
+      margin-bottom: 16px;
       background: rgba(255,255,255,0.05);
       border: 1px solid rgba(255,255,255,0.1);
       border-radius: 12px;
       color: #fff;
       font-size: 16px;
     }
-    .input:focus {
-      outline: none;
-      border-color: #00f3ff;
-    }
-    .btn {
+    button {
       width: 100%;
       padding: 16px;
       background: linear-gradient(135deg, #00f3ff, #00c4cc);
@@ -104,130 +66,64 @@
       font-size: 16px;
       font-weight: 600;
       cursor: pointer;
-      margin-top: 8px;
     }
-    .btn:hover {
-      opacity: 0.9;
-    }
+    button:active { opacity: 0.8; }
     
     /* 主页 */
-    .home-header {
+    .header {
       padding: 24px;
-      background: linear-gradient(180deg, rgba(18,18,26,0.8), transparent);
+      background: linear-gradient(180deg, rgba(0,243,255,0.1), transparent);
     }
-    .greeting {
-      font-size: 14px;
-      color: rgba(255,255,255,0.6);
-      margin-bottom: 4px;
-    }
-    .username {
-      font-size: 28px;
-      font-weight: 700;
-      margin-bottom: 16px;
-    }
-    .time-display {
-      font-size: 40px;
+    .time {
+      font-size: 48px;
       font-weight: 700;
       color: #00f3ff;
-      text-shadow: 0 0 20px rgba(0,243,255,0.4);
+      text-shadow: 0 0 20px rgba(0,243,255,0.5);
     }
-    
-    /* AI教练 */
-    .coach-card {
-      background: linear-gradient(135deg, rgba(0,243,255,0.1), rgba(255,0,255,0.1));
-      border: 1px solid rgba(0,243,255,0.3);
+    .card {
+      background: rgba(255,255,255,0.05);
+      border: 1px solid rgba(255,255,255,0.1);
       border-radius: 16px;
-      padding: 24px;
-      margin: 0 24px 24px;
+      padding: 20px;
+      margin: 0 20px 16px;
     }
-    .coach-avatar {
-      width: 56px; height: 56px;
-      border-radius: 50%;
-      background: linear-gradient(135deg, #00f3ff, #ff00ff);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 28px;
-      margin-bottom: 16px;
-    }
-    .coach-message {
-      font-size: 16px;
-      line-height: 1.6;
-      margin-bottom: 16px;
-    }
-    .coach-actions {
-      display: flex;
-      gap: 12px;
-    }
-    .coach-actions .btn {
-      flex: 1;
-      margin-top: 0;
-    }
-    .btn-secondary {
-      background: transparent;
-      border: 1px solid #00f3ff;
-      color: #00f3ff;
-    }
-    
-    /* 数据卡片 */
-    .section {
-      padding: 0 24px 24px;
-    }
-    .section-title {
-      font-size: 18px;
-      font-weight: 600;
-      margin-bottom: 16px;
-    }
-    .stats-grid {
+    .stats {
       display: grid;
       grid-template-columns: repeat(2, 1fr);
       gap: 12px;
+      padding: 0 20px;
     }
-    .stat-card {
-      background: rgba(26, 26, 37, 0.9);
+    .stat {
+      background: rgba(255,255,255,0.05);
       border: 1px solid rgba(255,255,255,0.1);
       border-radius: 12px;
       padding: 16px;
+      text-align: center;
     }
-    .stat-value {
-      font-size: 24px;
-      font-weight: 700;
-      margin-bottom: 4px;
-    }
-    .stat-label {
-      font-size: 12px;
-      color: rgba(255,255,255,0.6);
-    }
+    .stat-value { font-size: 28px; font-weight: 700; color: #00f3ff; }
+    .stat-label { font-size: 12px; color: rgba(255,255,255,0.6); margin-top: 4px; }
     
     /* 底部导航 */
-    .bottom-nav {
+    .nav {
       position: fixed;
       bottom: 0;
       left: 0; right: 0;
-      background: rgba(10, 10, 15, 0.95);
-      backdrop-filter: blur(20px);
+      background: rgba(10,10,15,0.95);
       border-top: 1px solid rgba(255,255,255,0.1);
-      padding: 8px 0;
-      z-index: 100;
-    }
-    .nav-items {
       display: flex;
       justify-content: space-around;
+      padding: 8px 0;
     }
-    .nav-item {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      gap: 4px;
-      padding: 8px 16px;
+    .nav-btn {
+      flex: 1;
       background: transparent;
       border: none;
-      color: rgba(255,255,255,0.4);
+      color: rgba(255,255,255,0.5);
+      padding: 8px;
+      font-size: 12px;
       cursor: pointer;
     }
-    .nav-item.active { color: #00f3ff; }
-    .nav-icon { font-size: 24px; }
-    .nav-label { font-size: 11px; }
+    .nav-btn.active { color: #00f3ff; }
     
     /* Toast */
     .toast {
@@ -236,12 +132,9 @@
       left: 50%;
       transform: translateX(-50%);
       padding: 12px 24px;
-      background: rgba(26, 26, 37, 0.95);
-      border: 1px solid rgba(255,255,255,0.1);
+      background: rgba(0,0,0,0.9);
       border-radius: 8px;
-      color: #fff;
       font-size: 14px;
-      z-index: 1000;
       opacity: 0;
       transition: opacity 0.3s;
       pointer-events: none;
@@ -250,134 +143,108 @@
   </style>
 </head>
 <body>
-  <div class="bg-grid"></div>
-  
   <!-- 登录页 -->
-  <div class="page active" id="loginPage">
-    <div class="login-page">
+  <div id="page-login" class="page active">
+    <div class="login-container">
       <div class="logo">
         <h1>AMBROSE</h1>
-        <p>AI HEALTH COACH</p>
+        <p style="color: rgba(255,255,255,0.6);">AI HEALTH COACH</p>
       </div>
-      <div class="login-card">
-        <div class="input-group">
-          <label>识别码</label>
-          <input type="password" class="input" id="bossCode" placeholder="输入识别码">
-        </div>
-        <button class="btn" onclick="login()">进入系统</button>
+      <div class="login-box">
+        <input type="password" id="code" placeholder="输入识别码">
+        <button onclick="doLogin()">进入系统</button>
       </div>
     </div>
   </div>
-  
+
   <!-- 主页 -->
-  <div class="page" id="homePage">
-    <div class="home-header">
-      <div class="greeting" id="greeting">早安</div>
-      <div class="username" id="username">BOSS Shao</div>
-      <div class="time-display" id="time">00:00:00</div>
+  <div id="page-home" class="page">
+    <div class="header">
+      <p style="color: rgba(255,255,255,0.6); margin-bottom: 4px;">早安</p>
+      <h2 style="margin-bottom: 16px;">BOSS Shao</h2>
+      <div class="time" id="clock">00:00:00</div>
     </div>
     
-    <div class="coach-card">
-      <div class="coach-avatar">🤖</div>
-      <div class="coach-message" id="coachMsg">早安，BOSS！今天想做什么？我随时待命。</div>
-      <div class="coach-actions">
-        <button class="btn" onclick="showToast('开始训练')">开始训练</button>
-        <button class="btn btn-secondary" onclick="showToast('记录饮食')">记录饮食</button>
+    <div class="card">
+      <div style="font-size: 32px; margin-bottom: 12px;">🤖</div>
+      <p style="margin-bottom: 16px;">早安，BOSS！今天想做什么？</p>
+      <button onclick="showMsg('开始训练')" style="margin-bottom: 8px;">开始训练</button>
+      <button onclick="showMsg('记录饮食')" style="background: transparent; border: 1px solid #00f3ff; color: #00f3ff;">记录饮食</button>
+    </div>
+    
+    <p style="padding: 0 20px 12px; font-weight: 600;">今日数据</p>
+    <div class="stats">
+      <div class="stat">
+        <div class="stat-value">8,432</div>
+        <div class="stat-label">步数</div>
       </div>
-    </div>
-    
-    <div class="section">
-      <div class="section-title">今日数据</div>
-      <div class="stats-grid">
-        <div class="stat-card">
-          <div class="stat-value">8,432</div>
-          <div class="stat-label">步数</div>
-        </div>
-        <div class="stat-card">
-          <div class="stat-value">368</div>
-          <div class="stat-label">千卡</div>
-        </div>
-        <div class="stat-card">
-          <div class="stat-value">7.5h</div>
-          <div class="stat-label">睡眠</div>
-        </div>
-        <div class="stat-card">
-          <div class="stat-value">1.2L</div>
-          <div class="stat-label">饮水</div>
-        </div>
+      <div class="stat">
+        <div class="stat-value">368</div>
+        <div class="stat-label">千卡</div>
+      </div>
+      <div class="stat">
+        <div class="stat-value">7.5h</div>
+        <div class="stat-label">睡眠</div>
+      </div>
+      <div class="stat">
+        <div class="stat-value">1.2L</div>
+        <div class="stat-label">饮水</div>
       </div>
     </div>
   </div>
-  
+
   <!-- 底部导航 -->
-  <nav class="bottom-nav" id="navBar" style="display: none;">
-    <div class="nav-items">
-      <button class="nav-item active" onclick="goHome()">
-        <span class="nav-icon">🏠</span>
-        <span class="nav-label">首页</span>
-      </button>
-      <button class="nav-item" onclick="showToast('训练')">
-        <span class="nav-icon">💪</span>
-        <span class="nav-label">训练</span>
-      </button>
-      <button class="nav-item" onclick="showToast('饮食')">
-        <span class="nav-icon">🥗</span>
-        <span class="nav-label">饮食</span>
-      </button>
-      <button class="nav-item" onclick="showToast('我的')">
-        <span class="nav-icon">👤</span>
-        <span class="nav-label">我的</span>
-      </button>
-    </div>
-  </nav>
-  
-  <div class="toast" id="toast"></div>
-  
+  <div id="navbar" class="nav" style="display: none;">
+    <button class="nav-btn active" onclick="goPage('home')">🏠<br>首页</button>
+    <button class="nav-btn" onclick="showMsg('训练')">💪<br>训练</button>
+    <button class="nav-btn" onclick="showMsg('饮食')">🥗<br>饮食</button>
+    <button class="nav-btn" onclick="showMsg('我的')">👤<br>我的</button>
+  </div>
+
+  <div id="toast" class="toast"></div>
+
   <script>
     // 登录
-    function login() {
-      var code = document.getElementById('bossCode').value;
+    function doLogin() {
+      var code = document.getElementById('code').value;
       if (code === '0812') {
-        showToast('👑 欢迎BOSS');
+        showMsg('👑 欢迎BOSS');
         setTimeout(function() {
-          document.getElementById('loginPage').classList.remove('active');
-          document.getElementById('homePage').classList.add('active');
-          document.getElementById('navBar').style.display = 'block';
+          document.getElementById('page-login').classList.remove('active');
+          document.getElementById('page-home').classList.add('active');
+          document.getElementById('navbar').style.display = 'flex';
           startClock();
         }, 500);
       } else {
-        showToast('识别码错误');
+        showMsg('识别码错误');
       }
     }
-    
+
     // 时钟
     function startClock() {
       function update() {
         var now = new Date();
-        document.getElementById('time').textContent = now.toLocaleTimeString('zh-CN', {hour12: false});
-        var hour = now.getHours();
-        var greeting = hour < 12 ? '早安' : hour < 18 ? '午安' : '晚安';
-        document.getElementById('greeting').textContent = greeting;
+        document.getElementById('clock').textContent = now.toLocaleTimeString('zh-CN', {hour12: false});
       }
       update();
       setInterval(update, 1000);
     }
-    
-    // 导航
-    function goHome() {
-      document.querySelectorAll('.page').forEach(function(p) { p.classList.remove('active'); });
-      document.getElementById('homePage').classList.add('active');
+
+    // 页面切换
+    function goPage(page) {
+      document.querySelectorAll('.nav-btn').forEach(function(b) { b.classList.remove('active'); });
+      event.target.classList.add('active');
     }
-    
-    // Toast
-    function showToast(msg) {
-      var toast = document.getElementById('toast');
-      toast.textContent = msg;
-      toast.classList.add('show');
-      setTimeout(function() { toast.classList.remove('show'); }, 3000);
+
+    // Toast提示
+    function showMsg(text) {
+      var t = document.getElementById('toast');
+      t.textContent = text;
+      t.classList.add('show');
+      setTimeout(function() { t.classList.remove('show'); }, 2000);
     }
-    
-    console.log('✅ AMBROSE 稳定版已加载');
+
+    console.log('✅ AMBROSE 已加载');
   </script>
 </body>
 </html>
