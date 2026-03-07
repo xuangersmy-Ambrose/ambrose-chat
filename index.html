@@ -2165,31 +2165,31 @@ body {
 <div class="quick-actions">
 <div class="section-title">⚡ 快捷功能</div>
 <div class="actions-grid">
-<div class="action-item" onclick="showPage('workoutPage')">
+<div class="action-item" data-action="workoutPage">
 <div class="action-icon workout">💪</div>
 <div class="action-text">开始训练</div>
 </div>
-<div class="action-item" onclick="showPage('dietPage')">
+<div class="action-item" data-action="dietPage">
 <div class="action-icon diet">🥗</div>
 <div class="action-text">记录饮食</div>
 </div>
-<div class="action-item" onclick="showPage('achievePage')">
+<div class="action-item" data-action="achievePage">
 <div class="action-icon achieve">🏆</div>
 <div class="action-text">成就徽章</div>
 </div>
-<div class="action-item" onclick="showLeaderboard()">
+<div class="action-item" data-action="leaderboard">
 <div class="action-icon" style="background: linear-gradient(135deg, #FFD700, #FF8C00);">📊</div>
 <div class="action-text">排行榜</div>
 </div>
-<div class="action-item" onclick="showCommunity()">
+<div class="action-item" data-action="community">
 <div class="action-icon" style="background: linear-gradient(135deg, #9B59B6, #3498DB);">👥</div>
 <div class="action-text">社区</div>
 </div>
-<div class="action-item" onclick="showReport()">
+<div class="action-item" data-action="report">
 <div class="action-icon" style="background: linear-gradient(135deg, #30D158, #00D4FF);">📈</div>
 <div class="action-text">数据报告</div>
 </div>
-<div class="action-item" onclick="showCoursePage()">
+<div class="action-item" data-action="coursePage">
 <div class="action-icon" style="background: linear-gradient(135deg, #FF2D92, #FF6B6B);">📚</div>
 <div class="action-text">健康课程</div>
 </div>
@@ -5953,6 +5953,8 @@ function toggleDebugPanel() {
   document.body.appendChild(panel);
 }
 </script>
+
+<script src="js/event-system.js"></script>
 
 </body>
 </html>
