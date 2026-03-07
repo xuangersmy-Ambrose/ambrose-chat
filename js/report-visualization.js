@@ -22,12 +22,9 @@ function renderReportPage() {
   
   // 时间切换标签
   html += '<div style="padding: 0 24px 16px; display: flex; gap: 8px;">';
-  html += '<button class="report-tab active" onclick="switchReportPeriod(\'week\', this)" data-period="week"
-          style="flex: 1; padding: 12px; background: var(--primary); color: #000; border: none; border-radius: 12px; font-weight: 600; cursor: pointer;">本周</button>';
-  html += '<button class="report-tab" onclick="switchReportPeriod(\'month\', this)" data-period="month"
-          style="flex: 1; padding: 12px; background: rgba(255,255,255,0.05); border: 1px solid var(--border); border-radius: 12px; color: #fff; cursor: pointer;">本月</button>';
-  html += '<button class="report-tab" onclick="switchReportPeriod(\'year\', this)" data-period="year"
-          style="flex: 1; padding: 12px; background: rgba(255,255,255,0.05); border: 1px solid var(--border); border-radius: 12px; color: #fff; cursor: pointer;">全年</button>';
+  html += '<button class="report-tab active" onclick="switchReportPeriod(\'week\', this)" data-period="week" style="flex: 1; padding: 12px; background: var(--primary); color: #000; border: none; border-radius: 12px; font-weight: 600; cursor: pointer;">本周</button>';
+  html += '<button class="report-tab" onclick="switchReportPeriod(\'month\', this)" data-period="month" style="flex: 1; padding: 12px; background: rgba(255,255,255,0.05); border: 1px solid var(--border); border-radius: 12px; color: #fff; cursor: pointer;">本月</button>';
+  html += '<button class="report-tab" onclick="switchReportPeriod(\'year\', this)" data-period="year" style="flex: 1; padding: 12px; background: rgba(255,255,255,0.05); border: 1px solid var(--border); border-radius: 12px; color: #fff; cursor: pointer;">全年</button>';
   html += '</div>';
   
   // 概览卡片
@@ -267,7 +264,7 @@ function renderAbilityRadarChart() {
     if (pos.left) html += 'left: ' + pos.left + '; ';
     if (pos.right) html += 'right: ' + pos.right + '; ';
     if (pos.transform) html += 'transform: ' + pos.transform + '; ';
-    html += '"'>' + ab.name + '</div>';
+    html += '">' + ab.name + '</div>';
   });
   
   html += '</div>';

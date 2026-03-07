@@ -23,9 +23,9 @@ function renderHealthReportPage() {
   // 报告类型切换
   html += '<div style="padding: 0 24px 24px;">';
   html += '<div style="display: flex; gap: 8px; background: rgba(255,255,255,0.05); border-radius: 12px; padding: 4px;">';
-  html += '<button onclick="switchReportType('weekly', this)" class="report-type-btn active" data-type="weekly" style="flex: 1; padding: 12px; background: var(--primary); border: none; border-radius: 8px; color: #000; font-size: 14px; font-weight: 600; cursor: pointer;">周报</button>';
-  html += '<button onclick="switchReportType('monthly', this)" class="report-type-btn" data-type="monthly" style="flex: 1; padding: 12px; background: transparent; border: none; border-radius: 8px; color: var(--text-secondary); font-size: 14px; cursor: pointer;">月报</button>';
-  html += '<button onclick="switchReportType('profile', this)" class="report-type-btn" data-type="profile" style="flex: 1; padding: 12px; background: transparent; border: none; border-radius: 8px; color: var(--text-secondary); font-size: 14px; cursor: pointer;">运动档案</button>';
+  html += '<button onclick="switchReportType(\'weekly\', this)" class="report-type-btn active" data-type="weekly" style="flex: 1; padding: 12px; background: var(--primary); border: none; border-radius: 8px; color: #000; font-size: 14px; font-weight: 600; cursor: pointer;">周报</button>';
+  html += '<button onclick="switchReportType(\'monthly\', this)" class="report-type-btn" data-type="monthly" style="flex: 1; padding: 12px; background: transparent; border: none; border-radius: 8px; color: var(--text-secondary); font-size: 14px; cursor: pointer;">月报</button>';
+  html += '<button onclick="switchReportType(\'profile\', this)" class="report-type-btn" data-type="profile" style="flex: 1; padding: 12px; background: transparent; border: none; border-radius: 8px; color: var(--text-secondary); font-size: 14px; cursor: pointer;">运动档案</button>';
   html += '</div>';
   html += '</div>';
   

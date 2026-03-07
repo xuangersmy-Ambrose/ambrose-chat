@@ -21,9 +21,7 @@ function renderCommunityPage() {
   html += '<div style="display: flex; gap: 12px;">';
   html += '<div style="width: 44px; height: 44px; background: linear-gradient(135deg, var(--primary), var(--secondary)); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 20px; flex-shrink: 0;">' + (currentUser ? (currentUser.gender === 'female' ? '👩' : '👨') : '👤') + '</div>';
   html += '<div style="flex: 1;">';
-  html += '<input type="text" id="postInput" placeholder="分享今天的运动成果..." 
-          style="width: 100%; padding: 12px 16px; background: rgba(255,255,255,0.05); border: 1px solid var(--border); border-radius: 24px; color: #fff; font-size: 14px; cursor: pointer;"
-          onclick="openPostModal()" readonly>';
+  html += '<input type="text" id="postInput" placeholder="分享今天的运动成果..." style="width: 100%; padding: 12px 16px; background: rgba(255,255,255,0.05); border: 1px solid var(--border); border-radius: 24px; color: #fff; font-size: 14px; cursor: pointer;" onclick="openPostModal()" readonly>';
   html += '</div>';
   html += '</div>';
   html += '<div style="display: flex; justify-content: space-around; margin-top: 12px; padding-top: 12px; border-top: 1px solid var(--border);">';
