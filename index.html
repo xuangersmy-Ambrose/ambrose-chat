@@ -625,43 +625,39 @@ function initCyberGrid() {
 // 页面切换动画增强
 window.showPage = function(pageId) {
   try {
-    // 添加退出动画
-    var currentPage = document.querySelector('.page.active');
-    if (currentPage) {
-      currentPage.style.animation = 'pageExit 0.3s ease forwards';
-      setTimeout(function() {
-        currentPage.classList.remove('active');
-        currentPage.style.animation = '';
-      }, 300);
+    // 隐藏所有页面
+    document.querySelectorAll('.page').forEach(function(p) { 
+      p.classList.remove('active'); 
+    });
+    
+    // 显示目标页面
+    var target = document.getElementById(pageId);
+    if (target) {
+      target.classList.add('active');
+      window.scrollTo(0, 0);
     }
     
-    // 显示新页面
-    setTimeout(function() {
-      document.querySelectorAll('.page').forEach(function(p) { 
-        p.classList.remove('active'); 
-      });
-      var target = document.getElementById(pageId);
-      if (target) {
-        target.classList.add('active');
-        target.style.animation = 'pageEnter 0.4s cubic-bezier(0.4, 0, 0.2, 1)';
-      }
-      window.scrollTo(0, 0);
-    }, currentPage ? 300 : 0);
+    // 更新导航状态
+    document.querySelectorAll('.nav-item').forEach(function(n) { 
+      n.classList.remove('active'); 
+    });
     
+    var navMap = {
+      'homePage': 'navHome',
+      'workoutPage': 'navWorkout',
+      'dietPage': 'navDiet',
+      'profilePage': 'navProfile'
+    };
+    
+    var navId = navMap[pageId];
+    if (navId) {
+      var navItem = document.getElementById(navId);
+      if (navItem) navItem.classList.add('active');
+    }
   } catch(e) { 
-    console.error(e); 
+    console.error('showPage error:', e); 
   }
 };
-
-// 添加页面退出动画样式
-var pageExitStyle = document.createElement('style');
-pageExitStyle.textContent = `
-  @keyframes pageExit {
-    from { opacity: 1; transform: translateX(0); }
-    to { opacity: 0; transform: translateX(-20px); }
-  }
-`;
-document.head.appendChild(pageExitStyle);
 
 // 按钮点击波纹效果
 document.addEventListener('click', function(e) {
