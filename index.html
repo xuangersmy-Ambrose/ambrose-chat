@@ -5880,6 +5880,20 @@ document.addEventListener('DOMContentLoaded', function() {
   if (window.__AMBROSE__ && window.__AMBROSE__.definedFunctions) {
     console.log('[AMBROSE] 已注册函数:', Array.from(window.__AMBROSE__.definedFunctions));
   }
+  
+  // 检查关键函数是否存在
+  var criticalFuncs = ['showPage', 'showLeaderboard', 'showCommunity', 'showReport', 'showCoursePage', 'switchMode'];
+  var missingFuncs = [];
+  criticalFuncs.forEach(function(fn) {
+    if (typeof window[fn] !== 'function') {
+      missingFuncs.push(fn);
+    }
+  });
+  if (missingFuncs.length > 0) {
+    console.error('[AMBROSE] ❌ 关键函数未定义:', missingFuncs);
+  } else {
+    console.log('[AMBROSE] ✅ 所有关键函数已定义');
+  }
 });
 
 // 调试面板 (按 Ctrl+Shift+D 打开)
@@ -5903,10 +5917,20 @@ function toggleDebugPanel() {
   
   var html = '<h3 style="margin:0 0 12px 0;color:#ff00ff;">🔧 AMBROSE Debug</h3>';
   
+  // 快捷功能函数检查
+  var quickFuncs = ['showPage', 'showLeaderboard', 'showCommunity', 'showReport', 'showCoursePage', 'switchMode', 'loginBoss'];
+  html += '<div style="margin-bottom:12px;"><strong>快捷功能状态:</strong><br/>';
+  quickFuncs.forEach(function(fn) {
+    var exists = typeof window[fn] === 'function';
+    html += fn + ': ' + (exists ? '✅' : '❌') + '<br/>';
+  });
+  html += '</div>';
+  
   // 已定义函数
   if (window.__AMBROSE__ && window.__AMBROSE__.definedFunctions) {
     html += '<div style="margin-bottom:12px;"><strong>已注册函数 (' + window.__AMBROSE__.definedFunctions.size + '):</strong><br/>';
-    html += Array.from(window.__AMBROSE__.definedFunctions).join(', ');
+    html += Array.from(window.__AMBROSE__.definedFunctions).slice(0, 10).join(', ');
+    if (window.__AMBROSE__.definedFunctions.size > 10) html += '...';
     html += '</div>';
   }
   
