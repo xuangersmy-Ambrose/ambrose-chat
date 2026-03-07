@@ -1125,8 +1125,8 @@ body {
 </div>
 </div>
 
-<!-- ========== 欢迎页 ========== -->
-<div class="page active" id="welcomePage">
+<!-- ========== 欢迎页（备用） ========== -->
+<div class="page" id="welcomePage">
 <div class="welcome-page">
 <div class="logo-container">
 <div class="logo-glow"></div>
@@ -1245,8 +1245,25 @@ body {
 </div>
 
 <!-- ========== 主页 ========== -->
-<div class="page" id="homePage">
+<div class="page active" id="homePage">
 <div class="home-page">
+
+<!-- 开始使用提示层（未登录时显示） -->
+<div id="startPrompt" style="display: none; position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(10,10,10,0.85); backdrop-filter: blur(8px); z-index: 99999; flex-direction: column; align-items: center; justify-content: center; padding: 24px; text-align: center;">
+<div style="font-size: 64px; margin-bottom: 24px;">🚀</div>
+<div style="font-size: 24px; font-weight: 700; margin-bottom: 12px;">欢迎使用 AMBROSE</div>
+<div style="font-size: 16px; color: var(--text-secondary); margin-bottom: 32px; line-height: 1.6;">
+      AI智能健康教练 <br>
+      帮你科学健身、合理饮食
+    </div>
+<button class="btn-primary" onclick="authHandleStart()" style="padding: 16px 48px; font-size: 18px;">
+      开始使用
+    </button>
+<div style="margin-top: 24px; font-size: 14px; color: var(--text-secondary);">
+      点击即可登录或注册
+    </div>
+</div>
+
 <div class="home-header">
 <div class="home-date" id="homeDate">--月--日 星期-</div>
 <div class="home-greeting" id="homeGreeting">你好</div>

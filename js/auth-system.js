@@ -18,20 +18,55 @@ class AuthManager {
   }
 
   init() {
-    // 始终先显示欢迎页，让用户点击"开始使用"后再进入
-    this.showWelcome();
+    // 直接显示主页
+    this.showHome();
+    
+    // 检查登录状态，如果未登录显示开始使用提示
+    const saved = localStorage.getItem('ambroseUser');
+    if (!saved) {
+      this.showStartPrompt();
+    } else {
+      this.currentUser = JSON.parse(saved);
+      this.updateUIForLoggedInUser();
+    }
   }
 
-  // 处理"开始使用"按钮点击
+  // 显示开始使用提示
+  showStartPrompt() {
+    // 显示主页上的开始使用按钮/遮罩
+    var promptEl = document.getElementById('startPrompt');
+    if (promptEl) {
+      promptEl.style.display = 'flex';
+    }
+  }
+
+  // 隐藏开始使用提示
+  hideStartPrompt() {
+    var promptEl = document.getElementById('startPrompt');
+    if (promptEl) {
+      promptEl.style.display = 'none';
+    }
+  }
+
+  // 处理"开始使用"点击
   handleStart() {
-    // 检查是否已登录
     const saved = localStorage.getItem('ambroseUser');
     if (saved) {
       this.currentUser = JSON.parse(saved);
-      this.showHome();
+      this.hideStartPrompt();
+      this.updateUIForLoggedInUser();
     } else {
       this.showLogin();
     }
+  }
+
+  // 更新UI为已登录状态
+  updateUIForLoggedInUser() {
+    // 更新用户信息显示
+    if (typeof updateHomePage === 'function') updateHomePage();
+    if (typeof updateProfilePage === 'function') updateProfilePage();
+    // 隐藏开始使用提示
+    this.hideStartPrompt();
   }
 
   // 显示欢迎页
