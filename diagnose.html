@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AMBROSE - 诊断模式</title>
+<style>
+body { background: #0a0a0a; color: #fff; font-family: sans-serif; padding: 20px; }
+.log { background: rgba(255,255,255,0.1); padding: 10px; margin: 5px 0; border-radius: 8px; }
+.error { background: rgba(255,0,0,0.3); }
+.success { background: rgba(0,255,0,0.2); }
+</style>
+</head>
+<body>
+<h1>🔍 AMBROSE 诊断工具</h1>
+<div id="logs"></div>
+
+<script>
+function log(msg, type) {
+  var div = document.createElement('div');
+  div.className = 'log ' + (type || '');
+  div.textContent = msg;
+  document.getElementById('logs').appendChild(div);
+}
+
+log('✅ HTML 加载成功', 'success');
+
+try {
+  // 测试基本JavaScript
+  var test = { a: 1, b: 2 };
+  log('✅ JavaScript 执行正常', 'success');
+} catch(e) {
+  log('❌ JavaScript 错误: ' + e.message, 'error');
+}
+
+// 测试 localStorage
+try {
+  localStorage.setItem('test', '1');
+  localStorage.removeItem('test');
+  log('✅ localStorage 可用', 'success');
+} catch(e) {
+  log('❌ localStorage 不可用: ' + e.message, 'error');
+}
+
+// 加载主要JS文件并检查错误
+var scripts = [
+  'js/p0-bug-fixes.js',
+  'js/bug-fixes.js',
+  'js/chat.js'
+];
+
+var loaded = 0;
+scripts.forEach(function(src) {
+  var s = document.createElement('script');
+  s.src = src;
+  s.onload = function() {
+    log('✅ 加载成功: ' + src, 'success');
+    loaded++;
+    if (loaded === scripts.length) {
+      log('🎉 所有脚本加载完成', 'success');
+    }
+  };
+  s.onerror = function() {
+    log('❌ 加载失败: ' + src, 'error');
+  };
+  document.head.appendChild(s);
+});
+</script>
+
+</body>
+</html>

@@ -4679,6 +4679,12 @@ window.onload = function() {
 <div class="food-list" id="foodList" style="padding: 0 24px 100px;">
 <!-- 食物列表将在这里动态生成 -->
 </div>
+<div style="padding: 16px 24px; text-align: center;">
+<button onclick="showAddCustomFoodModal()" style="background: rgba(0,212,255,0.1); border: 1px dashed var(--primary); color: var(--primary); padding: 12px 24px; border-radius: 12px; font-size: 14px; cursor: pointer; display: flex; align-items: center; gap: 8px; margin: 0 auto;">
+<span>+</span> 添加自定义食物
+</button>
+<p style="color: var(--text-secondary); font-size: 12px; margin-top: 8px;">找不到想记录的食物？自己添加吧</p>
+</div>
 </div>
 
 <!-- ========== 食物详情弹窗 ========== -->
@@ -5019,6 +5025,9 @@ window.onload = function() {
 <script src="data/courses-data.js"></script>
 <script src="js/course-system.js"></script>
 <script src="js/auth-system.js"></script>
+
+<!-- AMBROSE Health - 饮食功能修复 -->
+<script src="js/diet-fixes.js"></script>
 
 </body>
 </html>
