@@ -10,15 +10,6 @@
 <title>AMBROSE - AI健康教练</title>
 <script>
 // 核心函数预定义（确保按钮点击可用）
-window.showPage = function(pageId) {
-  try {
-    document.querySelectorAll('.page').forEach(function(p) { p.classList.remove('active'); });
-    var target = document.getElementById(pageId);
-    if (target) target.classList.add('active');
-    window.scrollTo(0, 0);
-  } catch(e) { console.error(e); }
-};
-
 window.switchMode = function(mode) {
   try {
     document.querySelectorAll('.mode-btn').forEach(function(b) { b.classList.remove('active'); });
@@ -637,6 +628,13 @@ window.showPage = function(pageId) {
       window.scrollTo(0, 0);
     }
     
+    // 更新底部导航显示
+    var navPages = ['homePage', 'workoutPage', 'dietPage', 'chatPage', 'profilePage', 'communityPage', 'reportPage', 'coursePage', 'achievePage'];
+    var bottomNav = document.getElementById('bottomNav') || document.querySelector('.bottom-nav');
+    if (bottomNav) {
+      bottomNav.style.display = navPages.includes(pageId) ? 'flex' : 'none';
+    }
+    
     // 更新导航状态
     document.querySelectorAll('.nav-item').forEach(function(n) { 
       n.classList.remove('active'); 
@@ -654,8 +652,10 @@ window.showPage = function(pageId) {
       var navItem = document.getElementById(navId);
       if (navItem) navItem.classList.add('active');
     }
+    
+    console.log('[showPage] Switched to:', pageId);
   } catch(e) { 
-    console.error('showPage error:', e); 
+    console.error('[showPage] Error:', e); 
   }
 };
 
@@ -2995,42 +2995,8 @@ var badgeData = [
   { id: 'balanced_diet', name: '均衡饮食', desc: '一周营养均衡', icon: '🥗', unlocked: false }
 ];
 
-// ==================== 页面切换（简化版） ====================
-function showPage(pageId) {
-  console.log('[DEBUG] showPage called with:', pageId);
-  try {
-    var pages = document.querySelectorAll('.page');
-    console.log('[DEBUG] Found pages:', pages.length);
-    pages.forEach(p => p.classList.remove('active'));
-
-    var targetPage = document.getElementById(pageId);
-    console.log('[DEBUG] Target page:', targetPage ? 'found' : 'NOT FOUND');
-
-    if (targetPage) {
-      targetPage.classList.add('active');
-      console.log('[DEBUG] Page activated:', pageId);
-    } else {
-      console.error('[DEBUG] Page not found:', pageId);
-      alert('页面加载失败，请刷新重试');
-    }
-    window.scrollTo(0, 0);
-
-    var navPages = ['homePage', 'workoutPage', 'dietPage', 'chatPage', 'profilePage', 'communityPage', 'reportPage', 'coursePage'];
-    var bottomNav = document.getElementById('bottomNav');
-    if (bottomNav) bottomNav.style.display = navPages.includes(pageId) ? 'flex' : 'none';
-
-    if (pageId === 'homePage' && typeof updateHomePage === 'function') updateHomePage();
-    if (pageId === 'profilePage' && typeof updateProfilePage === 'function') updateProfilePage();
-    if (pageId === 'achievePage' && typeof renderBadges === 'function') renderBadges();
-    if (pageId === 'weightPage' && typeof updateWeightPage === 'function') updateWeightPage();
-    if (pageId === 'videoLibraryPage' && typeof renderVideoLibraryPage === 'function') renderVideoLibraryPage();
-    if (pageId === 'smartPlanPage' && typeof renderSmartPlanPage === 'function') renderSmartPlanPage();
-    if (pageId === 'reportPage' && typeof renderReportPage === 'function') renderReportPage();
-    if (pageId === 'communityPage' && typeof renderCommunityPage === 'function') renderCommunityPage();
-  } catch (e) {
-    console.error('页面切换失败:', e);
-  }
-}
+// ==================== 核心页面切换函数（唯一版本） ====================
+// 注意：此函数在文档后面有完整实现
 
 function updateNav(activeId) {
   document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
