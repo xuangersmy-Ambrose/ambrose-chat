@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AMBROSE - 测试</title>
+<style>
+:root {
+  --primary: #00D4FF;
+  --secondary: #FF2D92;
+  --bg-dark: #0a0a0a;
+}
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body {
+  font-family: -apple-system, BlinkMacSystemFont, 'PingFang SC', sans-serif;
+  background: var(--bg-dark);
+  color: #fff;
+  min-height: 100vh;
+}
+.page {
+  display: none;
+  min-height: 100vh;
+  padding: 20px;
+}
+.page.active {
+  display: block;
+}
+.welcome-page {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 100vh;
+  text-align: center;
+}
+.logo {
+  width: 120px;
+  height: 120px;
+  background: linear-gradient(135deg, #00D4FF, #FF2D92);
+  border-radius: 24px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 60px;
+  font-weight: 800;
+  color: #000;
+  margin-bottom: 30px;
+}
+.brand-name {
+  font-size: 36px;
+  font-weight: 800;
+  color: var(--primary);
+  margin-bottom: 10px;
+}
+.brand-tagline {
+  font-size: 16px;
+  color: rgba(255,255,255,0.6);
+  margin-bottom: 60px;
+}
+.btn-primary {
+  width: 80%;
+  max-width: 300px;
+  padding: 18px;
+  background: var(--primary);
+  color: #000;
+  border: none;
+  border-radius: 16px;
+  font-size: 17px;
+  font-weight: 600;
+  cursor: pointer;
+}
+.btn-primary:active {
+  transform: scale(0.98);
+}
+.login-page {
+  padding: 60px 20px;
+}
+.login-title {
+  font-size: 28px;
+  font-weight: 700;
+  margin-bottom: 10px;
+}
+.input-field {
+  width: 100%;
+  padding: 16px;
+  background: rgba(255,255,255,0.05);
+  border: 1px solid rgba(255,255,255,0.1);
+  border-radius: 12px;
+  color: #fff;
+  font-size: 16px;
+  margin-bottom: 20px;
+}
+</style>
+</head>
+<body>
+
+<!-- 欢迎页 -->
+<div class="page active" id="welcomePage">
+  <div class="welcome-page">
+    <div class="logo">A</div>
+    <div class="brand-name">AMBROSE</div>
+    <div class="brand-tagline">AI智能健康教练</div>
+    <button class="btn-primary" onclick="goToLogin()">开始使用</button>
+  </div>
+</div>
+
+<!-- 登录页 -->
+<div class="page" id="loginPage">
+  <div class="login-page">
+    <div class="login-title">欢迎回来</div>
+    <input type="text" class="input-field" placeholder="请输入用户名">
+    <button class="btn-primary" onclick="goToHome()">进入系统</button>
+    <button class="btn-primary" onclick="goBack()" style="margin-top: 20px; background: transparent; border: 1px solid var(--primary); color: var(--primary);">返回</button>
+  </div>
+</div>
+
+<!-- 主页 -->
+<div class="page" id="homePage">
+  <div style="padding: 60px 20px; text-align: center;">
+    <div style="font-size: 24px; font-weight: 700; margin-bottom: 20px;">🏠 主页</div>
+    <div style="color: rgba(255,255,255,0.6); margin-bottom: 40px;">欢迎使用 AMBROSE Health</div>
+    <button class="btn-primary" onclick="goBack()">返回欢迎页</button>
+  </div>
+</div>
+
+<script>
+// 页面切换函数
+function showPage(pageId) {
+  console.log('Switching to page:', pageId);
+  document.querySelectorAll('.page').forEach(function(p) {
+    p.classList.remove('active');
+  });
+  var target = document.getElementById(pageId);
+  if (target) {
+    target.classList.add('active');
+    console.log('Page switched successfully');
+  } else {
+    console.error('Page not found:', pageId);
+    alert('页面切换失败');
+  }
+}
+
+function goToLogin() {
+  console.log('goToLogin called');
+  showPage('loginPage');
+}
+
+function goToHome() {
+  console.log('goToHome called');
+  showPage('homePage');
+}
+
+function goBack() {
+  console.log('goBack called');
+  showPage('welcomePage');
+}
+
+// 页面加载完成提示
+window.onload = function() {
+  console.log('App loaded successfully');
+};
+</script>
+
+</body>
+</html>
