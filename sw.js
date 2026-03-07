@@ -1,12 +1,13 @@
-// AMBROSE Health - Service Worker
+// AMBROSE Health - Service Worker v1.1
 // 版本号用于缓存控制
-const CACHE_VERSION = 'v1';
+const CACHE_VERSION = 'v1.1';
 const CACHE_NAME = `ambrose-${CACHE_VERSION}`;
 
 // 核心资源列表
 const STATIC_ASSETS = [
   '/',
   '/index.html',
+  '/analysis.html',
   '/favicon.ico'
 ];
 
@@ -15,33 +16,31 @@ const DYNAMIC_CACHE = `ambrose-dynamic-${CACHE_VERSION}`;
 
 // ==================== 安装阶段 ====================
 self.addEventListener('install', event => {
-  console.log('[SW] Installing...');
+  console.log('[SW v1.1] Installing...');
   
   event.waitUntil(
     caches.open(CACHE_NAME)
       .then(cache => {
         console.log('[SW] Caching static assets');
-        // 使用 addAll 缓存核心资源
         return cache.addAll(STATIC_ASSETS).catch(err => {
           console.warn('[SW] Some assets failed to cache:', err);
         });
       })
       .then(() => {
         console.log('[SW] Skip waiting');
-        return self.skipWaiting(); // 立即激活新版本
+        return self.skipWaiting();
       })
   );
 });
 
 // ==================== 激活阶段 ====================
 self.addEventListener('activate', event => {
-  console.log('[SW] Activating...');
+  console.log('[SW v1.1] Activating...');
   
   event.waitUntil(
     caches.keys().then(cacheNames => {
       return Promise.all(
         cacheNames.map(cacheName => {
-          // 删除旧版本缓存
           if (cacheName !== CACHE_NAME && cacheName !== DYNAMIC_CACHE) {
             console.log('[SW] Deleting old cache:', cacheName);
             return caches.delete(cacheName);
@@ -50,7 +49,7 @@ self.addEventListener('activate', event => {
       );
     }).then(() => {
       console.log('[SW] Claiming clients');
-      return self.clients.claim(); // 立即控制所有页面
+      return self.clients.claim();
     })
   );
 });
@@ -59,13 +58,9 @@ self.addEventListener('activate', event => {
 self.addEventListener('fetch', event => {
   const { request } = event;
   
-  // 跳过非 GET 请求
   if (request.method !== 'GET') return;
-  
-  // 跳过 Chrome 扩展请求
   if (request.url.startsWith('chrome-extension://')) return;
   
-  // 根据请求类型选择策略
   const url = new URL(request.url);
   
   // API 请求 - Network First
@@ -86,7 +81,6 @@ self.addEventListener('fetch', event => {
 
 // ==================== 缓存策略 ====================
 
-// 1. Cache First - 适用于静态资源
 async function cacheFirstStrategy(request) {
   const cached = await caches.match(request);
   if (cached) return cached;
@@ -102,7 +96,6 @@ async function cacheFirstStrategy(request) {
   }
 }
 
-// 2. Network First - 适用于 API 数据
 async function networkFirstStrategy(request) {
   try {
     const networkResponse = await fetch(request);
@@ -117,7 +110,6 @@ async function networkFirstStrategy(request) {
   }
 }
 
-// 3. Stale While Revalidate - 平衡速度和新鲜度
 async function staleWhileRevalidateStrategy(request) {
   const cached = await caches.match(request);
   
@@ -129,13 +121,9 @@ async function staleWhileRevalidateStrategy(request) {
     console.log('[SW] Network fetch failed:', err);
   });
   
-  // 优先返回缓存，后台更新
   return cached || fetchPromise;
 }
 
-// ==================== 辅助函数 ====================
-
-// 判断是否为静态资源
 function isStaticAsset(request) {
   const staticExtensions = [
     '.js', '.css', '.png', '.jpg', '.jpeg', '.gif', '.svg', '.ico',
@@ -152,46 +140,138 @@ self.addEventListener('sync', event => {
   }
 });
 
-// 同步健康数据
 async function syncHealthData() {
-  // 从 IndexedDB 获取待同步数据
-  // 发送到服务器
   console.log('[SW] Syncing health data...');
 }
 
-// ==================== 推送通知 ====================
+// ==================== 推送通知 v1.1 ====================
 self.addEventListener('push', event => {
-  const data = event.data?.json() || {};
+  console.log('[SW] Push received:', event);
   
+  let data = {};
+  try {
+    data = event.data?.json() || {};
+  } catch (e) {
+    data = { title: event.data?.text() || 'AMBROSE Health', body: '' };
+  }
+  
+  const title = data.title || 'AMBROSE Health';
   const options = {
     body: data.body || 'Time to check your health!',
     icon: '/icon-192.png',
     badge: '/badge-72.png',
     tag: data.tag || 'health-reminder',
-    requireInteraction: true,
-    actions: [
-      { action: 'open', title: 'Open App' },
-      { action: 'dismiss', title: 'Dismiss' }
-    ]
+    requireInteraction: data.requireInteraction !== false,
+    renotify: true,
+    silent: false,
+    vibrate: [100, 50, 100],
+    data: {
+      url: data.url || '/',
+      type: data.type || 'general',
+      ...data.payload
+    },
+    actions: getNotificationActions(data.type)
   };
   
   event.waitUntil(
-    self.registration.showNotification(
-      data.title || 'AMBROSE Health',
-      options
-    )
+    self.registration.showNotification(title, options)
   );
 });
 
+// 根据通知类型获取操作按钮
+function getNotificationActions(type) {
+  const actions = {
+    water: [
+      { action: 'record', title: '💧 记录饮水' },
+      { action: 'snooze', title: '⏰ 稍后提醒' }
+    ],
+    exercise: [
+      { action: 'start', title: '💪 开始运动' },
+      { action: 'snooze', title: '⏰ 稍后提醒' }
+    ],
+    sleep: [
+      { action: 'record', title: '😴 记录睡眠' },
+      { action: 'dismiss', title: '忽略' }
+    ],
+    report: [
+      { action: 'view', title: '📊 查看报告' },
+      { action: 'dismiss', title: '忽略' }
+    ]
+  };
+  
+  return actions[type] || [
+    { action: 'open', title: '打开应用' },
+    { action: 'dismiss', title: '忽略' }
+  ];
+}
+
 // 点击通知
 self.addEventListener('notificationclick', event => {
-  event.notification.close();
+  console.log('[SW] Notification click:', event);
   
-  if (event.action === 'open' || !event.action) {
-    event.waitUntil(
-      clients.openWindow('/')
-    );
+  const notification = event.notification;
+  const action = event.action;
+  const data = notification.data || {};
+  
+  notification.close();
+  
+  if (action === 'dismiss' || action === 'snooze') {
+    return;
+  }
+  
+  // 处理不同操作
+  let targetUrl = data.url || '/';
+  
+  if (action === 'record' && data.type === 'water') {
+    targetUrl = '/?action=addWater';
+  } else if (action === 'start' && data.type === 'exercise') {
+    targetUrl = '/workout.html';
+  } else if (action === 'view' && data.type === 'report') {
+    targetUrl = '/analysis.html?tab=report';
+  }
+  
+  event.waitUntil(
+    clients.matchAll({ type: 'window', includeUncontrolled: true })
+      .then(windowClients => {
+        // 查找已打开的窗口
+        for (let client of windowClients) {
+          if (client.url.includes(self.location.origin) && 'focus' in client) {
+            return client.focus().then(client => {
+              // 发送消息到客户端
+              client.postMessage({
+                type: 'notification-click',
+                action: action,
+                data: data
+              });
+              return client.navigate(targetUrl);
+            });
+          }
+        }
+        // 没有打开的窗口，新建一个
+        if (clients.openWindow) {
+          return clients.openWindow(targetUrl);
+        }
+      })
+  );
+});
+
+// 关闭通知
+self.addEventListener('notificationclose', event => {
+  console.log('[SW] Notification closed:', event);
+});
+
+// ==================== 消息处理 ====================
+self.addEventListener('message', event => {
+  console.log('[SW] Message received:', event.data);
+  
+  if (event.data === 'skipWaiting') {
+    self.skipWaiting();
+  }
+  
+  if (event.data.type === 'schedule-reminder') {
+    // 处理客户端发送的提醒调度请求
+    console.log('[SW] Scheduling reminder:', event.data.reminder);
   }
 });
 
-console.log('[SW] Service Worker loaded');
+console.log('[SW v1.1] Service Worker loaded');

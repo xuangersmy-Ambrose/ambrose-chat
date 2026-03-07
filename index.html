@@ -2691,18 +2691,9 @@ function likePost(id) {
 
 // ==================== 数据统计周报月报 ====================
 function showReport() {
-  // 移除旧页面（如果存在）
-  var oldPage = document.getElementById('reportPage');
-  if (oldPage) oldPage.remove();
-  
-  var html = '<div class="page" id="reportPage"><div class="workout-page">';
-  html += '<div class="page-header"><div class="page-title">📊 运动报告</div><div class="page-subtitle">查看你的运动数据分析</div></div>';
-  
-  html += '<div class="category-tabs"><div class="tab active" onclick="switchReport(\'week\', this)">本周</div><div class="tab" onclick="switchReport(\'month\', this)">本月</div><div class="tab" onclick="switchReport(\'year\', this)">全年</div></div>';
-  
-  // 数据概览
-  html += '<div class="points-display" style="margin-bottom: 24px;">';
-  html += '<div class="point-item"><div class="point-value" style="color: var(--primary);">5</div><div class="point-label">训练次数</div></div>';
+  // v1.1: 使用新的分析页面替代旧版报告
+  window.location.href = '/analysis.html';
+}
   html += '<div class="point-item"><div class="point-value" style="color: var(--secondary);">125</div><div class="point-label">训练分钟</div></div>';
   html += '<div class="point-item"><div class="point-value" style="color: #FFD700;">680</div><div class="point-label">消耗千卡</div></div>';
   html += '</div>';

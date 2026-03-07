@@ -1,0 +1,809 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<meta name="theme-color" content="#0a0a0a">
+<link rel="manifest" href="/manifest.json">
+<title>健康分析 - AMBROSE</title>
+<style>
+:root {
+  --primary: #00D4FF;
+  --primary-dark: #0099CC;
+  --secondary: #FF2D92;
+  --bg-dark: #0a0a0a;
+  --bg-card: rgba(255,255,255,0.03);
+  --border: rgba(255,255,255,0.1);
+  --text-primary: #fff;
+  --text-secondary: rgba(255,255,255,0.5);
+  --success: #30D158;
+  --warning: #FFD93D;
+  --error: #FF6B6B;
+}
+
+* { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+html, body { height: 100%; }
+body {
+  font-family: -apple-system, BlinkMacSystemFont, 'PingFang SC', 'Hiragino Sans GB', 'Microsoft YaHei', sans-serif;
+  background: var(--bg-dark);
+  color: #fff;
+  overflow-x: hidden;
+  -webkit-overflow-scrolling: touch;
+}
+::-webkit-scrollbar { width: 0; height: 0; }
+
+/* 页面容器 */
+.page { min-height: 100vh; padding-bottom: 100px; }
+
+/* 头部 */
+.page-header {
+  padding: 60px 24px 20px;
+  background: linear-gradient(180deg, rgba(0,212,255,0.1) 0%, transparent 100%);
+}
+.page-title { font-size: 28px; font-weight: 700; margin-bottom: 4px; }
+.page-subtitle { color: var(--text-secondary); font-size: 14px; }
+
+/* 返回按钮 */
+.back-btn {
+  position: fixed;
+  top: 20px;
+  left: 20px;
+  width: 40px;
+  height: 40px;
+  background: rgba(255,255,255,0.1);
+  border: none;
+  border-radius: 12px;
+  color: #fff;
+  font-size: 20px;
+  cursor: pointer;
+  z-index: 100;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Tab导航 */
+.tab-nav {
+  display: flex;
+  padding: 0 24px 20px;
+  gap: 12px;
+  overflow-x: auto;
+  border-bottom: 1px solid var(--border);
+}
+.tab-btn {
+  padding: 10px 20px;
+  background: transparent;
+  border: 1px solid var(--border);
+  border-radius: 20px;
+  color: var(--text-secondary);
+  font-size: 14px;
+  white-space: nowrap;
+  cursor: pointer;
+  transition: all 0.3s;
+}
+.tab-btn.active {
+  background: var(--primary);
+  color: #000;
+  border-color: var(--primary);
+  font-weight: 600;
+}
+
+/* Tab内容 */
+.tab-content { display: none; }
+.tab-content.active { display: block; animation: fadeIn 0.3s ease; }
+@keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+
+/* 周期选择器 */
+.period-selector {
+  display: flex;
+  justify-content: center;
+  gap: 12px;
+  padding: 20px 24px;
+}
+.period-btn {
+  padding: 10px 24px;
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: 20px;
+  color: var(--text-secondary);
+  font-size: 14px;
+  cursor: pointer;
+  transition: all 0.3s;
+}
+.period-btn.active {
+  background: var(--primary);
+  color: #000;
+  border-color: var(--primary);
+}
+
+/* 统计卡片 */
+.stats-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 12px;
+  padding: 0 24px 24px;
+}
+.stat-card {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  padding: 20px;
+  text-align: center;
+}
+.stat-value {
+  font-size: 28px;
+  font-weight: 700;
+  color: var(--primary);
+  margin-bottom: 4px;
+}
+.stat-label {
+  font-size: 12px;
+  color: var(--text-secondary);
+  margin-bottom: 8px;
+}
+.stat-goal {
+  font-size: 11px;
+  color: var(--text-secondary);
+}
+.stat-goal .percent { color: var(--success); }
+
+/* 洞察区域 */
+.insights-section {
+  margin: 0 24px 24px;
+  padding: 20px;
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: 16px;
+}
+.section-title {
+  font-size: 16px;
+  font-weight: 600;
+  margin-bottom: 16px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.insight-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  padding: 12px;
+  background: rgba(255,255,255,0.03);
+  border-radius: 12px;
+  margin-bottom: 8px;
+}
+.insight-item:last-child { margin-bottom: 0; }
+.insight-item.positive { border-left: 3px solid var(--success); }
+.insight-item.warning { border-left: 3px solid var(--warning); }
+.insight-item.neutral { border-left: 3px solid var(--text-secondary); }
+.insight-icon { font-size: 20px; }
+.insight-text { font-size: 14px; line-height: 1.5; flex: 1; }
+
+/* 图表容器 */
+.chart-section {
+  margin: 0 24px 24px;
+  padding: 20px;
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: 16px;
+}
+.chart-title {
+  font-size: 14px;
+  font-weight: 600;
+  margin-bottom: 16px;
+  color: var(--text-secondary);
+}
+.chart-container {
+  height: 200px;
+  position: relative;
+}
+
+/* AI报告样式 */
+.report-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0 24px 20px;
+}
+.report-date {
+  font-size: 14px;
+  color: var(--text-secondary);
+}
+.generate-btn {
+  padding: 8px 16px;
+  background: var(--primary);
+  border: none;
+  border-radius: 20px;
+  color: #000;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+/* 评分圈 */
+.scores-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 16px;
+  padding: 0 24px 24px;
+}
+.score-item {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+.score-item.main {
+  grid-column: span 2;
+  flex-direction: row;
+  justify-content: space-around;
+}
+.score-circle-wrapper {
+  position: relative;
+  width: 120px;
+  height: 120px;
+}
+.score-circle-bg {
+  fill: none;
+  stroke: rgba(255,255,255,0.1);
+  stroke-width: 8;
+}
+.score-circle {
+  fill: none;
+  stroke: var(--primary);
+  stroke-width: 8;
+  stroke-linecap: round;
+  transform: rotate(-90deg);
+  transform-origin: 50% 50%;
+  transition: stroke-dashoffset 1s ease;
+}
+.score-value {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  font-size: 32px;
+  font-weight: 700;
+}
+.score-label {
+  margin-top: 12px;
+  font-size: 14px;
+  color: var(--text-secondary);
+}
+
+/* 亮点和关注点 */
+.list-section {
+  margin: 0 24px 24px;
+  padding: 20px;
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: 16px;
+}
+.list-title {
+  font-size: 16px;
+  font-weight: 600;
+  margin-bottom: 16px;
+}
+.highlight-item, .concern-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px;
+  background: rgba(48, 209, 88, 0.1);
+  border-radius: 12px;
+  margin-bottom: 8px;
+}
+.concern-item {
+  background: rgba(255, 217, 61, 0.1);
+}
+.highlight-icon, .concern-icon {
+  font-size: 20px;
+}
+.highlight-text, .concern-text {
+  font-size: 14px;
+  flex: 1;
+}
+.empty-state {
+  text-align: center;
+  padding: 20px;
+  color: var(--text-secondary);
+  font-size: 14px;
+}
+
+/* 建议卡片 */
+.recommendations-section {
+  margin: 0 24px 24px;
+}
+.rec-card {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  padding: 20px;
+  margin-bottom: 12px;
+  transition: all 0.3s;
+}
+.rec-card:hover {
+  border-color: var(--primary);
+}
+.rec-card.priority-high { border-left: 4px solid var(--error); }
+.rec-card.priority-medium { border-left: 4px solid var(--warning); }
+.rec-card.priority-low { border-left: 4px solid var(--success); }
+.rec-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 12px;
+}
+.rec-category {
+  font-size: 12px;
+  color: var(--primary);
+  padding: 4px 10px;
+  background: rgba(0,212,255,0.1);
+  border-radius: 12px;
+}
+.rec-priority {
+  font-size: 11px;
+  color: var(--text-secondary);
+}
+.rec-title {
+  font-size: 16px;
+  font-weight: 600;
+  margin-bottom: 8px;
+}
+.rec-description {
+  font-size: 14px;
+  color: var(--text-secondary);
+  line-height: 1.5;
+  margin-bottom: 12px;
+}
+.rec-reason {
+  font-size: 12px;
+  color: var(--primary);
+  padding: 8px 12px;
+  background: rgba(0,212,255,0.05);
+  border-radius: 8px;
+}
+
+/* 推送设置 */
+.push-section {
+  margin: 0 24px 24px;
+}
+.setting-group {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  padding: 20px;
+  margin-bottom: 16px;
+}
+.setting-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 16px;
+}
+.setting-title {
+  font-size: 16px;
+  font-weight: 600;
+}
+.toggle-switch {
+  position: relative;
+  display: inline-block;
+  width: 50px;
+  height: 28px;
+}
+.toggle-switch input { opacity: 0; width: 0; height: 0; }
+.toggle-slider {
+  position: absolute;
+  cursor: pointer;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(255,255,255,0.2);
+  border-radius: 28px;
+  transition: 0.3s;
+}
+.toggle-slider:before {
+  position: absolute;
+  content: "";
+  height: 22px;
+  width: 22px;
+  left: 3px;
+  bottom: 3px;
+  background: white;
+  border-radius: 50%;
+  transition: 0.3s;
+}
+input:checked + .toggle-slider { background: var(--primary); }
+input:checked + .toggle-slider:before { transform: translateX(22px); }
+
+.option-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 12px 0;
+  border-top: 1px solid var(--border);
+}
+.option-row label { font-size: 14px; color: var(--text-secondary); }
+.option-row select, .option-row input {
+  padding: 8px 12px;
+  background: rgba(255,255,255,0.05);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  color: #fff;
+  font-size: 14px;
+}
+
+.btn-primary {
+  width: 100%;
+  padding: 16px;
+  background: var(--primary);
+  border: none;
+  border-radius: 12px;
+  color: #000;
+  font-size: 16px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s;
+}
+.btn-primary:active { transform: scale(0.98); }
+.btn-secondary {
+  width: 100%;
+  padding: 16px;
+  background: transparent;
+  border: 1px solid var(--primary);
+  border-radius: 12px;
+  color: var(--primary);
+  font-size: 16px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+/* 底部按钮 */
+.bottom-actions {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  padding: 20px 24px 40px;
+  background: linear-gradient(to top, var(--bg-dark), transparent);
+  display: flex;
+  gap: 12px;
+}
+.bottom-actions .btn-primary, .bottom-actions .btn-secondary {
+  flex: 1;
+}
+
+/* Toast */
+.toast {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background: rgba(40,40,40,0.98);
+  padding: 16px 28px;
+  border-radius: 12px;
+  color: #fff;
+  font-size: 15px;
+  z-index: 10000;
+  display: none;
+  border: 1px solid rgba(255,255,255,0.1);
+}
+.toast.show { display: block; animation: toastIn 0.3s ease; }
+@keyframes toastIn { from { opacity: 0; transform: translate(-50%, -40%); } to { opacity: 1; transform: translate(-50%, -50%); } }
+.toast.error { background: rgba(231, 76, 60, 0.95); }
+</style>
+</head>
+<body>
+
+<!-- 返回按钮 -->
+<button class="back-btn" onclick="history.back()">←</button>
+
+<!-- 分析页面 -->
+<div class="page" id="analysisPage">
+
+<!-- 头部 -->
+<div class="page-header">
+<div class="page-title">📊 健康分析</div>
+<div class="page-subtitle">数据驱动，科学管理健康</div>
+</div>
+
+<!-- Tab导航 -->
+<div class="tab-nav">
+<button class="tab-btn active" data-tab="trends">📈 趋势分析</button>
+<button class="tab-btn" data-tab="report">📋 AI日报</button>
+<button class="tab-btn" data-tab="recommendations">💡 个性建议</button>
+<button class="tab-btn" data-tab="notifications">🔔 推送设置</button>
+</div>
+
+<!-- 趋势分析Tab -->
+<div class="tab-content active" id="trendsTab">
+
+<!-- 周期选择 -->
+<div class="period-selector">
+<button class="period-btn active" data-period="7d">近7天</button>
+<button class="period-btn" data-period="30d">近30天</button>
+</div>
+
+<!-- 统计卡片 -->
+<div class="stats-grid">
+<div class="stat-card">
+<div class="stat-value" id="avgSteps">--</div>
+<div class="stat-label">平均步数</div>
+<div class="stat-goal">目标完成度 <span class="percent" id="stepGoalPercent">--%</span></div>
+</div>
+<div class="stat-card">
+<div class="stat-value" id="avgCalories">--</div>
+<div class="stat-label">平均热量</div>
+<div class="stat-goal">千卡/天</div>
+</div>
+<div class="stat-card">
+<div class="stat-value" id="avgWater">--</div>
+<div class="stat-label">平均饮水</div>
+<div class="stat-goal">目标完成度 <span class="percent" id="waterGoalPercent">--%</span></div>
+</div>
+<div class="stat-card">
+<div class="stat-value" id="avgSleep">--</div>
+<div class="stat-label">平均睡眠</div>
+<div class="stat-goal">小时/天</div>
+</div>
+</div>
+
+<!-- 洞察 -->
+<div class="insights-section">
+<div class="section-title">💡 数据洞察</div>
+<div id="insightsContainer">
+<div class="insight-item neutral">📊 正在加载分析数据...</div>
+</div>
+</div>
+
+<!-- 步数图表 -->
+<div class="chart-section">
+<div class="chart-title">👟 步数趋势</div>
+<div class="chart-container">
+<canvas id="stepsChart"></canvas>
+</div>
+</div>
+
+<!-- 睡眠图表 -->
+<div class="chart-section">
+<div class="chart-title">😴 睡眠趋势</div>
+<div class="chart-container">
+<canvas id="sleepChart"></canvas>
+</div>
+</div>
+
+<!-- 饮水图表 -->
+<div class="chart-section">
+<div class="chart-title">💧 饮水趋势</div>
+<div class="chart-container">
+<canvas id="waterChart"></canvas>
+</div>
+</div>
+
+<!-- 热量图表 -->
+<div class="chart-section">
+<div class="chart-title">🔥 热量摄入趋势</div>
+<div class="chart-container">
+<canvas id="caloriesChart"></canvas>
+</div>
+</div>
+
+</div>
+
+<!-- AI日报Tab -->
+<div class="tab-content" id="reportTab">
+<!-- 报告头部 -->
+<div class="report-header">
+<div class="report-date" id="reportDate">今日报告</div>
+<button class="generate-btn" id="generateReportBtn">🔄 重新生成</button>
+</div>
+
+<!-- 综合评分 -->
+<div class="scores-grid">
+<div class="score-item main" id="overallScore">
+<div class="score-circle-wrapper">
+<svg width="120" height="120">
+<circle class="score-circle-bg" cx="60" cy="60" r="54"></circle>
+<circle class="score-circle" cx="60" cy="60" r="54" 
+stroke-dasharray="339.292" stroke-dashoffset="339.292"></circle>
+</svg>
+<div class="score-value">--</div>
+</div>
+<div class="score-label">综合评分</div>
+</div>
+<div class="score-item" id="activityScore">
+<div class="score-circle-wrapper">
+<svg width="120" height="120">
+<circle class="score-circle-bg" cx="60" cy="60" r="54"></circle>
+<circle class="score-circle" cx="60" cy="60" r="54"
+stroke-dasharray="339.292" stroke-dashoffset="339.292"></circle>
+</svg>
+<div class="score-value">--</div>
+</div>
+<div class="score-label">活动</div>
+</div>
+<div class="score-item" id="nutritionScore">
+<div class="score-circle-wrapper">
+<svg width="120" height="120">
+<circle class="score-circle-bg" cx="60" cy="60" r="54"></circle>
+<circle class="score-circle" cx="60" cy="60" r="54"
+stroke-dasharray="339.292" stroke-dashoffset="339.292"></circle>
+</svg>
+<div class="score-value">--</div>
+</div>
+<div class="score-label">营养</div>
+</div>
+<div class="score-item" id="sleepScore">
+<div class="score-circle-wrapper">
+<svg width="120" height="120">
+<circle class="score-circle-bg" cx="60" cy="60" r="54"></circle>
+<circle class="score-circle" cx="60" cy="60" r="54"
+stroke-dasharray="339.292" stroke-dashoffset="339.292"></circle>
+</svg>
+<div class="score-value">--</div>
+</div>
+<div class="score-label">睡眠</div>
+</div>
+</div>
+
+<!-- 报告总结 -->
+<div class="list-section">
+<div class="list-title">📝 今日总结</div>
+<div id="reportSummary">正在生成报告...</div>
+</div>
+
+<!-- 今日亮点 -->
+<div class="list-section">
+<div class="list-title">🌟 今日亮点</div>
+<div id="reportHighlights"></div>
+</div>
+
+<!-- 需要关注 -->
+<div class="list-section">
+<div class="list-title">⚠️ 需要关注</div>
+<div id="reportConcerns"></div>
+</div>
+
+<!-- AI建议 -->
+<div class="list-section">
+<div class="list-title">💡 AI个性化建议</div>
+<div id="reportRecommendations"></div>
+</div>
+
+</div>
+
+<!-- 个性建议Tab -->
+<div class="tab-content" id="recommendationsTab">
+
+<!-- 筛选按钮 -->
+<div class="tab-nav">
+<button class="tab-btn filter-btn active" data-filter="all">全部</button>
+<button class="tab-btn filter-btn" data-filter="exercise">运动</button>
+<button class="tab-btn filter-btn" data-filter="nutrition">营养</button>
+<button class="tab-btn filter-btn" data-filter="sleep">睡眠</button>
+</div>
+
+<!-- 建议列表 -->
+<div class="recommendations-section" id="recommendationsList">
+<div class="empty-state">正在加载个性化建议...</div>
+</div>
+
+<!-- 底部刷新按钮 -->
+<div class="bottom-actions">
+<button class="btn-secondary" id="refreshRecsBtn">🔄 刷新建议</button>
+</div>
+
+</div>
+
+<!-- 推送设置Tab -->
+<div class="tab-content" id="notificationsTab">
+
+<div class="push-section" id="pushNotificationSection">
+
+<!-- 订阅状态 -->
+<div class="setting-group">
+<div class="setting-header">
+<div class="setting-title">🔔 推送通知</div>
+<span id="pushStatus" class="status-disabled">未启用</span>
+</div>
+<p style="font-size: 14px; color: var(--text-secondary); margin-bottom: 16px;">
+启用推送通知，获得喝水、运动、睡眠等智能提醒
+</p>
+<button class="btn-primary" id="pushToggleBtn">启用推送</button>
+</div>
+
+<!-- 提醒设置 -->
+<div id="pushSettingsForm">
+<!-- 动态生成 -->
+</div>
+
+<!-- 测试按钮 -->
+<div class="setting-group">
+<div class="setting-title" style="margin-bottom: 16px;">🧪 测试通知</div>
+<div style="display: flex; gap: 8px; flex-wrap: wrap;">
+<button class="btn-secondary" onclick="window.pushNotificationManager.sendTestNotification('water')" style="flex: 1; min-width: 100px;">💧 喝水</button>
+<button class="btn-secondary" onclick="window.pushNotificationManager.sendTestNotification('exercise')" style="flex: 1; min-width: 100px;">💪 运动</button>
+<button class="btn-secondary" onclick="window.pushNotificationManager.sendTestNotification('sleep')" style="flex: 1; min-width: 100px;">😴 睡眠</button>
+</div>
+</div>
+
+</div>
+
+</div>
+
+</div>
+
+<!-- Toast -->
+<div class="toast" id="toast"></div>
+
+<!-- 脚本 -->
+<script src="js/health-analytics.js"></script>
+<script src="js/daily-report.js"></script>
+<script src="js/recommendations.js"></script>
+<script src="js/push-notifications.js"></script>
+
+<script>
+// Tab切换
+function initTabs() {
+  const tabBtns = document.querySelectorAll('.tab-nav .tab-btn:not(.filter-btn)');
+  const tabContents = document.querySelectorAll('.tab-content');
+  
+  tabBtns.forEach(btn => {
+    btn.addEventListener('click', () => {
+      const tabId = btn.dataset.tab + 'Tab';
+      
+      // 更新按钮状态
+      tabBtns.forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      
+      // 更新内容显示
+      tabContents.forEach(content => {
+        content.classList.toggle('active', content.id === tabId);
+      });
+      
+      // 初始化对应模块
+      if (tabId === 'trendsTab') {
+        window.healthAnalytics?.init();
+      } else if (tabId === 'reportTab') {
+        window.dailyReportManager?.init();
+      } else if (tabId === 'recommendationsTab') {
+        window.recommendationEngine?.init();
+      } else if (tabId === 'notificationsTab') {
+        window.pushNotificationManager?.init();
+      }
+    });
+  });
+}
+
+// 推送切换按钮
+function initPushToggle() {
+  const toggleBtn = document.getElementById('pushToggleBtn');
+  if (toggleBtn) {
+    toggleBtn.addEventListener('click', () => {
+      if (window.pushNotificationManager?.isSubscribed) {
+        window.pushNotificationManager.unsubscribe();
+      } else {
+        window.pushNotificationManager.subscribe();
+      }
+    });
+  }
+}
+
+// 页面加载完成后初始化
+document.addEventListener('DOMContentLoaded', () => {
+  initTabs();
+  initPushToggle();
+  
+  // 默认加载趋势分析
+  setTimeout(() => {
+    window.healthAnalytics?.init();
+  }, 100);
+});
+</script>
+
+</body>
+</html>
