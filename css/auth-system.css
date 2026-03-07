@@ -1,0 +1,182 @@
+/**
+ * AMBROSE Health - 统一登录系统样式
+ */
+
+/* 登录模式选择器 */
+.auth-mode-selector {
+  display: flex;
+  gap: 12px;
+  margin-bottom: 32px;
+}
+
+.auth-mode-btn {
+  flex: 1;
+  padding: 16px;
+  background: rgba(255,255,255,0.05);
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  color: var(--text-secondary);
+  font-size: 15px;
+  cursor: pointer;
+  transition: all 0.3s;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+}
+
+.auth-mode-btn .mode-icon {
+  font-size: 24px;
+}
+
+.auth-mode-btn .mode-text {
+  font-weight: 500;
+}
+
+.auth-mode-btn.active {
+  background: linear-gradient(135deg, rgba(0,212,255,0.15), rgba(255,45,146,0.1));
+  border-color: var(--primary);
+  color: #fff;
+}
+
+/* 认证表单容器 */
+.auth-form {
+  display: none;
+}
+
+.auth-form.active {
+  display: block;
+  animation: fadeIn 0.3s ease;
+}
+
+/* 用户表单选项卡 */
+.user-form-tabs {
+  display: flex;
+  gap: 0;
+  margin-bottom: 24px;
+  background: rgba(255,255,255,0.05);
+  border-radius: 12px;
+  padding: 4px;
+}
+
+.user-form-tab {
+  flex: 1;
+  padding: 12px;
+  background: transparent;
+  border: none;
+  border-radius: 8px;
+  color: var(--text-secondary);
+  font-size: 15px;
+  cursor: pointer;
+  transition: all 0.3s;
+  font-weight: 500;
+}
+
+.user-form-tab.active {
+  background: var(--primary);
+  color: #000;
+}
+
+/* 用户表单内容 */
+.user-form-content {
+  display: none;
+}
+
+.user-form-content.active {
+  display: block;
+  animation: fadeIn 0.3s ease;
+}
+
+/* 验证码输入组 */
+.verify-input-group {
+  display: flex;
+  gap: 12px;
+}
+
+.verify-input-group .input-field {
+  flex: 1;
+}
+
+.verify-input-group .code-btn {
+  padding: 18px 16px;
+  background: rgba(0,212,255,0.1);
+  border: 1px solid rgba(0,212,255,0.3);
+  border-radius: 16px;
+  color: var(--primary);
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  white-space: nowrap;
+}
+
+.verify-input-group .code-btn:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+/* 表单一行多列布局 */
+.form-row {
+  display: flex;
+  gap: 12px;
+}
+
+.form-row .form-group {
+  flex: 1;
+}
+
+/* 表单提示文字 */
+.form-hint {
+  text-align: center;
+  margin-top: 16px;
+  color: var(--text-secondary);
+  font-size: 13px;
+}
+
+/* 性别选择器 */
+.gender-selector {
+  display: flex;
+  gap: 16px;
+}
+
+.gender-option {
+  flex: 1;
+  padding: 24px;
+  background: rgba(255,255,255,0.03);
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  text-align: center;
+  cursor: pointer;
+  transition: all 0.3s;
+}
+
+.gender-option.selected {
+  border-color: var(--primary);
+  background: rgba(0,212,255,0.1);
+}
+
+.gender-option .icon {
+  font-size: 32px;
+  margin-bottom: 8px;
+}
+
+.gender-option .text {
+  font-size: 14px;
+  color: var(--text-secondary);
+}
+
+.gender-option.selected .text {
+  color: var(--primary);
+  font-weight: 600;
+}
+
+/* 动画 */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
