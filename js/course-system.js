@@ -304,7 +304,7 @@ class CourseSystem {
           
           ${recipe.isPremium 
             ? '<button class="btn-primary" onclick="showUpgradeModal()">升级Pro会员解锁</button>'
-            : '<button class="btn-primary" onclick="showToast('已添加到今日食谱')">添加到今日食谱</button>'
+            : '<button class="btn-primary" onclick="showToast(\'已添加到今日食谱\')">添加到今日食谱</button>'
           }
         </div>
       </div>
