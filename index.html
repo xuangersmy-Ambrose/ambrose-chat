@@ -1599,11 +1599,21 @@ var badgeData = [
 
 // ==================== 页面切换（简化版） ====================
 function showPage(pageId) {
+  console.log('[DEBUG] showPage called with:', pageId);
   try {
-    document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+    var pages = document.querySelectorAll('.page');
+    console.log('[DEBUG] Found pages:', pages.length);
+    pages.forEach(p => p.classList.remove('active'));
+    
     var targetPage = document.getElementById(pageId);
+    console.log('[DEBUG] Target page:', targetPage ? 'found' : 'NOT FOUND');
+    
     if (targetPage) {
       targetPage.classList.add('active');
+      console.log('[DEBUG] Page activated:', pageId);
+    } else {
+      console.error('[DEBUG] Page not found:', pageId);
+      alert('页面加载失败，请刷新重试');
     }
     window.scrollTo(0, 0);
     
