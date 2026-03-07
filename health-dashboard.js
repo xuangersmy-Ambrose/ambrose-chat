@@ -106,6 +106,7 @@ class HealthDashboard {
         `;
     }
 
+    renderDashboard() {
         const today = new Date();
         const dateStr = today.toLocaleDateString('zh-CN', { month: 'long', day: 'numeric' });
         const weekdayStr = today.toLocaleDateString('zh-CN', { weekday: 'long' });
