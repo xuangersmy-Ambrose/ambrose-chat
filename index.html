@@ -19,19 +19,6 @@ window.showPage = function(pageId) {
   } catch(e) { console.error(e); }
 };
 
-// 预定义 authHandleStart，防止点击时未定义
-window.authHandleStart = window.authHandleStart || function() {
-  showToast('正在加载，请稍候...');
-  // 等待 auth-system.js 加载完成后重试
-  setTimeout(function() {
-    if (typeof authManager !== 'undefined' && authManager.handleStart) {
-      authManager.handleStart();
-    } else {
-      showToast('加载中，请再次点击');
-    }
-  }, 500);
-};
-
 window.switchMode = function(mode) {
   try {
     document.querySelectorAll('.mode-btn').forEach(function(b) { b.classList.remove('active'); });
@@ -4747,15 +4734,7 @@ window.onload = function() {
 
   setTimeout(function() {
     hideSkeletonLoader();
-
-    // 新的启动流程：由 auth-system.js 处理
-    // 它会显示主页并根据登录状态显示/隐藏提示层
-    if (typeof authManager !== 'undefined') {
-      authManager.init();
-    } else {
-      // 备用方案：直接显示主页
-      showPage('homePage');
-    }
+    // auth-system.js 会自动处理初始化
   }, 500);
 };
 </script>
