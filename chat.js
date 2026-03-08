@@ -38,13 +38,16 @@ const UI = {
         // 初始化AI教练 (让App变聪明)
         this.aiCoach = new AICoach(this);
         
+        // 🆕 初始化AMBROSE Health v2.0 双引擎系统
+        this.ambroseV2 = new AMBROSEHealthV2();
+        
         // 检查身份
         const userRelation = localStorage.getItem('ambrose_user_relation');
         this.isMaster = userRelation === 'self';
 
         this.bindEvents();
         this.startClock();
-        this.addWelcomeMessage();
+        this.addWelcomeMessageV2();  // 🆕 使用v2欢迎语
         
         // 显示健康中心按钮
         const fitnessBtn = document.getElementById('fitnessBtn');
@@ -121,12 +124,17 @@ const UI = {
         try {
             let reply;
             
-            // 优先使用AI教练生成智能回复
-            if (this.aiCoach) {
+            // 🆕 优先使用AMBROSE Health v2.0双引擎系统
+            if (this.ambroseV2) {
+                reply = await this.ambroseV2.processMessage(text);
+            }
+            
+            // 如果v2没有返回，尝试v1 AI教练
+            if (!reply && this.aiCoach) {
                 reply = this.aiCoach.generateSmartReply(text);
             }
             
-            // 如果AI教练没有返回回复，或者需要更复杂的处理，调用API
+            // 最后调用API
             if (!reply) {
                 reply = await this.callAPI(text);
             }
@@ -136,8 +144,15 @@ const UI = {
         } catch (err) {
             console.error('Error:', err);
             loadingEl.remove();
-            // 出错时尝试使用AI教练
-            if (this.aiCoach) {
+            // 出错时尝试使用v2系统
+            if (this.ambroseV2) {
+                try {
+                    const fallbackReply = await this.ambroseV2.processMessage(text);
+                    this.addMessage(fallbackReply, 'bot');
+                } catch (v2Err) {
+                    this.addMessage('抱歉，服务暂时不可用，请稍后重试。', 'bot');
+                }
+            } else if (this.aiCoach) {
                 const fallbackReply = this.aiCoach.generateContextualReply(text);
                 this.addMessage(fallbackReply, 'bot');
             } else {
@@ -343,7 +358,31 @@ const UI = {
         if (dateEl) dateEl.textContent = dateStr;
     },
 
+    addWelcomeMessageV2() {
+        // 🆕 使用AMBROSE Health v2.0生成智能欢迎语
+        if (this.ambroseV2) {
+            const welcomeMessage = this.ambroseV2.generateWelcomeMessage();
+            this.addMessage(welcomeMessage, 'bot');
+        } else if (this.aiCoach) {
+            const welcomeMessage = this.aiCoach.generateSmartWelcome();
+            this.addMessage(welcomeMessage, 'bot');
+        } else {
+            // 后备方案
+            const hour = new Date().getHours();
+            let greeting = '你好';
+            if (hour < 6) greeting = '夜深了';
+            else if (hour < 12) greeting = '早上好';
+            else if (hour < 18) greeting = '下午好';
+            else greeting = '晚上好';
+            
+            this.addMessage(`${greeting}，我是 AMBROSE，你的 AI 健康教练。`, 'bot');
+        }
+    },
+    
+    // 保留旧方法作为兼容
     addWelcomeMessage() {
+        this.addWelcomeMessageV2();
+    }
         // 使用AI教练生成智能欢迎语
         if (this.aiCoach) {
             const welcomeMessage = this.aiCoach.generateSmartWelcome();
